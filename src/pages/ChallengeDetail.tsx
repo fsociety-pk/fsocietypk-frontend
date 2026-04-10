@@ -19,7 +19,7 @@ const ChallengeDetail: React.FC = () => {
   const [completedFlagSteps, setCompletedFlagSteps] = useState<number[]>([]);
   const [flagValues, setFlagValues] = useState<string[]>([]);
 
-  const getProgressStorageKey = (challengeId: string) => `flag-progress:${challengeId}`;
+  const getProgressStorageKey = (challengeId: string) => `flag-progress:v2:${challengeId}`;
 
   const saveFlagProgress = (challengeId: string, steps: number[]) => {
     const uniqueSorted = [...new Set(steps)].sort((a, b) => a - b);
@@ -45,6 +45,13 @@ const ChallengeDetail: React.FC = () => {
   useEffect(() => {
     const fetchDetail = async () => {
       if (!id) return;
+
+      setLoading(true);
+      setChallenge(null);
+      setCompletedFlagSteps([]);
+      setCurrentFlagStep(1);
+      setFlagValues([]);
+
       try {
         const response = await challengeService.getChallengeById(id);
         const challengeData = response.data;
