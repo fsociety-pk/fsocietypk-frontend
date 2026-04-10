@@ -24,6 +24,6 @@ export const authService = {
   },
 
   refreshToken: async (): Promise<void> => {
-    await apiClient.post('/auth/refresh')
+    return Promise.resolve()
   },
 }

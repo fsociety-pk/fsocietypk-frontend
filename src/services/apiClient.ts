@@ -22,22 +22,9 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error) => {
-    const originalRequest = error.config
-
-    // Auto refresh on 401 (token expired) — one retry
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url?.includes('/auth/')
-    ) {
-      originalRequest._retry = true
-      try {
-        await apiClient.post('/auth/refresh')
-        return apiClient(originalRequest)
-      } catch {
-        // Redirect to login if refresh also fails
-        window.location.href = '/login'
-      }
+    // Backend does not expose /auth/refresh. Redirect on unauthorized API calls.
+    if (error.response?.status === 401 && !error.config?.url?.includes('/auth/')) {
+      window.location.href = '/login'
     }
 
     return Promise.reject(error)
