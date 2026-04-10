@@ -14,6 +14,11 @@ import {
   MessageCircle,
   Rocket,
   Shield,
+  Target,
+  Timer,
+  Terminal,
+  Lock,
+  Crosshair,
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
@@ -35,32 +40,87 @@ const Dashboard: React.FC = () => {
     visible: {
       opacity: 1,
       y: 0,
+      transition: {
+        duration: 0.45,
+      },
+    },
+  };
+
+  const spotlightVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.9,
+      },
     },
   };
 
   return (
-    <div className="min-h-screen bg-black font-mono text-white py-12 px-4 md:px-8">
+    <div className="min-h-screen bg-black font-mono text-white py-12 px-4 md:px-8 overflow-hidden">
+      <motion.div
+        variants={spotlightVariants}
+        initial="hidden"
+        animate="visible"
+        className="pointer-events-none absolute left-1/2 top-28 -translate-x-1/2 h-72 w-72 rounded-full bg-neon-green/10 blur-3xl"
+      />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 0.1 }}
+        className="pointer-events-none absolute -right-24 top-48 h-64 w-64 rounded-full border border-neon-green/20"
+      />
       <div className="max-w-6xl mx-auto">
         {/* Header Banner */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative mb-16 rounded-2xl border border-neon-green/30 overflow-hidden bg-gradient-to-br from-zinc-900/80 to-black p-8 md:p-12"
+          transition={{ duration: 0.55 }}
+          className="relative mb-16 rounded-2xl border border-neon-green/30 overflow-hidden bg-gradient-to-br from-zinc-900/90 via-black to-zinc-900/60 p-8 md:p-12"
         >
-          <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
+          <div className="absolute top-0 right-0 opacity-10 pointer-events-none animate-pulse">
             <Code className="w-48 h-48" />
           </div>
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,rgba(0,255,65,0.15),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(0,255,65,0.08),transparent_35%)]" />
 
           <div className="relative z-10">
-            <h1 className="text-5xl md:text-6xl font-black italic text-glow mb-2 tracking-tighter">
-              WELCOME BACK
+            <p className="text-xs md:text-sm uppercase tracking-[0.35em] text-neon-green/80 mb-4">
+              CTF Command Center
+            </p>
+            <h1 className="text-4xl md:text-6xl font-black italic text-glow mb-2 tracking-tight">
+              TRAIN. BREAK. DEFEND.
             </h1>
             <h2 className="text-2xl md:text-3xl text-neon-green tracking-widest font-bold mb-4">
-              {user?.username?.toUpperCase()}
+              {user?.username?.toUpperCase() || 'OPERATOR'}
             </h2>
-            <p className="text-zinc-400 max-w-2xl leading-relaxed">
-              You're now part of the underground. Explore challenges designed to test and improve your cybersecurity skills.
+            <p className="text-zinc-300 max-w-3xl leading-relaxed">
+              Build practical security skills through real attack paths, guided challenge flows, and a competitive learning environment. Every solve sharpens your thinking for real-world assessments.
             </p>
+
+            <div className="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <motion.div
+                whileHover={{ y: -4 }}
+                className="rounded-xl border border-neon-green/30 bg-neon-green/5 px-4 py-3"
+              >
+                <p className="text-[10px] text-zinc-500 uppercase tracking-[0.24em]">Challenge Tracks</p>
+                <p className="mt-1 text-lg font-bold text-neon-green">7+ Domains</p>
+              </motion.div>
+              <motion.div
+                whileHover={{ y: -4 }}
+                className="rounded-xl border border-neon-green/30 bg-neon-green/5 px-4 py-3"
+              >
+                <p className="text-[10px] text-zinc-500 uppercase tracking-[0.24em]">Practice Model</p>
+                <p className="mt-1 text-lg font-bold text-neon-green">Unlimited Retries</p>
+              </motion.div>
+              <motion.div
+                whileHover={{ y: -4 }}
+                className="rounded-xl border border-neon-green/30 bg-neon-green/5 px-4 py-3"
+              >
+                <p className="text-[10px] text-zinc-500 uppercase tracking-[0.24em]">Learning Style</p>
+                <p className="mt-1 text-lg font-bold text-neon-green">Hands-On First</p>
+              </motion.div>
+            </div>
           </div>
         </motion.div>
 
@@ -91,6 +151,7 @@ const Dashboard: React.FC = () => {
               {/* Mission Card */}
               <motion.div
                 variants={itemVariants}
+                whileHover={{ y: -5 }}
                 className="bg-zinc-900/60 border border-neon-green/20 rounded-xl p-6 hover:border-neon-green/50 transition-all hover:shadow-[0_0_20px_rgba(0,255,65,0.1)]"
               >
                 <div className="flex items-start gap-4">
@@ -109,6 +170,7 @@ const Dashboard: React.FC = () => {
               {/* Professional Card */}
               <motion.div
                 variants={itemVariants}
+                whileHover={{ y: -5 }}
                 className="bg-zinc-900/60 border border-neon-green/20 rounded-xl p-6 hover:border-neon-green/50 transition-all hover:shadow-[0_0_20px_rgba(0,255,65,0.1)]"
               >
                 <div className="flex items-start gap-4">
@@ -191,14 +253,14 @@ const Dashboard: React.FC = () => {
                 href="https://discord.gg/YYpFYBzH"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group bg-gradient-to-br from-purple-900/30 to-purple-900/10 border border-purple-600/40 rounded-xl p-6 hover:border-purple-600/80 transition-all hover:shadow-[0_0_25px_rgba(147,51,234,0.2)]"
+                className="group bg-gradient-to-br from-zinc-900/70 to-zinc-900/20 border border-neon-green/30 rounded-xl p-6 hover:border-neon-green/70 transition-all hover:shadow-[0_0_25px_rgba(0,255,65,0.2)]"
               >
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-purple-500/20 rounded-lg group-hover:scale-110 transition-transform">
-                    <MessageCircle className="w-5 h-5 text-purple-400" />
+                  <div className="p-3 bg-neon-green/20 rounded-lg group-hover:scale-110 transition-transform">
+                    <MessageCircle className="w-5 h-5 text-neon-green" />
                   </div>
                   <div className="flex-1">
-                    <h5 className="font-bold text-purple-400 mb-1">Discord Community</h5>
+                    <h5 className="font-bold text-neon-green mb-1">Discord Community</h5>
                     <p className="text-sm text-zinc-400">Join our Discord server</p>
                     <p className="text-[10px] text-zinc-500 mt-2">Chat, share writeups & connect</p>
                   </div>
@@ -254,24 +316,67 @@ const Dashboard: React.FC = () => {
               {/* Contribute Challenge */}
               <Link
                 to="/submit-challenge"
-                className="group relative bg-gradient-to-br from-purple-600/20 to-purple-600/5 border border-purple-600/40 rounded-xl p-8 hover:border-purple-600/80 transition-all hover:shadow-[0_0_30px_rgba(147,51,234,0.2)]"
+                className="group relative bg-gradient-to-br from-zinc-900/90 to-black border border-neon-green/40 rounded-xl p-8 hover:border-neon-green/80 transition-all hover:shadow-[0_0_30px_rgba(0,255,65,0.2)]"
               >
                 <div className="absolute top-0 right-0 opacity-10 group-hover:opacity-20 transition-opacity">
                   <Users className="w-32 h-32" />
                 </div>
                 <div className="relative z-10">
                   <div className="flex items-center gap-3 mb-3">
-                    <Plus className="w-6 h-6 text-purple-400" />
-                    <h4 className="text-xl font-bold text-purple-400">Contribute a Challenge</h4>
+                    <Plus className="w-6 h-6 text-neon-green" />
+                    <h4 className="text-xl font-bold text-neon-green">Contribute a Challenge</h4>
                   </div>
                   <p className="text-zinc-400 mb-4 text-sm">
                     Share your own challenges! Submit challenges for review and help others learn.
                   </p>
-                  <div className="flex items-center text-purple-400 font-bold text-sm group-hover:translate-x-2 transition-transform">
+                  <div className="flex items-center text-neon-green font-bold text-sm group-hover:translate-x-2 transition-transform">
                     Create Challenge <ArrowRight className="w-4 h-4 ml-2" />
                   </div>
                 </div>
               </Link>
+            </div>
+          </motion.section>
+
+          {/* Learning Flow Section */}
+          <motion.section variants={itemVariants} className="space-y-6">
+            <div className="flex items-center gap-3 mb-8">
+              <Target className="text-neon-green w-6 h-6" />
+              <h3 className="text-2xl font-bold tracking-widest uppercase">What To Do Next</h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <motion.article
+                whileHover={{ y: -4 }}
+                className="rounded-xl border border-zinc-700 bg-zinc-900/50 p-5"
+              >
+                <Timer className="w-5 h-5 text-neon-green mb-3" />
+                <h4 className="font-bold text-neon-green mb-2">Warm Up (15-20 min)</h4>
+                <p className="text-sm text-zinc-300 leading-relaxed">
+                  Start with one easy challenge to lock in momentum and refresh core web or crypto fundamentals.
+                </p>
+              </motion.article>
+
+              <motion.article
+                whileHover={{ y: -4 }}
+                className="rounded-xl border border-zinc-700 bg-zinc-900/50 p-5"
+              >
+                <Terminal className="w-5 h-5 text-neon-green mb-3" />
+                <h4 className="font-bold text-neon-green mb-2">Deep Work (45 min)</h4>
+                <p className="text-sm text-zinc-300 leading-relaxed">
+                  Pick a medium or hard task, document your payload chain, and validate each assumption like a real engagement.
+                </p>
+              </motion.article>
+
+              <motion.article
+                whileHover={{ y: -4 }}
+                className="rounded-xl border border-zinc-700 bg-zinc-900/50 p-5"
+              >
+                <Crosshair className="w-5 h-5 text-neon-green mb-3" />
+                <h4 className="font-bold text-neon-green mb-2">Debrief (10 min)</h4>
+                <p className="text-sm text-zinc-300 leading-relaxed">
+                  Capture what worked, what failed, and where to revisit. Consistent debriefing accelerates long-term growth.
+                </p>
+              </motion.article>
             </div>
           </motion.section>
 
@@ -285,7 +390,7 @@ const Dashboard: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h5 className="font-bold text-neon-green mb-2 flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 bg-neon-green rounded-full" />
+                    <Lock className="w-4 h-4 text-neon-green" />
                     Flag Format
                   </h5>
                   <p className="text-sm text-zinc-400">
@@ -294,7 +399,7 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div>
                   <h5 className="font-bold text-neon-green mb-2 flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 bg-neon-green rounded-full" />
+                    <Shield className="w-4 h-4 text-neon-green" />
                     Review Process
                   </h5>
                   <p className="text-sm text-zinc-400">
@@ -306,7 +411,7 @@ const Dashboard: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h5 className="font-bold text-neon-green mb-2 flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 bg-neon-green rounded-full" />
+                    <Book className="w-4 h-4 text-neon-green" />
                     Categories
                   </h5>
                   <p className="text-sm text-zinc-400">
@@ -315,7 +420,7 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div>
                   <h5 className="font-bold text-neon-green mb-2 flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 bg-neon-green rounded-full" />
+                    <Award className="w-4 h-4 text-neon-green" />
                     Difficulty Levels
                   </h5>
                   <p className="text-sm text-zinc-400">

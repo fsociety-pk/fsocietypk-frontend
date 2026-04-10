@@ -26,7 +26,7 @@ const Login: React.FC = () => {
     try {
       const response = await authService.login(data);
       setUser(response.data.user);
-      toast.success('Access Granted. Welcome back, agent.');
+      toast.success('Access Granted. Operator session initialized.');
       navigate('/dashboard');
     } catch (error: any) {
       toast.error(error.message || 'Authentication failed. Check your credentials.');
