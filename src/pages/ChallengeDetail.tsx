@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Terminal, FileDown, HelpCircle, Trophy, Send, CheckCircle2, Loader2 } from 'lucide-react';
+import { ArrowLeft, Terminal, FileDown, HelpCircle, Trophy, Send, CheckCircle2, Loader2, Lock, Unlock } from 'lucide-react';
 import { challengeService } from '../services/challenge.service';
 
 import { IChallenge } from '../types';
@@ -13,6 +13,8 @@ const ChallengeDetail: React.FC = () => {
   const [challenge, setChallenge] = useState<(IChallenge & { isSolved: boolean }) | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [unlockingHintId, setUnlockingHintId] = useState<string | null>(null);
+  const [unlockedHintIds, setUnlockedHintIds] = useState<string[]>([]);
   const [flag, setFlag] = useState('');
 
   useEffect(() => {
@@ -31,6 +33,49 @@ const ChallengeDetail: React.FC = () => {
 
     fetchDetail();
   }, [id, navigate]);
+
+  const handleUnlockHint = async (hintId: string) => {
+    if (!id) return;
+
+    setUnlockingHintId(hintId);
+    try {
+      const response = await challengeService.unlockHint(id, hintId);
+      const unlockedContent = response.data.content;
+
+      setChallenge((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          hints: prev.hints.map((h) => (h._id === hintId ? { ...h, content: unlockedContent } : h)),
+        };
+      });
+
+      setUnlockedHintIds((prev) => (prev.includes(hintId) ? prev : [...prev, hintId]));
+      toast.success('Hint unlocked');
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Failed to unlock hint');
+    } finally {
+      setUnlockingHintId(null);
+    }
+  };
+
+  const getAttachmentLabel = (url: string, index: number): string => {
+    try {
+      const parsed = new URL(url);
+      const lastPart = parsed.pathname.split('/').filter(Boolean).pop();
+      return lastPart || `attachment-${index + 1}`;
+    } catch {
+      return `attachment-${index + 1}`;
+    }
+  };
+
+  const configuredFlags = challenge
+    ? (
+      challenge.flags && challenge.flags.length > 0
+        ? [...challenge.flags].sort((a, b) => a.sequence - b.sequence).map((f) => f.value)
+        : (challenge.flag ? [challenge.flag] : [])
+    )
+    : [];
 
   const handleSubmitFlag = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,8 +143,28 @@ const ChallengeDetail: React.FC = () => {
                 {challenge.description}
               </div>
 
+              {/* Configured Flags */}
+              {configuredFlags.length > 0 && (
+                <div className="space-y-3 pt-6 border-t border-zinc-800">
+                  <h3 className="text-sm font-bold text-zinc-500 uppercase flex items-center gap-2">
+                    <Terminal className="w-4 h-4" /> CONFIGURED_FLAGS
+                  </h3>
+                  <div className="space-y-2">
+                    {configuredFlags.map((flagValue, index) => (
+                      <div
+                        key={`${flagValue}-${index}`}
+                        className="px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-neon-green break-all"
+                      >
+                        <span className="text-zinc-500 mr-2">FLAG {index + 1}:</span>
+                        {flagValue}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Files */}
-              {challenge.files.length > 0 && (
+              {(challenge.files.length > 0 || challenge.attachments.length > 0) && (
                 <div className="space-y-3 pt-6 border-t border-zinc-800">
                   <h3 className="text-sm font-bold text-zinc-500 uppercase flex items-center gap-2">
                     <FileDown className="w-4 h-4" /> ATTACHED_ASSETS
@@ -113,6 +178,18 @@ const ChallengeDetail: React.FC = () => {
                       >
                         <FileDown className="w-4 h-4 text-neon-green" />
                         {file.filename}
+                      </a>
+                    ))}
+                    {challenge.attachments.map((attachment, i) => (
+                      <a
+                        key={`attachment-${i}`}
+                        href={attachment}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg hover:border-neon-green transition-all text-xs"
+                      >
+                        <FileDown className="w-4 h-4 text-neon-green" />
+                        {getAttachmentLabel(attachment, i)}
                       </a>
                     ))}
                   </div>
@@ -149,7 +226,7 @@ const ChallengeDetail: React.FC = () => {
                   <form onSubmit={handleSubmitFlag} className="flex gap-2">
                     <input
                       type="text"
-                      placeholder="FsocietyPK{...}"
+                      placeholder="fsociety{...}"
                       value={flag}
                       onChange={(e) => setFlag(e.target.value)}
                       disabled={submitting}
@@ -209,8 +286,38 @@ const ChallengeDetail: React.FC = () => {
                   <HelpCircle className="w-4 h-4" /> INTELLIGENCE_HINTS
                 </h3>
                 {challenge.hints.map((hint, i) => (
-                  <div key={i} className="p-4 bg-zinc-900/30 border border-zinc-800 rounded-lg text-xs leading-relaxed text-zinc-400">
-                    {hint.content}
+                  <div key={hint._id} className="p-4 bg-zinc-900/30 border border-zinc-800 rounded-lg text-xs leading-relaxed text-zinc-400 space-y-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-zinc-500 uppercase tracking-widest text-[10px]">Hint {i + 1}</span>
+                      {unlockedHintIds.includes(hint._id) ? (
+                        <span className="inline-flex items-center gap-1 text-neon-green text-[10px] uppercase tracking-widest">
+                          <Unlock className="w-3 h-3" /> UNLOCKED
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleUnlockHint(hint._id)}
+                          disabled={
+                            unlockingHintId === hint._id ||
+                            (i > 0 && !unlockedHintIds.includes(challenge.hints[i - 1]._id))
+                          }
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded border border-zinc-700 text-zinc-400 hover:text-neon-green hover:border-neon-green/50 disabled:opacity-50 disabled:cursor-not-allowed text-[10px] uppercase tracking-widest transition-colors"
+                        >
+                          {unlockingHintId === hint._id ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <Lock className="w-3 h-3" />
+                          )}
+                          {unlockingHintId === hint._id ? 'Unlocking' : 'Unlock'}
+                        </button>
+                      )}
+                    </div>
+
+                    {unlockedHintIds.includes(hint._id) ? (
+                      <p>{hint.content}</p>
+                    ) : (
+                      <p className="text-zinc-600">Unlock this hint to reveal its content.</p>
+                    )}
                   </div>
                 ))}
               </motion.div>

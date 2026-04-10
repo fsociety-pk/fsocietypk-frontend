@@ -6,6 +6,10 @@ export interface SubmitFlagResponse {
   points?: number;
 }
 
+export interface UnlockHintResponse {
+  content: string;
+}
+
 export interface SubmitChallengePayload {
   title: string;
   description: string;
@@ -43,6 +47,17 @@ export const challengeService = {
       challengeId,
       flag,
     });
+    return response.data;
+  },
+
+  /** Unlock a single hint for a challenge */
+  unlockHint: async (
+    challengeId: string,
+    hintId: string
+  ): Promise<ApiResponse<UnlockHintResponse>> => {
+    const response = await api.post<ApiResponse<UnlockHintResponse>>(
+      `/challenges/${challengeId}/hints/${hintId}/unlock`
+    );
     return response.data;
   },
 

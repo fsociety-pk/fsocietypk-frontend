@@ -16,10 +16,12 @@ import { toast } from 'react-hot-toast';
 import { format } from 'date-fns';
 import { clsx } from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuthStore } from '../../store/authStore';
 
 const ManageChallenges: React.FC = () => {
   const queryClient = useQueryClient();
   const [filter, setFilter] = React.useState<string>('');
+  const { user } = useAuthStore();
 
   const { data: challenges, isLoading } = useQuery({
     queryKey: ['admin-challenges', filter],
@@ -95,6 +97,17 @@ const ManageChallenges: React.FC = () => {
       <div className="grid grid-cols-1 gap-4">
         <AnimatePresence mode="popLayout">
           {challenges?.map((mission) => (
+            (() => {
+              const authorObj = typeof mission.author === 'string' ? null : (mission.author as any);
+              const createdByObj = typeof mission.createdBy === 'string' ? null : (mission.createdBy as any);
+              const authorId =
+                authorObj?._id ||
+                createdByObj?._id ||
+                (typeof mission.author === 'string' ? mission.author : undefined) ||
+                (typeof mission.createdBy === 'string' ? mission.createdBy : undefined);
+              const isOwnSubmission = Boolean(user?._id && authorId && user._id === authorId);
+
+              return (
             <motion.div
               key={mission._id}
               layout
@@ -135,8 +148,9 @@ const ManageChallenges: React.FC = () => {
                 {mission.status !== 'approved' && (
                   <button 
                     onClick={() => statusMutation.mutate({ id: mission._id, status: 'approved' })}
-                    disabled={statusMutation.isPending}
+                    disabled={statusMutation.isPending || isOwnSubmission}
                     className="btn bg-status-success/10 text-status-success hover:bg-status-success/20 border-status-success/30 px-4 py-2 text-[10px] font-black flex items-center gap-2"
+                    title={isOwnSubmission ? 'You cannot approve your own submission' : 'Approve'}
                   >
                     <CheckCircle size={14} /> APPROVE
                   </button>
@@ -144,11 +158,17 @@ const ManageChallenges: React.FC = () => {
                 {mission.status === 'pending' && (
                   <button 
                     onClick={() => handleReject(mission._id)}
-                    disabled={statusMutation.isPending}
+                    disabled={statusMutation.isPending || isOwnSubmission}
                     className="btn bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border-orange-500/30 px-4 py-2 text-[10px] font-black flex items-center gap-2"
+                    title={isOwnSubmission ? 'You cannot reject your own submission' : 'Reject'}
                   >
                     <XCircle size={14} /> REJECT
                   </button>
+                )}
+                {isOwnSubmission && mission.status === 'pending' && (
+                  <span className="text-[10px] uppercase tracking-widest text-zinc-500 border border-zinc-700 rounded px-2 py-1">
+                    Awaiting another admin
+                  </span>
                 )}
                 <button 
                   onClick={() => deleteMutation.mutate(mission._id)}
@@ -168,6 +188,8 @@ const ManageChallenges: React.FC = () => {
                 </a>
               </div>
             </motion.div>
+              );
+            })()
           ))}
         </AnimatePresence>
 

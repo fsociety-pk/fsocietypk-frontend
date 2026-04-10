@@ -44,6 +44,8 @@ interface FormState {
   attachments: string[];
 }
 
+type SubmissionStatus = 'pending' | 'approved' | 'rejected';
+
 const INITIAL_FORM: FormState = {
   title: '',
   description: '',
@@ -69,7 +71,7 @@ const SubmitChallenge: React.FC = () => {
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState | 'form', string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState<{ id: string; title: string; points: number } | null>(null);
+  const [submitted, setSubmitted] = useState<{ id: string; title: string; points: number; status: SubmissionStatus } | null>(null);
 
   // ── Field helpers ───────────────────────────────────────────────────────────
   const set = (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -187,9 +189,16 @@ const SubmitChallenge: React.FC = () => {
       }
 
       const res = await challengeService.createChallenge(payload);
-      setSubmitted({ id: res.data._id, title: res.data.title, points: res.data.points });
+      const status = (res.data.status === 'approved' || res.data.status === 'rejected')
+        ? res.data.status
+        : 'pending';
+      setSubmitted({ id: res.data._id, title: res.data.title, points: res.data.points, status });
       setForm(INITIAL_FORM);
-      toast.success('Challenge submitted for review!');
+      if (status === 'approved') {
+        toast.success('Challenge submitted and published successfully!');
+      } else {
+        toast.success('Challenge submitted for review!');
+      }
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Submission failed';
       toast.error(msg);
@@ -214,17 +223,33 @@ const SubmitChallenge: React.FC = () => {
           </div>
 
           <h2 className="text-2xl font-bold text-neon-green mb-2 tracking-widest uppercase">
-            SUBMISSION QUEUED
+            {submitted.status === 'approved' ? 'MISSION DEPLOYED' : 'SUBMISSION QUEUED'}
           </h2>
           <p className="text-zinc-400 text-sm mb-6 leading-relaxed">
-            Your challenge <span className="text-white font-bold">"{submitted.title}"</span> has been submitted and is awaiting admin review.
+            {submitted.status === 'approved'
+              ? (
+                <>
+                  Your challenge <span className="text-white font-bold">"{submitted.title}"</span> is approved and now visible to players.
+                </>
+              )
+              : (
+                <>
+                  Your challenge <span className="text-white font-bold">"{submitted.title}"</span> has been submitted and is awaiting admin review.
+                </>
+              )}
           </p>
 
           {/* Status Badge */}
-          <div className="flex items-center justify-center gap-3 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl mb-6">
-            <Clock className="w-5 h-5 text-orange-400" />
-            <span className="text-orange-300 text-sm font-bold tracking-widest uppercase">
-              PENDING APPROVAL
+          <div className={`flex items-center justify-center gap-3 p-4 rounded-xl mb-6 ${
+            submitted.status === 'approved'
+              ? 'bg-emerald-500/10 border border-emerald-500/30'
+              : 'bg-orange-500/10 border border-orange-500/30'
+          }`}>
+            <Clock className={`w-5 h-5 ${submitted.status === 'approved' ? 'text-emerald-400' : 'text-orange-400'}`} />
+            <span className={`text-sm font-bold tracking-widest uppercase ${
+              submitted.status === 'approved' ? 'text-emerald-300' : 'text-orange-300'
+            }`}>
+              {submitted.status === 'approved' ? 'APPROVED & PUBLISHED' : 'PENDING APPROVAL'}
             </span>
           </div>
 
@@ -235,7 +260,9 @@ const SubmitChallenge: React.FC = () => {
             </div>
             <div className="p-3 bg-zinc-900 rounded-lg border border-zinc-800">
               <p className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Status</p>
-              <p className="text-xl font-bold text-orange-400">Pending</p>
+              <p className={`text-xl font-bold ${submitted.status === 'approved' ? 'text-emerald-400' : 'text-orange-400'}`}>
+                {submitted.status === 'approved' ? 'Approved' : 'Pending'}
+              </p>
             </div>
           </div>
 
