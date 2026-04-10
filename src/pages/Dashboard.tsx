@@ -58,18 +58,12 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black font-mono text-white py-12 px-4 md:px-8 overflow-hidden">
+    <div className="relative min-h-screen bg-black font-mono text-white py-12 px-4 md:px-8 overflow-hidden">
       <motion.div
         variants={spotlightVariants}
         initial="hidden"
         animate="visible"
         className="pointer-events-none absolute left-1/2 top-28 -translate-x-1/2 h-72 w-72 rounded-full bg-neon-green/10 blur-3xl"
-      />
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, delay: 0.1 }}
-        className="pointer-events-none absolute -right-24 top-48 h-64 w-64 rounded-full border border-neon-green/20"
       />
       <div className="max-w-6xl mx-auto">
         {/* Header Banner */}
@@ -79,19 +73,16 @@ const Dashboard: React.FC = () => {
           transition={{ duration: 0.55 }}
           className="relative mb-16 rounded-2xl border border-neon-green/30 overflow-hidden bg-gradient-to-br from-zinc-900/90 via-black to-zinc-900/60 p-8 md:p-12"
         >
-          <div className="absolute top-0 right-0 opacity-10 pointer-events-none animate-pulse">
-            <Code className="w-48 h-48" />
-          </div>
           <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,rgba(0,255,65,0.15),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(0,255,65,0.08),transparent_35%)]" />
 
           <div className="relative z-10">
             <p className="text-xs md:text-sm uppercase tracking-[0.35em] text-neon-green/80 mb-4">
               CTF Command Center
             </p>
-            <h1 className="text-4xl md:text-6xl font-black italic text-glow mb-2 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-black italic text-glow mb-2 tracking-tight break-words leading-tight">
               TRAIN. BREAK. DEFEND.
             </h1>
-            <h2 className="text-2xl md:text-3xl text-neon-green tracking-widest font-bold mb-4">
+            <h2 className="text-xl sm:text-2xl md:text-3xl text-neon-green tracking-widest font-bold mb-4 break-all sm:break-normal">
               {user?.username?.toUpperCase() || 'OPERATOR'}
             </h2>
             <p className="text-zinc-300 max-w-3xl leading-relaxed">
