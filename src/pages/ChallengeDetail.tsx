@@ -15,6 +15,8 @@ const ChallengeDetail: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [unlockingHintId, setUnlockingHintId] = useState<string | null>(null);
   const [unlockedHintIds, setUnlockedHintIds] = useState<string[]>([]);
+  const [currentFlagStep, setCurrentFlagStep] = useState(1);
+  const [completedFlagSteps, setCompletedFlagSteps] = useState<number[]>([]);
   const [flag, setFlag] = useState('');
 
   useEffect(() => {
@@ -22,7 +24,17 @@ const ChallengeDetail: React.FC = () => {
       if (!id) return;
       try {
         const response = await challengeService.getChallengeById(id);
-        setChallenge(response.data);
+        const challengeData = response.data;
+        const totalSteps = challengeData.flags?.length || (challengeData.flag ? 1 : 1);
+
+        setChallenge(challengeData);
+        if (challengeData.isSolved) {
+          setCompletedFlagSteps(Array.from({ length: totalSteps }, (_, index) => index + 1));
+          setCurrentFlagStep(totalSteps);
+        } else {
+          setCompletedFlagSteps([]);
+          setCurrentFlagStep(1);
+        }
       } catch (error: any) {
         toast.error(error.message || 'Error fetching mission data');
         navigate('/challenges');
@@ -59,23 +71,9 @@ const ChallengeDetail: React.FC = () => {
     }
   };
 
-  const getAttachmentLabel = (url: string, index: number): string => {
-    try {
-      const parsed = new URL(url);
-      const lastPart = parsed.pathname.split('/').filter(Boolean).pop();
-      return lastPart || `attachment-${index + 1}`;
-    } catch {
-      return `attachment-${index + 1}`;
-    }
-  };
-
-  const configuredFlags = challenge
-    ? (
-      challenge.flags && challenge.flags.length > 0
-        ? [...challenge.flags].sort((a, b) => a.sequence - b.sequence).map((f) => f.value)
-        : (challenge.flag ? [challenge.flag] : [])
-    )
-    : [];
+  const totalFlagSteps = challenge
+    ? (challenge.flags?.length || (challenge.flag ? 1 : 1))
+    : 1;
 
   const handleSubmitFlag = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,8 +83,18 @@ const ChallengeDetail: React.FC = () => {
     try {
       const response = await challengeService.submitFlag(id, flag);
       if (response.data.correct) {
-        toast.success(`ACCESS GRANTED: ${response.data.points} PTS AWARDED`);
-        setChallenge(prev => prev ? { ...prev, isSolved: true } : null);
+        const isFinalStep = currentFlagStep >= totalFlagSteps;
+
+        setCompletedFlagSteps((prev) => (prev.includes(currentFlagStep) ? prev : [...prev, currentFlagStep]));
+
+        if (isFinalStep) {
+          toast.success(`ACCESS GRANTED: ${response.data.points} PTS AWARDED`);
+          setChallenge(prev => prev ? { ...prev, isSolved: true } : null);
+        } else {
+          const nextStep = currentFlagStep + 1;
+          setCurrentFlagStep(nextStep);
+          toast.success(`FLAG ${currentFlagStep} VERIFIED. FLAG ${nextStep} UNLOCKED`);
+        }
       } else {
         toast.error('INVALID FLAG: ACCESS DENIED');
       }
@@ -143,22 +151,42 @@ const ChallengeDetail: React.FC = () => {
                 {challenge.description}
               </div>
 
-              {/* Configured Flags */}
-              {configuredFlags.length > 0 && (
+              {/* Flag Stages */}
+              {totalFlagSteps > 0 && (
                 <div className="space-y-3 pt-6 border-t border-zinc-800">
                   <h3 className="text-sm font-bold text-zinc-500 uppercase flex items-center gap-2">
-                    <Terminal className="w-4 h-4" /> CONFIGURED_FLAGS
+                    <Terminal className="w-4 h-4" /> FLAG_STAGES
                   </h3>
                   <div className="space-y-2">
-                    {configuredFlags.map((flagValue, index) => (
+                    {Array.from({ length: totalFlagSteps }, (_, index) => {
+                      const step = index + 1;
+                      const isStepCompleted = challenge.isSolved || completedFlagSteps.includes(step);
+                      const isCurrentStep = !challenge.isSolved && step === currentFlagStep;
+                      const isStepLocked = !isStepCompleted && !isCurrentStep;
+
+                      return (
                       <div
-                        key={`${flagValue}-${index}`}
-                        className="px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-neon-green break-all"
+                        key={`flag-stage-${step}`}
+                        className={`px-3 py-2 bg-zinc-900 border rounded-lg text-xs break-all ${
+                          isStepCompleted
+                            ? 'border-neon-green/40 text-neon-green'
+                            : isCurrentStep
+                              ? 'border-neon-green/30 text-zinc-300'
+                              : 'border-zinc-800 text-zinc-600'
+                        }`}
                       >
-                        <span className="text-zinc-500 mr-2">FLAG {index + 1}:</span>
-                        {flagValue}
+                        <div className="flex items-center justify-between gap-2">
+                          <span>
+                            <span className="text-zinc-500 mr-2">FLAG {step}:</span>
+                            fsociety{'{'}your_flag_here{'}'}
+                          </span>
+                          <span className="text-[10px] uppercase tracking-widest">
+                            {isStepCompleted ? 'Verified' : isCurrentStep ? 'Active' : isStepLocked ? 'Locked' : 'Pending'}
+                          </span>
+                        </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -189,7 +217,7 @@ const ChallengeDetail: React.FC = () => {
                         className="flex items-center gap-2 px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg hover:border-neon-green transition-all text-xs"
                       >
                         <FileDown className="w-4 h-4 text-neon-green" />
-                        {getAttachmentLabel(attachment, i)}
+                        <span className="break-all">{attachment}</span>
                       </a>
                     ))}
                   </div>
@@ -211,7 +239,7 @@ const ChallengeDetail: React.FC = () => {
               }`}>
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                   <Terminal className="w-5 h-5 text-neon-green" />
-                  FLAG_SUBMISSION
+                  {`FLAG_SUBMISSION (${Math.min(currentFlagStep, totalFlagSteps)}/${totalFlagSteps})`}
                 </h3>
                 
                 {challenge.isSolved ? (
@@ -226,11 +254,11 @@ const ChallengeDetail: React.FC = () => {
                   <form onSubmit={handleSubmitFlag} className="flex gap-2">
                     <input
                       type="text"
-                      placeholder="fsociety{...}"
+                      placeholder="fsociety{your_flag_here}"
                       value={flag}
                       onChange={(e) => setFlag(e.target.value)}
                       disabled={submitting}
-                      className="flex-grow bg-black border border-zinc-800 rounded-lg px-4 py-3 outline-none focus:border-neon-green transition-all text-sm uppercase"
+                      className="flex-grow bg-black border border-zinc-800 rounded-lg px-4 py-3 outline-none focus:border-neon-green transition-all text-sm"
                     />
                     <button
                       type="submit"

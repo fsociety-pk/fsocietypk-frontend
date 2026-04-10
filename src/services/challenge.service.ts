@@ -55,10 +55,41 @@ export const challengeService = {
     challengeId: string,
     hintId: string
   ): Promise<ApiResponse<UnlockHintResponse>> => {
-    const response = await api.post<ApiResponse<UnlockHintResponse>>(
-      `/challenges/${challengeId}/hints/${hintId}/unlock`
-    );
-    return response.data;
+    const attempts = [
+      () => api.post(`/challenges/${challengeId}/hints/${hintId}/unlock`),
+      () => api.post(`/challenges/hints/${hintId}/unlock`, { challengeId }),
+      () => api.post(`/hints/${hintId}/unlock`, { challengeId }),
+      () => api.post('/challenges/unlock-hint', { challengeId, hintId }),
+    ];
+
+    let lastError: any = null;
+
+    for (const attempt of attempts) {
+      try {
+        const response = await attempt();
+        const payload: any = response.data;
+
+        if (payload?.data?.content) {
+          return payload as ApiResponse<UnlockHintResponse>;
+        }
+
+        if (typeof payload?.content === 'string') {
+          return {
+            success: true,
+            statusCode: 200,
+            message: 'Hint unlocked',
+            data: { content: payload.content },
+          };
+        }
+      } catch (error: any) {
+        lastError = error;
+        if (error?.response?.status !== 404) {
+          throw error;
+        }
+      }
+    }
+
+    throw lastError;
   },
 
   /** Submit a new challenge for admin review */
