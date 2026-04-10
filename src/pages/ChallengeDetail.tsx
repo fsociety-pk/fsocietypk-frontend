@@ -94,6 +94,12 @@ const ChallengeDetail: React.FC = () => {
     ? (challenge.flags?.length || (challenge.flag ? 1 : 1))
     : 1;
 
+  const orderedServerFlags = challenge?.flags?.length
+    ? [...challenge.flags]
+      .sort((a, b) => a.sequence - b.sequence)
+      .map((f) => (f.value || '').trim())
+    : [];
+
   const isChallengeSolvedUI = totalFlagSteps > 1
     ? completedFlagSteps.length >= totalFlagSteps
     : Boolean(challenge?.isSolved || completedFlagSteps.length >= 1);
@@ -104,6 +110,15 @@ const ChallengeDetail: React.FC = () => {
 
     const enteredFlag = (flagValues[step - 1] || '').trim();
     if (!enteredFlag) return;
+
+    // Enforce step-specific validation when multi-flag values are available.
+    if (totalFlagSteps > 1 && orderedServerFlags.length === totalFlagSteps) {
+      const expectedFlag = orderedServerFlags[step - 1];
+      if (expectedFlag && enteredFlag !== expectedFlag) {
+        toast.error(`INVALID FLAG ${step}: ACCESS DENIED`);
+        return;
+      }
+    }
 
     setSubmitting(true);
     try {
