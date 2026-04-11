@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Terminal, FileDown, HelpCircle, Trophy, Send, CheckCircle2, Loader2, Lock, Unlock } from 'lucide-react';
 import { challengeService } from '../services/challenge.service';
+import { useAuthStore } from '../store/authStore';
 
 import { IChallenge } from '../types';
 import { toast } from 'react-hot-toast';
@@ -14,6 +15,7 @@ type FlagFeedback = {
 
 const ChallengeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
   const [challenge, setChallenge] = useState<(IChallenge & { isSolved: boolean }) | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,7 +27,10 @@ const ChallengeDetail: React.FC = () => {
   const [flagValues, setFlagValues] = useState<string[]>([]);
   const [flagFeedback, setFlagFeedback] = useState<FlagFeedback | null>(null);
 
-  const getProgressStorageKey = (challengeId: string) => `flag-progress:v2:${challengeId}`;
+  const getProgressStorageKey = (challengeId: string) => {
+    const userScope = user?._id ?? 'anonymous';
+    return `flag-progress:v3:${userScope}:${challengeId}`;
+  };
 
   const saveFlagProgress = (challengeId: string, steps: number[]) => {
     const uniqueSorted = [...new Set(steps)].sort((a, b) => a - b);

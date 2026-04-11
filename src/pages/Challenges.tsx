@@ -5,6 +5,7 @@ import { challengeService } from '../services/challenge.service';
 import { IChallenge, ChallengeCategory, ChallengeDifficulty } from '../types';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { useAuthStore } from '../store/authStore';
 
 const CATEGORIES: ChallengeCategory[] = [
   'web', 'pwn', 'rev', 'crypto', 'forensics', 'osint', 'misc', 'stego', 'network', 'mobile'
@@ -15,6 +16,7 @@ const DIFFICULTIES: ChallengeDifficulty[] = [
 ];
 
 const Challenges: React.FC = () => {
+  const user = useAuthStore((state) => state.user);
   const [challenges, setChallenges] = useState<IChallenge[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<{
@@ -59,7 +61,10 @@ const Challenges: React.FC = () => {
     }
   };
 
-  const getProgressStorageKey = (challengeId: string) => `flag-progress:v2:${challengeId}`;
+  const getProgressStorageKey = (challengeId: string) => {
+    const userScope = user?._id ?? 'anonymous';
+    return `flag-progress:v3:${userScope}:${challengeId}`;
+  };
 
   const getCompletedStepsFromStorage = (challengeId: string, totalSteps: number): number => {
     if (totalSteps <= 1) return 0;
