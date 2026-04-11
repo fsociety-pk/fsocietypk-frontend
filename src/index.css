@@ -129,3 +129,42 @@
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
+
+/* ── Global Toast Theme ───────────────────────────────────────── */
+.cyber-toaster {
+  margin-top: 12px;
+}
+
+.cyber-toast {
+  min-width: 320px;
+  max-width: 92vw;
+  backdrop-filter: blur(8px);
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+}
+
+.cyber-toast::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, rgba(0, 255, 127, 1), rgba(0, 255, 127, 0.15));
+}
+
+.cyber-toast-success {
+  border-color: rgba(0, 255, 127, 0.45) !important;
+  background: linear-gradient(135deg, rgba(0, 30, 18, 0.96), rgba(7, 12, 10, 0.96)) !important;
+}
+
+.cyber-toast-error {
+  border-color: rgba(255, 77, 109, 0.55) !important;
+  background: linear-gradient(135deg, rgba(42, 9, 17, 0.96), rgba(18, 8, 11, 0.96)) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 18px rgba(255, 77, 109, 0.2) !important;
+}
+
+.cyber-toast-error::before {
+  background: linear-gradient(180deg, rgba(255, 77, 109, 1), rgba(255, 77, 109, 0.15));
+}

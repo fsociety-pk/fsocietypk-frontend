@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 import { useAuthStore } from './store/authStore';
 import { authService } from './services/auth.service';
 
@@ -49,7 +49,7 @@ function App() {
         if (error.response?.status === 401 && !['/login', '/signup'].includes(window.location.pathname)) {
           // Only show toast if it's a session expired (not initial load)
           if (error.response?.data?.message?.includes('expired')) {
-            toast.error('SESSION_EXPIRED');
+            toast.error('SESSION_EXPIRED', { id: 'session-expired' });
           }
         }
       } finally {
@@ -99,19 +99,6 @@ function App() {
 
   return (
     <>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: '#18181b', // zinc-900
-            color: '#fff',
-            border: '1px solid rgba(0, 255, 65, 0.2)',
-            fontFamily: 'JetBrains Mono, monospace',
-            fontSize: '12px',
-          },
-        }}
-      />
-      
       <Routes>
         <Route element={<MainLayout />}>
           {/* Public Entrance */}
