@@ -26,6 +26,7 @@ const ChallengeDetail: React.FC = () => {
   const [completedFlagSteps, setCompletedFlagSteps] = useState<number[]>([]);
   const [flagValues, setFlagValues] = useState<string[]>([]);
   const [flagFeedback, setFlagFeedback] = useState<FlagFeedback | null>(null);
+  const [roastError, setRoastError] = useState(false);
 
   const getProgressStorageKey = (challengeId: string) => {
     const userScope = user?._id ?? 'anonymous';
@@ -121,6 +122,12 @@ const ChallengeDetail: React.FC = () => {
     const enteredFlag = (flagValues[step - 1] || '').trim();
     if (!enteredFlag) return;
 
+    const sqlInjectionPattern = /(?:')|(?:--)|(?:\/\*)|(?:\b(?:SELECT|UNION|UPDATE|INSERT|DELETE|DROP|ALTER|CREATE|EXEC)\b)/i;
+    if (sqlInjectionPattern.test(enteredFlag)) {
+      setRoastError(true);
+      return;
+    }
+
     setSubmitting(true);
     try {
       const response = await challengeService.submitFlag(id, enteredFlag);
@@ -142,7 +149,10 @@ const ChallengeDetail: React.FC = () => {
             type: 'success',
             message: `ACCESS_GRANTED :: FLAG_${step}_VERIFIED :: MISSION_COMPLETE`,
           });
-          toast.success(`ACCESS GRANTED: ${result.points ?? 0} PTS AWARDED`);
+          toast.success(`FLAG ACCEPTED: ${result.points ?? 0} PTS AWARDED`, {
+            style: { border: '1px solid #00ff41', padding: '16px', color: '#00ff41', background: '#0a0a0a' },
+            iconTheme: { primary: '#00ff41', secondary: '#0a0a0a' },
+          });
           const allDone = Array.from({ length: totalFlagSteps }, (_, index) => index + 1);
           setCompletedFlagSteps(allDone);
           saveFlagProgress(id, allDone);
@@ -154,7 +164,10 @@ const ChallengeDetail: React.FC = () => {
             message: `ACCESS_GRANTED :: FLAG_${step}_VERIFIED :: FLAG_${nextStep}_UNLOCKED`,
           });
           setCurrentFlagStep(nextStep);
-          toast.success(`FLAG ${step} VERIFIED. FLAG ${nextStep} UNLOCKED`);
+          toast.success(`FLAG ACCEPTED. FLAG ${nextStep} UNLOCKED`, {
+            style: { border: '1px solid #00ff41', padding: '16px', color: '#00ff41', background: '#0a0a0a' },
+            iconTheme: { primary: '#00ff41', secondary: '#0a0a0a' },
+          });
         }
       } else {
         const nextExpected = result.nextSequence ?? step;
@@ -165,7 +178,10 @@ const ChallengeDetail: React.FC = () => {
           type: 'error',
           message: `ACCESS_DENIED :: INVALID_FLAG_${nextExpected} :: RETRY_REQUIRED`,
         });
-        toast.error(response.message || 'INVALID FLAG: ACCESS DENIED');
+        toast.error(`MISSION FAILED: INVALID FLAG`, {
+          style: { border: '1px solid #ef4444', padding: '16px', color: '#ef4444', background: '#0a0a0a' },
+          iconTheme: { primary: '#ef4444', secondary: '#0a0a0a' },
+        });
       }
     } catch (error: any) {
       setFlagFeedback({
@@ -190,6 +206,28 @@ const ChallengeDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black text-white font-mono p-4 md:p-8">
+      {roastError && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm">
+          <div className="border-2 border-red-500 bg-zinc-950 p-8 rounded-2xl max-w-2xl text-center shadow-[0_0_50px_rgba(239,68,68,0.3)]">
+            <h2 className="text-4xl md:text-5xl font-black text-red-500 mb-6 uppercase tracking-widest break-words leading-tight">
+              🚨 NICE TRY, SKID 🚨
+            </h2>
+            <p className="text-xl md:text-2xl text-zinc-300 mb-4 font-bold">
+              Did you really think a basic SQL Injection would work here?
+            </p>
+            <p className="text-sm md:text-md text-zinc-500 mb-8 max-w-lg mx-auto">
+              You watched one episode of Mr. Robot and now you're throwing quotes and dashes into a flag submission form. 
+              We're laughing. The servers are laughing. Even your keyboard is judging you.
+            </p>
+            <button
+              onClick={() => setRoastError(false)}
+              className="bg-red-600 hover:bg-red-500 text-white px-8 py-3 rounded-lg font-bold uppercase tracking-widest transition-all w-full"
+            >
+              I will try to be a better hacker
+            </button>
+          </div>
+        </div>
+      )}
       <div className="max-w-4xl mx-auto">
         {/* ── Navigation ────────────────────────────────────────────── */}
         <button
@@ -377,7 +415,7 @@ const ChallengeDetail: React.FC = () => {
               </div>
               <div className="flex justify-between items-center text-sm border-b border-zinc-800 pb-4 gap-4">
                 <span className="text-zinc-500 flex items-center gap-2 shrink-0"><CheckCircle2 className="w-4 h-4" /> YOUR_PROGRESS</span>
-                <span className="font-bold tracking-widest flex items-center gap-1.5 text-right whitespace-nowrap">
+                <span className="font-bold tracking-widest flex items-center gap-1.5 text-right flex-wrap justify-end">
                   <span className="text-base">{userCompletedSteps}/{totalFlagSteps}</span>
                   <span>COMPLETED</span>
                 </span>

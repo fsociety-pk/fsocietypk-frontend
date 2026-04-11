@@ -19,6 +19,7 @@ import {
   Terminal,
   Lock,
   Crosshair,
+  Film,
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
@@ -85,6 +86,11 @@ const Dashboard: React.FC = () => {
             <h2 className="text-xl sm:text-2xl md:text-3xl text-neon-green tracking-widest font-bold mb-4 break-all sm:break-normal">
               {user?.username?.toUpperCase() || 'OPERATOR'}
             </h2>
+            <div className="mb-6 pl-4 border-l-2 border-neon-green/50">
+              <p className="text-sm md:text-md italic text-zinc-300 tracking-wide font-serif">
+                "We are finally free. We are finally awake."
+              </p>
+            </div>
             <p className="text-zinc-300 max-w-3xl leading-relaxed">
               Build practical security skills through real attack paths, guided challenge flows, and a competitive learning environment. Every solve sharpens your thinking for real-world assessments.
             </p>
@@ -385,7 +391,7 @@ const Dashboard: React.FC = () => {
                     Flag Format
                   </h5>
                   <p className="text-sm text-zinc-400">
-                    Flags must follow the format: <code className="bg-black/50 px-2 py-1 rounded text-neon-green">fsociety{'{'}'...{'}'}</code>
+                    Flags must follow the format: <code className="bg-black/50 px-2 py-1 rounded text-neon-green">fsociety{'{'}{'}'}</code>
                   </p>
                 </div>
                 <div>
@@ -418,6 +424,34 @@ const Dashboard: React.FC = () => {
                     Easy, Medium, Hard, and Insane challenges available
                   </p>
                 </div>
+              </div>
+            </div>
+          </motion.section>
+
+          {/* Cyber Cinema Section */}
+          <motion.section variants={itemVariants} className="space-y-6">
+            <div className="flex items-center gap-3 mb-8">
+              <Film className="text-neon-green w-6 h-6" />
+              <h3 className="text-2xl font-bold tracking-widest uppercase">Cyber Cinema</h3>
+            </div>
+
+            <div className="relative overflow-hidden bg-zinc-900/40 border border-zinc-800/50 rounded-xl p-8 md:p-12 text-center group">
+              <div className="absolute inset-0 bg-gradient-to-br from-neon-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <Film className="w-16 h-16 text-zinc-700 mx-auto mb-4 group-hover:scale-110 transition-transform duration-500" />
+              <h4 className="text-xl md:text-2xl font-bold text-zinc-300 mb-2 uppercase tracking-widest">
+                Hacker Movie Archives
+              </h4>
+              <p className="text-sm md:text-base text-zinc-500 mb-8 max-w-2xl mx-auto">
+                A curated selection of the best hacker and cybersecurity films. Analyze real-world tactics versus Hollywood drama, and find your next weekend watch!
+              </p>
+              
+              <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full border border-neon-green/30 bg-neon-green/5 text-neon-green font-bold text-sm tracking-widest uppercase shadow-[0_0_15px_rgba(0,255,65,0.1)]">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-green opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-neon-green"></span>
+                </span>
+                Coming Soon
               </div>
             </div>
           </motion.section>
