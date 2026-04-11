@@ -106,6 +106,10 @@ const ChallengeDetail: React.FC = () => {
     ? (challenge.flags?.length || (challenge.flag ? 1 : 1))
     : 1;
 
+  const userCompletedSteps = totalFlagSteps > 1
+    ? completedFlagSteps.length
+    : (challenge?.isSolved ? 1 : 0);
+
   const isChallengeSolvedUI = totalFlagSteps > 1
     ? completedFlagSteps.length >= totalFlagSteps
     : Boolean(challenge?.isSolved || completedFlagSteps.length >= 1);
@@ -372,9 +376,9 @@ const ChallengeDetail: React.FC = () => {
                 <span className="font-bold text-neon-green">{challenge.points} PTS</span>
               </div>
               <div className="flex justify-between items-center text-sm border-b border-zinc-800 pb-4 gap-4">
-                <span className="text-zinc-500 flex items-center gap-2 shrink-0"><CheckCircle2 className="w-4 h-4" /> SUCCESS_RATE</span>
+                <span className="text-zinc-500 flex items-center gap-2 shrink-0"><CheckCircle2 className="w-4 h-4" /> YOUR_PROGRESS</span>
                 <span className="font-bold tracking-widest flex items-center gap-1.5 text-right whitespace-nowrap">
-                  <span className="text-base">{challenge.solveCount}</span>
+                  <span className="text-base">{userCompletedSteps}/{totalFlagSteps}</span>
                   <span>COMPLETED</span>
                 </span>
               </div>

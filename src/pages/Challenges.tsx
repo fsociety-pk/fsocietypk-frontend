@@ -236,7 +236,7 @@ const Challenges: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <CheckCircle2 className="w-4 h-4" />
-                      <span>{challenge.solveCount} SOLVES</span>
+                      <span>{completedSteps}/{totalFlagSteps} COMPLETED</span>
                     </div>
                   </div>
 
