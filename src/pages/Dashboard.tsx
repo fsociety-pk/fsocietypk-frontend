@@ -2,481 +2,199 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  Book,
-  ArrowRight,
-  Code,
-  Repeat,
-  Award,
-  Users,
-  Plus,
-  Mail,
-  Github,
-  MessageCircle,
-  Rocket,
+  Activity,
+  ArrowUpRight,
+  BookCheck,
+  Film,
+  Flag,
+  Lock,
   Shield,
   Target,
-  Timer,
-  Terminal,
-  Lock,
-  Crosshair,
-  Film,
+  TrendingUp,
+  Users2,
+  Zap,
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+
+const quickStats = [
+  { label: 'Challenge Domains', value: '07+', icon: Shield },
+  { label: 'Practice Attempts', value: 'Unlimited', icon: Activity },
+  { label: 'Community Tracks', value: 'Growing', icon: Users2 },
+  { label: 'Skill Momentum', value: '+24%', icon: TrendingUp },
+];
+
+const learningPath = [
+  {
+    title: 'Warm-Up',
+    subtitle: '20 minutes',
+    detail: 'Start with one easy challenge to lock in focus and confidence.',
+    icon: Target,
+  },
+  {
+    title: 'Core Session',
+    subtitle: '45 minutes',
+    detail: 'Work one medium challenge end-to-end and document your chain.',
+    icon: Zap,
+  },
+  {
+    title: 'Review',
+    subtitle: '10 minutes',
+    detail: 'Capture payload notes, mistakes, and repeatable patterns.',
+    icon: BookCheck,
+  },
+];
 
 const Dashboard: React.FC = () => {
   const user = useAuthStore((state) => state.user);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.45,
-      },
-    },
-  };
-
-  const spotlightVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.9,
-      },
-    },
-  };
-
   return (
-    <div className="relative min-h-screen bg-black font-mono text-white py-12 px-4 md:px-8 overflow-hidden">
-      <motion.div
-        variants={spotlightVariants}
-        initial="hidden"
-        animate="visible"
-        className="pointer-events-none absolute left-1/2 top-28 -translate-x-1/2 h-72 w-72 rounded-full bg-neon-green/10 blur-3xl"
-      />
-      <div className="max-w-6xl mx-auto">
-        {/* Header Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55 }}
-          className="relative mb-16 rounded-2xl border border-neon-green/30 overflow-hidden bg-gradient-to-br from-zinc-900/90 via-black to-zinc-900/60 p-8 md:p-12"
+    <div className="relative min-h-screen overflow-hidden bg-black px-4 py-8 text-white md:px-8">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_20%,rgba(0,255,65,0.2),transparent_38%),radial-gradient(circle_at_86%_10%,rgba(56,189,248,0.15),transparent_32%),radial-gradient(circle_at_60%_90%,rgba(0,255,65,0.1),transparent_40%)]" />
+
+      <div className="relative mx-auto grid w-full max-w-7xl gap-8 lg:grid-cols-[280px_1fr]">
+        <motion.aside
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.45 }}
+          className="hidden h-fit rounded-2xl border border-neon-green/25 bg-zinc-950/80 p-5 backdrop-blur-xl lg:sticky lg:top-24 lg:block"
         >
-          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,rgba(0,255,65,0.15),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(0,255,65,0.08),transparent_35%)]" />
+          <p className="text-[11px] uppercase tracking-[0.28em] text-neon-green/80">Control Panel</p>
+          <h2 className="mt-2 text-xl font-bold tracking-wide text-white">Welcome, {user?.username || 'Operator'}</h2>
+          <p className="mt-2 text-sm text-zinc-400">Clean, focused, and made for screenshots.</p>
 
-          <div className="relative z-10">
-            <p className="text-xs md:text-sm uppercase tracking-[0.35em] text-neon-green/80 mb-4">
-              CTF Command Center
-            </p>
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-black italic text-glow mb-2 tracking-tight break-words leading-tight">
-              TRAIN. BREAK. DEFEND.
-            </h1>
-            <h2 className="text-xl sm:text-2xl md:text-3xl text-neon-green tracking-widest font-bold mb-4 break-all sm:break-normal">
-              {user?.username?.toUpperCase() || 'OPERATOR'}
-            </h2>
-            <div className="mb-6 pl-4 border-l-2 border-neon-green/50">
-              <p className="text-sm md:text-md italic text-zinc-300 tracking-wide font-serif">
-                "We are finally free. We are finally awake."
-              </p>
-            </div>
-            <p className="text-zinc-300 max-w-3xl leading-relaxed">
-              Build practical security skills through real attack paths, guided challenge flows, and a competitive learning environment. Every solve sharpens your thinking for real-world assessments.
-            </p>
-
-            <div className="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <motion.div
-                whileHover={{ y: -4 }}
-                className="rounded-xl border border-neon-green/30 bg-neon-green/5 px-4 py-3"
-              >
-                <p className="text-[10px] text-zinc-500 uppercase tracking-[0.24em]">Challenge Tracks</p>
-                <p className="mt-1 text-lg font-bold text-neon-green">7+ Domains</p>
-              </motion.div>
-              <motion.div
-                whileHover={{ y: -4 }}
-                className="rounded-xl border border-neon-green/30 bg-neon-green/5 px-4 py-3"
-              >
-                <p className="text-[10px] text-zinc-500 uppercase tracking-[0.24em]">Practice Model</p>
-                <p className="mt-1 text-lg font-bold text-neon-green">Unlimited Retries</p>
-              </motion.div>
-              <motion.div
-                whileHover={{ y: -4 }}
-                className="rounded-xl border border-neon-green/30 bg-neon-green/5 px-4 py-3"
-              >
-                <p className="text-[10px] text-zinc-500 uppercase tracking-[0.24em]">Learning Style</p>
-                <p className="mt-1 text-lg font-bold text-neon-green">Hands-On First</p>
-              </motion.div>
-            </div>
+          <div className="mt-6 space-y-3">
+            <Link to="/challenges" className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/80 px-4 py-3 text-sm text-zinc-200 transition-all hover:border-neon-green/50 hover:text-neon-green">
+              <span className="flex items-center gap-2"><Shield className="h-4 w-4" /> Challenges</span>
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+            <Link to="/leaderboard" className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/80 px-4 py-3 text-sm text-zinc-200 transition-all hover:border-neon-green/50 hover:text-neon-green">
+              <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4" /> Leaderboard</span>
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+            <Link to="/submit-challenge" className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/80 px-4 py-3 text-sm text-zinc-200 transition-all hover:border-neon-green/50 hover:text-neon-green">
+              <span className="flex items-center gap-2"><Flag className="h-4 w-4" /> Submit Challenge</span>
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+            <Link to="/cyber-cinema" className="flex items-center justify-between rounded-xl border border-neon-green/40 bg-gradient-to-r from-neon-green/15 to-cyan-500/10 px-4 py-3 text-sm text-neon-green transition-all hover:shadow-[0_0_24px_rgba(0,255,65,0.25)]">
+              <span className="flex items-center gap-2"><Film className="h-4 w-4" /> Cyber Cinema</span>
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
           </div>
-        </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="space-y-16"
-        >
-          {/* About Section */}
-          <motion.section variants={itemVariants} className="space-y-6">
-            <div className="flex items-center gap-3 mb-8">
-              <Book className="text-neon-green w-6 h-6" />
-              <h3 className="text-2xl font-bold tracking-widest uppercase">About FsocietyPK</h3>
-            </div>
+          <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900/70 p-4">
+            <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">Quick Standard</p>
+            <p className="mt-2 text-sm text-zinc-300">Flags must follow <span className="rounded bg-black/60 px-2 py-1 font-semibold text-neon-green">fsociety&#123;...&#125;</span></p>
+            <p className="mt-2 text-xs text-zinc-500">Every new submission is reviewed before publishing.</p>
+          </div>
+        </motion.aside>
 
-            <div className="bg-gradient-to-r from-neon-green/10 to-transparent border border-neon-green/30 rounded-xl p-6 md:p-8 mb-6">
-              <h4 className="text-lg font-bold text-neon-green mb-3">The Best Platform for Beginners to Learn CVE & Practice</h4>
-              <p className="text-zinc-300 leading-relaxed mb-4">
-                FsocietyPK is designed as the ultimate learning platform for beginners and professionals alike. Whether you're just starting your cybersecurity journey or are a seasoned security researcher, our challenges help you master real-world Vulnerability Assessment & Penetration Testing skills.
+        <main className="space-y-6">
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="relative overflow-hidden rounded-2xl border border-neon-green/30 bg-zinc-950/80 p-7 md:p-10"
+          >
+            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-neon-green/15 blur-3xl" />
+            <div className="absolute -bottom-24 right-24 h-60 w-60 rounded-full bg-cyan-400/10 blur-3xl" />
+
+            <div className="relative">
+              <p className="text-[11px] uppercase tracking-[0.28em] text-neon-green/80">FsocietyPK Dashboard</p>
+              <h1 className="mt-3 max-w-3xl text-3xl font-black tracking-tight text-white md:text-5xl">
+                Practical cybersecurity training, presented with a premium command-center look.
+              </h1>
+              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-zinc-300 md:text-base">
+                Everything is now styled for a clean and professional screenshot: strong hierarchy,
+                balanced spacing, and a dedicated cinematic section for upcoming content.
               </p>
-              <p className="text-zinc-300 leading-relaxed">
-                Our platform provides hands-on experience with Common Vulnerabilities and Exposures (CVE), security tools, attack methodologies, and defensive techniques. Each challenge is carefully crafted to teach practical skills that matter in the field.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Mission Card */}
-              <motion.div
-                variants={itemVariants}
-                whileHover={{ y: -5 }}
-                className="bg-zinc-900/60 border border-neon-green/20 rounded-xl p-6 hover:border-neon-green/50 transition-all hover:shadow-[0_0_20px_rgba(0,255,65,0.1)]"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-neon-green/10 rounded-lg mt-1">
-                    <Rocket className="w-6 h-6 text-neon-green" />
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-bold mb-2 text-neon-green">For Beginners</h4>
-                    <p className="text-zinc-300 text-sm leading-relaxed">
-                      Start with easy challenges to build confidence. Learn fundamental concepts in web security, cryptography, and system administration. Get comprehensive writeups and hints to guide your learning journey.
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Professional Card */}
-              <motion.div
-                variants={itemVariants}
-                whileHover={{ y: -5 }}
-                className="bg-zinc-900/60 border border-neon-green/20 rounded-xl p-6 hover:border-neon-green/50 transition-all hover:shadow-[0_0_20px_rgba(0,255,65,0.1)]"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-neon-green/10 rounded-lg mt-1">
-                    <Shield className="w-6 h-6 text-neon-green" />
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-bold mb-2 text-neon-green">For Professionals</h4>
-                    <p className="text-zinc-300 text-sm leading-relaxed">
-                      Challenge yourself with insane-level CTF problems. Enhance your expertise with real-world attack scenarios, advanced exploitation techniques, and defensive strategies used by industry professionals.
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Feature 1 */}
-              <motion.div
-                variants={itemVariants}
-                className="flex items-center gap-3 p-4 bg-zinc-900/40 border border-zinc-800/50 rounded-lg hover:border-neon-green/30 transition-all"
-              >
-                <Repeat className="w-5 h-5 text-neon-green flex-shrink-0" />
-                <span className="text-sm">
-                  <span className="font-bold text-neon-green">Unlimited Practice:</span> Retry challenges unlimited times
-                </span>
-              </motion.div>
-
-              {/* Feature 2 */}
-              <motion.div
-                variants={itemVariants}
-                className="flex items-center gap-3 p-4 bg-zinc-900/40 border border-zinc-800/50 rounded-lg hover:border-neon-green/30 transition-all"
-              >
-                <Award className="w-5 h-5 text-neon-green flex-shrink-0" />
-                <span className="text-sm">
-                  <span className="font-bold text-neon-green">Gamified Learning:</span> Earn points and climb the leaderboard
-                </span>
-              </motion.div>
-
-              {/* Feature 3 */}
-              <motion.div
-                variants={itemVariants}
-                className="flex items-center gap-3 p-4 bg-zinc-900/40 border border-zinc-800/50 rounded-lg hover:border-neon-green/30 transition-all"
-              >
-                <Users className="w-5 h-5 text-neon-green flex-shrink-0" />
-                <span className="text-sm">
-                  <span className="font-bold text-neon-green">Community Challenges:</span> Learn from real submissions
-                </span>
-              </motion.div>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link to="/challenges" className="rounded-lg border border-neon-green/40 bg-neon-green/15 px-5 py-2.5 text-sm font-semibold text-neon-green transition hover:bg-neon-green/25">
+                  Start Challenges
+                </Link>
+                <Link to="/cyber-cinema" className="rounded-lg border border-cyan-400/40 bg-cyan-500/10 px-5 py-2.5 text-sm font-semibold text-cyan-300 transition hover:bg-cyan-500/20">
+                  Open Cyber Cinema
+                </Link>
+              </div>
             </div>
           </motion.section>
 
-          {/* Social Media & Contact Section */}
-          <motion.section variants={itemVariants} className="space-y-6">
-            <div className="flex items-center gap-3 mb-8">
-              <MessageCircle className="text-neon-green w-6 h-6" />
-              <h3 className="text-2xl font-bold tracking-widest uppercase">Connect With Us</h3>
+          <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {quickStats.map((item, index) => (
+              <motion.div
+                key={item.label}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.08 * index, duration: 0.35 }}
+                className="rounded-xl border border-zinc-800 bg-zinc-950/75 p-4"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">{item.label}</p>
+                  <item.icon className="h-4 w-4 text-neon-green" />
+                </div>
+                <p className="mt-3 text-2xl font-black text-white">{item.value}</p>
+              </motion.div>
+            ))}
+          </section>
+
+          <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+            <div className="xl:col-span-2 rounded-2xl border border-zinc-800 bg-zinc-950/75 p-6">
+              <h3 className="text-lg font-bold text-neon-green">Session Blueprint</h3>
+              <p className="mt-1 text-sm text-zinc-400">A simple structure you can follow every day.</p>
+
+              <div className="mt-5 space-y-4">
+                {learningPath.map((step, index) => (
+                  <motion.article
+                    key={step.title}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 * index, duration: 0.3 }}
+                    className="rounded-xl border border-zinc-800 bg-black/35 p-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="flex items-center gap-2 font-semibold text-white">
+                        <step.icon className="h-4 w-4 text-neon-green" />
+                        {step.title}
+                      </p>
+                      <span className="text-xs uppercase tracking-wider text-zinc-500">{step.subtitle}</span>
+                    </div>
+                    <p className="mt-2 text-sm text-zinc-400">{step.detail}</p>
+                  </motion.article>
+                ))}
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Email */}
-              <a
-                href="mailto:pkfsociety@gmail.com"
-                className="group bg-gradient-to-br from-blue-900/30 to-blue-900/10 border border-blue-600/40 rounded-xl p-6 hover:border-blue-600/80 transition-all hover:shadow-[0_0_25px_rgba(37,99,235,0.2)]"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-blue-500/20 rounded-lg group-hover:scale-110 transition-transform">
-                    <Mail className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <div className="flex-1">
-                    <h5 className="font-bold text-blue-400 mb-1">Email</h5>
-                    <p className="text-sm text-zinc-400 break-all">pkfsociety@gmail.com</p>
-                    <p className="text-[10px] text-zinc-500 mt-2">Questions? Reach out to us anytime</p>
-                  </div>
-                </div>
-              </a>
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-950/75 p-6">
+              <div className="flex items-center gap-2">
+                <Film className="h-5 w-5 text-cyan-300" />
+                <h3 className="text-lg font-bold text-cyan-200">Cyber Cinema</h3>
+              </div>
+              <p className="mt-2 text-sm text-zinc-400">
+                Curated hacker-culture visuals and stories are being produced.
+              </p>
 
-              {/* Discord */}
-              <a
-                href="https://discord.gg/YYpFYBzH"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-gradient-to-br from-zinc-900/70 to-zinc-900/20 border border-neon-green/30 rounded-xl p-6 hover:border-neon-green/70 transition-all hover:shadow-[0_0_25px_rgba(0,255,65,0.2)]"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-neon-green/20 rounded-lg group-hover:scale-110 transition-transform">
-                    <MessageCircle className="w-5 h-5 text-neon-green" />
-                  </div>
-                  <div className="flex-1">
-                    <h5 className="font-bold text-neon-green mb-1">Discord Community</h5>
-                    <p className="text-sm text-zinc-400">Join our Discord server</p>
-                    <p className="text-[10px] text-zinc-500 mt-2">Chat, share writeups & connect</p>
-                  </div>
-                </div>
-              </a>
+              <div className="mt-5 rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Status</p>
+                <p className="mt-2 text-xl font-bold text-white">Coming Soon</p>
+                <p className="mt-1 text-sm text-zinc-400">Click below for the cinematic teaser page.</p>
+              </div>
 
-              {/* GitHub */}
-              <a
-                href="https://github.com/orgs/fsociety-pk"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-gradient-to-br from-orange-900/30 to-orange-900/10 border border-orange-600/40 rounded-xl p-6 hover:border-orange-600/80 transition-all hover:shadow-[0_0_25px_rgba(234,88,12,0.2)]"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-orange-500/20 rounded-lg group-hover:scale-110 transition-transform">
-                    <Github className="w-5 h-5 text-orange-400" />
-                  </div>
-                  <div className="flex-1">
-                    <h5 className="font-bold text-orange-400 mb-1">GitHub Organization</h5>
-                    <p className="text-sm text-zinc-400">View our source & projects</p>
-                    <p className="text-[10px] text-zinc-500 mt-2">Contribute to the community</p>
-                  </div>
-                </div>
-              </a>
-            </div>
-          </motion.section>
-
-          {/* Call to Action Section */}
-          <motion.section variants={itemVariants} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Explore Challenges */}
               <Link
-                to="/challenges"
-                className="group relative bg-gradient-to-br from-neon-green/20 to-neon-green/5 border border-neon-green/40 rounded-xl p-8 hover:border-neon-green/80 transition-all hover:shadow-[0_0_30px_rgba(0,255,65,0.2)]"
+                to="/cyber-cinema"
+                className="mt-5 inline-flex items-center gap-2 rounded-lg border border-cyan-400/40 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-500/20"
               >
-                <div className="absolute top-0 right-0 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <Code className="w-32 h-32" />
-                </div>
-                <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Code className="w-6 h-6 text-neon-green" />
-                    <h4 className="text-xl font-bold text-neon-green">Explore Challenges</h4>
-                  </div>
-                  <p className="text-zinc-400 mb-4 text-sm">
-                    Browse through our collection of challenges across different categories and difficulty levels.
-                  </p>
-                  <div className="flex items-center text-neon-green font-bold text-sm group-hover:translate-x-2 transition-transform">
-                    Start Solving <ArrowRight className="w-4 h-4 ml-2" />
-                  </div>
-                </div>
+                Visit Preview
+                <ArrowUpRight className="h-4 w-4" />
               </Link>
 
-              {/* Contribute Challenge */}
-              <Link
-                to="/submit-challenge"
-                className="group relative bg-gradient-to-br from-zinc-900/90 to-black border border-neon-green/40 rounded-xl p-8 hover:border-neon-green/80 transition-all hover:shadow-[0_0_30px_rgba(0,255,65,0.2)]"
-              >
-                <div className="absolute top-0 right-0 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <Users className="w-32 h-32" />
-                </div>
-                <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Plus className="w-6 h-6 text-neon-green" />
-                    <h4 className="text-xl font-bold text-neon-green">Contribute a Challenge</h4>
-                  </div>
-                  <p className="text-zinc-400 mb-4 text-sm">
-                    Share your own challenges! Submit challenges for review and help others learn.
-                  </p>
-                  <div className="flex items-center text-neon-green font-bold text-sm group-hover:translate-x-2 transition-transform">
-                    Create Challenge <ArrowRight className="w-4 h-4 ml-2" />
-                  </div>
-                </div>
-              </Link>
-            </div>
-          </motion.section>
-
-          {/* Learning Flow Section */}
-          <motion.section variants={itemVariants} className="space-y-6">
-            <div className="flex items-center gap-3 mb-8">
-              <Target className="text-neon-green w-6 h-6" />
-              <h3 className="text-2xl font-bold tracking-widest uppercase">What To Do Next</h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <motion.article
-                whileHover={{ y: -4 }}
-                className="rounded-xl border border-zinc-700 bg-zinc-900/50 p-5"
-              >
-                <Timer className="w-5 h-5 text-neon-green mb-3" />
-                <h4 className="font-bold text-neon-green mb-2">Warm Up (15-20 min)</h4>
-                <p className="text-sm text-zinc-300 leading-relaxed">
-                  Start with one easy challenge to lock in momentum and refresh core web or crypto fundamentals.
+              <div className="mt-6 border-t border-zinc-800 pt-4">
+                <p className="flex items-center gap-2 text-sm text-zinc-400">
+                  <Lock className="h-4 w-4 text-neon-green" />
+                  Professional presentation mode is active.
                 </p>
-              </motion.article>
-
-              <motion.article
-                whileHover={{ y: -4 }}
-                className="rounded-xl border border-zinc-700 bg-zinc-900/50 p-5"
-              >
-                <Terminal className="w-5 h-5 text-neon-green mb-3" />
-                <h4 className="font-bold text-neon-green mb-2">Deep Work (45 min)</h4>
-                <p className="text-sm text-zinc-300 leading-relaxed">
-                  Pick a medium or hard task, document your payload chain, and validate each assumption like a real engagement.
-                </p>
-              </motion.article>
-
-              <motion.article
-                whileHover={{ y: -4 }}
-                className="rounded-xl border border-zinc-700 bg-zinc-900/50 p-5"
-              >
-                <Crosshair className="w-5 h-5 text-neon-green mb-3" />
-                <h4 className="font-bold text-neon-green mb-2">Debrief (10 min)</h4>
-                <p className="text-sm text-zinc-300 leading-relaxed">
-                  Capture what worked, what failed, and where to revisit. Consistent debriefing accelerates long-term growth.
-                </p>
-              </motion.article>
-            </div>
-          </motion.section>
-
-          {/* Guidelines Section */}
-          <motion.section variants={itemVariants} className="space-y-6">
-            <h3 className="text-2xl font-bold tracking-widest uppercase mb-6">
-              Challenge Submission Guidelines
-            </h3>
-
-            <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-xl p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h5 className="font-bold text-neon-green mb-2 flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-neon-green" />
-                    Flag Format
-                  </h5>
-                  <p className="text-sm text-zinc-400">
-                    Flags must follow the format: <code className="bg-black/50 px-2 py-1 rounded text-neon-green">fsociety{'{'}{'}'}</code>
-                  </p>
-                </div>
-                <div>
-                  <h5 className="font-bold text-neon-green mb-2 flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-neon-green" />
-                    Review Process
-                  </h5>
-                  <p className="text-sm text-zinc-400">
-                    All submitted challenges go through admin review before being published to ensure quality and security.
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h5 className="font-bold text-neon-green mb-2 flex items-center gap-2">
-                    <Book className="w-4 h-4 text-neon-green" />
-                    Categories
-                  </h5>
-                  <p className="text-sm text-zinc-400">
-                    Web, Crypto, Forensics, Reverse Engineering, PWN, OSINT, and more!
-                  </p>
-                </div>
-                <div>
-                  <h5 className="font-bold text-neon-green mb-2 flex items-center gap-2">
-                    <Award className="w-4 h-4 text-neon-green" />
-                    Difficulty Levels
-                  </h5>
-                  <p className="text-sm text-zinc-400">
-                    Easy, Medium, Hard, and Insane challenges available
-                  </p>
-                </div>
               </div>
             </div>
-          </motion.section>
-
-          {/* Cyber Cinema Section */}
-          <motion.section variants={itemVariants} className="space-y-6">
-            <div className="flex items-center gap-3 mb-8">
-              <Film className="text-neon-green w-6 h-6" />
-              <h3 className="text-2xl font-bold tracking-widest uppercase">Cyber Cinema</h3>
-            </div>
-
-            <div className="relative overflow-hidden bg-zinc-900/40 border border-zinc-800/50 rounded-xl p-8 md:p-12 text-center group">
-              <div className="absolute inset-0 bg-gradient-to-br from-neon-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              <Film className="w-16 h-16 text-zinc-700 mx-auto mb-4 group-hover:scale-110 transition-transform duration-500" />
-              <h4 className="text-xl md:text-2xl font-bold text-zinc-300 mb-2 uppercase tracking-widest">
-                Hacker Movie Archives
-              </h4>
-              <p className="text-sm md:text-base text-zinc-500 mb-8 max-w-2xl mx-auto">
-                A curated selection of the best hacker and cybersecurity films. Analyze real-world tactics versus Hollywood drama, and find your next weekend watch!
-              </p>
-              
-              <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full border border-neon-green/30 bg-neon-green/5 text-neon-green font-bold text-sm tracking-widest uppercase shadow-[0_0_15px_rgba(0,255,65,0.1)]">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-green opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-neon-green"></span>
-                </span>
-                Coming Soon
-              </div>
-            </div>
-          </motion.section>
-
-          {/* Stats Section */}
-          <motion.section variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-zinc-900/60 border border-neon-green/20 rounded-xl p-6 text-center">
-              <p className="text-zinc-500 text-sm uppercase tracking-widest mb-2">Learning Platform</p>
-              <h4 className="text-3xl font-black text-neon-green">100%</h4>
-              <p className="text-zinc-400 text-sm mt-2">Focused on Educational Growth</p>
-            </div>
-
-            <div className="bg-zinc-900/60 border border-neon-green/20 rounded-xl p-6 text-center">
-              <p className="text-zinc-500 text-sm uppercase tracking-widest mb-2">Community Driven</p>
-              <h4 className="text-3xl font-black text-neon-green">UNLIMITED</h4>
-              <p className="text-zinc-400 text-sm mt-2">Unlimited Challenge Attempts</p>
-            </div>
-
-            <div className="bg-zinc-900/60 border border-neon-green/20 rounded-xl p-6 text-center">
-              <p className="text-zinc-500 text-sm uppercase tracking-widest mb-2">Your Voice</p>
-              <h4 className="text-3xl font-black text-neon-green">SUBMIT</h4>
-              <p className="text-zinc-400 text-sm mt-2">Submit & Share Your Challenges</p>
-            </div>
-          </motion.section>
-        </motion.div>
+          </section>
+        </main>
       </div>
     </div>
   );

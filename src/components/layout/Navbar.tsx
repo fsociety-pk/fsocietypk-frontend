@@ -51,6 +51,7 @@ const Navbar: React.FC = () => {
         { name: 'MISSIONS', path: '/challenges', icon: Shield },
         { name: 'HALL_OF_FAME', path: '/leaderboard', icon: Trophy },
         { name: 'SUBMIT_MISSION', path: '/submit-challenge', icon: Terminal },
+        { name: 'CYBER_CINEMA', path: '/cyber-cinema', icon: Film },
       ]
     : [
         { name: 'LOGIN', path: '/login', icon: User },

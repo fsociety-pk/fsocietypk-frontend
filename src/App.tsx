@@ -23,6 +23,7 @@ import ManageUsers from './pages/admin/ManageUsers';
 import Analytics from './pages/admin/Analytics';
 import AdminSettings from './pages/admin/Settings';
 import SubmitChallenge from './pages/SubmitChallenge';
+import CyberCinema from './pages/CyberCinema';
 
 function App() {
   const { setUser, setLoading, isLoading } = useAuthStore();
@@ -110,6 +111,7 @@ function App() {
 
           {/* Dashboard is public */}
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/cyber-cinema" element={<CyberCinema />} />
 
           {/* Protected Area */}
           <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
