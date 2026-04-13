@@ -20,11 +20,7 @@ import {
   Lock,
   Crosshair,
 } from 'lucide-react';
-import { useAuthStore } from '../store/authStore';
-
 const Dashboard: React.FC = () => {
-  const user = useAuthStore((state) => state.user);
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -63,7 +59,7 @@ const Dashboard: React.FC = () => {
         variants={spotlightVariants}
         initial="hidden"
         animate="visible"
-        className="pointer-events-none absolute left-1/2 top-28 -translate-x-1/2 h-72 w-72 rounded-full bg-neon-green/10 blur-3xl"
+        className="pointer-events-none absolute left-1/2 top-40 -translate-x-1/2 h-96 w-96 rounded-full bg-neon-green/20 blur-[100px]"
       />
       <div className="max-w-6xl mx-auto">
         {/* Header Banner */}
@@ -71,7 +67,7 @@ const Dashboard: React.FC = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55 }}
-          className="relative mb-16 rounded-2xl border border-neon-green/30 overflow-hidden bg-gradient-to-br from-zinc-900/90 via-black to-zinc-900/60 p-8 md:p-12"
+          className="relative mt-8 mb-16 rounded-3xl border border-neon-green/40 overflow-hidden bg-gradient-to-br from-zinc-900/90 via-black to-neon-green/10 p-8 md:p-14 lg:p-20 shadow-[0_0_50px_rgba(0,255,65,0.15)] backdrop-blur-sm"
         >
           <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,rgba(0,255,65,0.15),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(0,255,65,0.08),transparent_35%)]" />
 
@@ -79,12 +75,9 @@ const Dashboard: React.FC = () => {
             <p className="text-xs md:text-sm uppercase tracking-[0.35em] text-neon-green/80 mb-4">
               CTF Command Center
             </p>
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-black italic text-glow mb-2 tracking-tight break-words leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black italic text-glow mb-4 tracking-tight drop-shadow-[0_0_15px_rgba(0,255,65,0.8)] break-words leading-tight">
               TRAIN. BREAK. DEFEND.
             </h1>
-            <h2 className="text-xl sm:text-2xl md:text-3xl text-neon-green tracking-widest font-bold mb-4 break-all sm:break-normal">
-              {user?.username?.toUpperCase() || 'OPERATOR'}
-            </h2>
             <p className="text-zinc-300 max-w-3xl leading-relaxed">
               Build practical security skills through real attack paths, guided challenge flows, and a competitive learning environment. Every solve sharpens your thinking for real-world assessments.
             </p>

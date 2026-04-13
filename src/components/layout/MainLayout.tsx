@@ -8,7 +8,7 @@ import SideNavigation from './SideNavigation';
 const MainLayout: React.FC = () => {
   const location = useLocation();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = React.useState(false);
-  const hideSideNavigation = ['/login', '/signup'].includes(location.pathname) || location.pathname.startsWith('/admin');
+  const hideSideNavigation = ['/login', '/signup', '/dashboard'].includes(location.pathname) || location.pathname.startsWith('/admin');
 
   React.useEffect(() => {
     setIsMobileSidebarOpen(false);
