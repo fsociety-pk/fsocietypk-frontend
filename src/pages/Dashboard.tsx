@@ -55,49 +55,86 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-black font-mono text-white py-12 px-4 md:px-8 overflow-hidden">
+      {/* Dynamic Background Noise/Scanlines */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(0,255,65,0.2)_1.5px,transparent_1.5px),linear-gradient(90deg,rgba(0,255,65,0.2)_1.5px,transparent_1.5px)] bg-[size:30px_30px] z-0" />
+      
       <motion.div
         variants={spotlightVariants}
         initial="hidden"
         animate="visible"
-        className="pointer-events-none absolute left-1/2 top-40 -translate-x-1/2 h-96 w-96 rounded-full bg-neon-green/20 blur-[100px]"
+        className="pointer-events-none absolute left-1/2 top-40 -translate-x-1/2 h-[500px] w-[500px] rounded-full bg-neon-green/10 blur-[120px] z-0"
       />
-      <div className="max-w-6xl mx-auto">
+
+      <div className="max-w-6xl mx-auto relative z-10">
         {/* Header Banner */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55 }}
-          className="relative mt-8 mb-16 rounded-3xl border border-neon-green/40 overflow-hidden bg-gradient-to-br from-zinc-900/90 via-black to-neon-green/10 p-8 md:p-14 lg:p-20 shadow-[0_0_50px_rgba(0,255,65,0.15)] backdrop-blur-sm"
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative mt-8 mb-16 rounded-2xl border border-zinc-800 overflow-hidden bg-black/40 p-8 md:p-12 lg:px-16 lg:py-20 backdrop-blur-md group"
         >
-          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,rgba(0,255,65,0.15),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(0,255,65,0.08),transparent_35%)]" />
+          {/* Animated decorative borders */}
+          <div className="absolute top-0 left-0 w-20 h-[1px] bg-neon-green shadow-neon" />
+          <div className="absolute top-0 left-0 w-[1px] h-20 bg-neon-green shadow-neon" />
+          <div className="absolute bottom-0 right-0 w-20 h-[1px] bg-neon-green shadow-neon" />
+          <div className="absolute bottom-0 right-0 w-[1px] h-20 bg-neon-green shadow-neon" />
 
-          <div className="relative z-10">
-            <p className="text-xs md:text-sm uppercase tracking-[0.35em] text-neon-green/80 mb-4">
-              CTF Command Center
-            </p>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black italic text-glow mb-4 tracking-tight drop-shadow-[0_0_15px_rgba(0,255,65,0.8)] break-words leading-tight">
-              TRAIN. BREAK. DEFEND.
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,65,0.05),transparent_70%)]" />
+
+          <div className="relative z-10 flex flex-col items-center text-center">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="mb-6 flex items-center gap-2 px-3 py-1 rounded-full border border-neon-green/20 bg-neon-green/5"
+            >
+              <div className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
+              <p className="text-[10px] uppercase tracking-[0.4em] text-neon-green font-bold">
+                SYSTEM_ACCESS: GRANTED
+              </p>
+            </motion.div>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tighter leading-none">
+              <span className="text-white">ENCRYPT. </span>
+              <span className="text-neon-green text-glow-strong">EXPLOIT. </span>
+              <span className="text-white">EVOLVE.</span>
             </h1>
-            <p className="text-zinc-300 max-w-3xl leading-relaxed">
-              Build practical security skills through real attack paths, guided challenge flows, and a competitive learning environment. Every solve sharpens your thinking for real-world assessments.
+
+            <p className="text-zinc-400 max-w-2xl leading-relaxed text-sm md:text-base font-medium">
+              Forge your path in the shadows. MASTER THE ART OF OFFENSIVE SECURITY through 
+              complex attack simulations and decentralized challenge architecture. 
+              The next level of elite training starts here.
             </p>
 
-            <div className="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <motion.div
-                whileHover={{ y: -4 }}
-                className="rounded-xl border border-neon-green/30 bg-neon-green/5 px-4 py-3"
+            <div className="mt-12 flex flex-wrap justify-center gap-6">
+              {[
+                { label: 'OP_CAPACITY', val: '7+ TRACKS', icon: Target },
+                { label: 'RETRY_POLICY', val: 'UNLIMITED', icon: Repeat },
+                { label: 'LEARNING_DIR', val: 'HANDS-ON', icon: Terminal },
+              ].map((stat, i) => (
+                <motion.div
+                  key={i}
+                  whileHover={{ y: -5, borderColor: 'rgba(0,255,65,0.4)' }}
+                  className="min-w-[160px] rounded-xl border border-zinc-800 bg-zinc-950/50 px-6 py-4 flex flex-col items-center transition-all group/stat"
+                >
+                  <stat.icon className="w-5 h-5 text-neon-green/60 mb-3 group-hover/stat:text-neon-green transition-colors" />
+                  <p className="text-[9px] text-zinc-500 uppercase tracking-[0.2em] mb-1">{stat.label}</p>
+                  <p className="text-sm font-bold text-zinc-100">{stat.val}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div className="mt-12">
+              <Link
+                to="/challenges"
+                className="group relative inline-flex items-center gap-3 px-8 py-4 bg-neon-green text-black font-black uppercase tracking-widest text-sm rounded-lg hover:shadow-neon transition-all hover:scale-105 active:scale-95"
               >
-                <p className="text-[10px] text-zinc-500 uppercase tracking-[0.24em]">Challenge Tracks</p>
-                <p className="mt-1 text-lg font-bold text-neon-green">7+ Domains</p>
-              </motion.div>
-              <motion.div
-                whileHover={{ y: -4 }}
-                className="rounded-xl border border-neon-green/30 bg-neon-green/5 px-4 py-3"
-              >
-                <p className="text-[10px] text-zinc-500 uppercase tracking-[0.24em]">Practice Model</p>
-                <p className="mt-1 text-lg font-bold text-neon-green">Unlimited Retries</p>
-              </motion.div>
-              <motion.div
+                Enter Command Center
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </motion.div>
+          </div>
+        </motion.div>
                 whileHover={{ y: -4 }}
                 className="rounded-xl border border-neon-green/30 bg-neon-green/5 px-4 py-3"
               >

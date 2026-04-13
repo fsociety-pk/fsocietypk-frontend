@@ -80,7 +80,7 @@ const Profile = () => {
   });
 
   // Sync saved avatar for demo purposes if backend doesn't support it yet
-  React.useEffect(() => {
+  useEffect(() => {
     if (profile?._id) {
        const savedAvatar = localStorage.getItem(`avatar_${profile._id}`);
        if (savedAvatar) setLocalAvatar(savedAvatar);
@@ -125,21 +125,21 @@ const Profile = () => {
     return (
       <div className="container mx-auto px-4 py-20 flex flex-col items-center justify-center space-y-4">
         <div className="w-12 h-12 border-4 border-neon-green/20 border-t-neon-green rounded-full animate-spin" />
-        <p className="font-mono text-neon-green animate-pulse">DECRYPTING_PROFILE_DATA...</p>
+        <p className="font-mono text-neon-green animate-pulse">ACCESSING_SECURE_VAULT...</p>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-6xl">
-      {/* Header / Banner */}
-      <div className="relative mb-12 rounded-2xl border border-surface-border overflow-hidden bg-background-elevated p-8">
-        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-           <Terminal size={120} />
+    <div className="container mx-auto px-4 py-12 max-w-7xl font-mono">
+      {/* ── PROFILE HEADER ── */}
+      <div className="relative mb-12 rounded-2xl border border-zinc-800 overflow-hidden bg-black/40 p-8 backdrop-blur-md">
+        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+           <Terminal size={150} />
         </div>
         
-        <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
-          <div className="relative group cursor-pointer">
+        <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
+          <div className="relative group">
             <input 
               type="file" 
               accept="image/*" 
@@ -147,66 +147,73 @@ const Profile = () => {
               id="avatarUpdate" 
               onChange={handleAvatarUpload} 
             />
-            <label htmlFor="avatarUpdate" className="w-32 h-32 rounded-full border-2 border-neon-green p-1 bg-background relative overflow-hidden transition-transform group-hover:scale-105 cursor-pointer flex flex-col items-center justify-center group-hover:border-white">
+            <label htmlFor="avatarUpdate" className="block w-40 h-40 rounded-2xl border-2 border-neon-green/40 p-1.5 bg-zinc-900/50 relative overflow-hidden transition-all group-hover:border-neon-green cursor-pointer">
               {(localAvatar || profile?.avatar) ? (
-                <img src={localAvatar || profile?.avatar} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                <img src={localAvatar || profile?.avatar} alt="Avatar" className="w-full h-full object-cover rounded-xl" />
               ) : (
-                <div className="w-full h-full bg-surface flex items-center justify-center text-4xl font-bold text-text-muted rounded-full">
+                <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-5xl font-black text-neon-green/20 rounded-xl">
                   {profile?.username?.[0]?.toUpperCase?.() || '?'}
                 </div>
               )}
               
-              <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full backdrop-blur-[2px]">
-                 <Camera className="text-neon-green w-8 h-8 mb-1" />
-                 <span className="text-[9px] font-bold tracking-widest text-white uppercase">Upload</span>
+              <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all rounded-xl backdrop-blur-sm">
+                 <Camera className="text-neon-green w-8 h-8 mb-2" />
+                 <span className="text-[10px] font-bold tracking-[0.3em] text-white uppercase">UPDATE_AVATAR</span>
               </div>
             </label>
-            <div className="absolute -bottom-2 -right-2 bg-neon-green text-background text-[10px] font-black italic px-3 py-1 rounded-full uppercase shadow-neon-sm">
-              Level {Math.floor((profile?.score || 0) / 1000) + 1}
+            <div className="absolute -bottom-3 -right-3 bg-neon-green text-black text-[11px] font-black italic px-4 py-1.5 rounded-lg uppercase shadow-neon">
+              LVL {Math.floor((profile?.score || 0) / 1000) + 1}
             </div>
           </div>
 
-          <div className="text-center md:text-left space-y-2">
-            <h1 className="text-4xl font-black italic tracking-tighter text-glow flex items-center gap-3">
-              {(profile?.username || 'operator').toUpperCase()}
-              {profile?.role === 'admin' && <Shield className="text-status-error w-6 h-6" />}
-            </h1>
-            <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-text-muted font-mono">
-              <span className="flex items-center gap-2"><Hash size={14} /> UUID: {profile?._id?.slice(-8) || 'UNKNOWN'}</span>
+          <div className="text-center md:text-left space-y-4 flex-grow">
+            <div>
+              <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
+                <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter text-glow truncate max-w-md">
+                  {(profile?.username || 'operator').toUpperCase()}
+                </h1>
+                {profile?.role === 'admin' && (
+                  <div className="px-3 py-1 bg-red-500/10 border border-red-500/20 rounded text-[10px] text-red-500 font-bold tracking-widest uppercase">
+                    SYSTEM_ROOT
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-wrap justify-center md:justify-start gap-6 text-xs text-zinc-500 font-mono uppercase tracking-[0.2em]">
+                <span className="flex items-center gap-2 border-r border-zinc-800 pr-6"><Hash size={14} className="text-neon-green" /> UID: {profile?._id?.slice(-8) || 'UNKNOWN'}</span>
+                <span className="flex items-center gap-2"><Lock size={14} className="text-neon-green" /> STATUS: ACTIVE_OPERATOR</span>
+              </div>
             </div>
-          </div>
 
-          <div className="hidden lg:flex flex-1 justify-end gap-4">
-             <div className="text-right">
-                <p className="text-xs text-text-muted font-mono uppercase">Global Rank</p>
-                <p className="text-3xl font-black text-neon-green italic">#{profile?.rank}</p>
-             </div>
-             <div className="w-px h-12 bg-surface-border self-center mx-2" />
-             <div className="text-right">
-                <p className="text-xs text-text-muted font-mono uppercase">Total Points</p>
-               <p className="text-3xl font-black text-white italic">{Number(profile?.score || 0).toLocaleString()}</p>
-             </div>
+            <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-4">
+              <div className="bg-zinc-900/50 border border-zinc-800 px-6 py-3 rounded-xl flex flex-col items-center min-w-[120px]">
+                <p className="text-[10px] text-zinc-600 uppercase mb-1">GLOBAL_RANK</p>
+                <p className="text-2xl font-black text-neon-green italic">#{profile?.rank}</p>
+              </div>
+              <div className="bg-zinc-900/50 border border-zinc-800 px-6 py-3 rounded-xl flex flex-col items-center min-w-[120px]">
+                <p className="text-[10px] text-zinc-600 uppercase mb-1">TOTAL_EXP</p>
+                <p className="text-2xl font-black text-white italic">{Number(profile?.score || 0).toLocaleString()}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left column: Navigation & Solves History */}
-        <div className="lg:col-span-8 space-y-12">
-          {/* Tab Switcher */}
-          <div className="flex gap-1 p-1 bg-surface rounded-xl border border-surface-border w-fit">
+        <div className="lg:col-span-8 space-y-8">
+          <div className="flex gap-2 p-1.5 bg-zinc-950 rounded-xl border border-zinc-800 w-fit">
             {[
-              { id: 'overview', label: 'OVERVIEW', icon: UserIcon },
+              { id: 'overview', label: 'ANALYTICS', icon: UserIcon },
               { id: 'settings', label: 'SETTINGS', icon: Settings },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={clsx(
-                  "flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs font-mono font-bold tracking-widest transition-all",
+                  "flex items-center gap-2 px-8 py-3 rounded-lg text-[10px] font-bold tracking-[0.3em] transition-all",
                   activeTab === tab.id 
-                    ? "bg-neon-green text-background shadow-neon-sm" 
-                    : "text-text-muted hover:text-text-primary"
+                    ? "bg-neon-green text-black shadow-neon" 
+                    : "text-zinc-500 hover:text-white hover:bg-zinc-900"
                 )}
               >
                 <tab.icon size={14} />

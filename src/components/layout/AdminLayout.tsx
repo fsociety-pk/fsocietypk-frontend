@@ -54,50 +54,69 @@ const AdminLayout: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="min-h-screen bg-black flex">
-      {/* Sidebar */}
-      <aside className={clsx(
-        "bg-background-card border-r border-surface-border transition-all duration-300 flex flex-col z-50",
-        isSidebarOpen ? "w-64" : "w-20"
-      )}>
-        <div className="p-6 flex items-center justify-between border-b border-surface-border h-16">
-          <Link to="/" className={clsx("flex items-center gap-2", !isSidebarOpen && "justify-center w-full")}>
-            <img src={companyLogo} alt="FsocietyPK logo" className="w-6 h-6 object-contain" />
-            {isSidebarOpen && <span className="font-display font-bold text-white tracking-widest">FSOCIETY</span>}
-          </Link>
-          {isSidebarOpen && (
-            <button onClick={() => setIsSidebarOpen(false)} className="text-text-muted hover:text-white lg:hidden">
-              <X size={20} />
-            </button>
-          )}
-        </div>
+    <div className="min-h-screen bg-black flex flex-col font-mono selection:bg-neon-green/30 selection:text-neon-green overflow-x-hidden">
+      {/* ── Background Grid (Global Decor) ────────────────────────── */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(0,255,65,0.2)_1.5px,transparent_1.5px),linear-gradient(90deg,rgba(0,255,65,0.2)_1.5px,transparent_1.5px)] bg-[size:30px_30px]" />
+      
+      {/* ── Global Scanline Effect ─────────────────────────────────── */}
+      <div className="fixed inset-0 pointer-events-none z-[9999] opacity-[0.03] bg-gradient-to-b from-transparent via-neon-green/10 to-transparent bg-[length:100%_4px] animate-scanline" />
 
-        <nav className="flex-1 p-4 space-y-2 mt-4">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={clsx(
-                  "flex items-center gap-3 px-4 py-3 rounded-lg font-mono text-sm transition-all group",
-                  isActive(item.path) 
-                    ? "bg-neon-green/10 text-neon-green border border-neon-green/20" 
-                    : "text-text-muted hover:bg-surface-border hover:text-text-primary"
-                )}
-              >
-                <Icon size={18} className={clsx(isActive(item.path) ? "text-neon-green" : "text-text-muted group-hover:text-text-primary")} />
-                {isSidebarOpen && <span>{item.name}</span>}
+      <header className="sticky top-0 z-50 w-full border-b border-zinc-900 bg-black/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
+            <div className="flex items-center gap-8">
+              <Link to="/" className="flex items-center gap-2">
+                <img src={companyLogo} alt="FsocietyPK logo" className="w-8 h-8 object-contain" />
+                <span className="font-display font-bold text-white tracking-widest hidden sm:block">FSOCIETY_ADMIN</span>
               </Link>
-            );
-          })}
-        </nav>
+              
+              <nav className="hidden md:flex items-center gap-1">
+                {menuItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={clsx(
+                        "flex items-center gap-2 px-3 py-2 rounded-md text-xs transition-all uppercase tracking-wider",
+                        isActive(item.path) 
+                          ? "text-neon-green bg-neon-green/10 border border-neon-green/20" 
+                          : "text-zinc-500 hover:text-white hover:bg-zinc-900"
+                      )}
+                    >
+                      <Icon size={14} />
+                      <span>{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
 
-        <div className="p-4 border-t border-surface-border">
-          <Link
-            to="/"
-            className={clsx(
-              "flex items-center gap-3 px-4 py-3 rounded-lg font-mono text-sm text-text-muted hover:text-white transition-all",
+            <div className="flex items-center gap-4">
+              <Link
+                to="/"
+                className="flex items-center gap-2 px-3 py-2 rounded-md text-xs text-zinc-500 hover:text-white hover:bg-zinc-900 transition-all uppercase tracking-wider border border-zinc-800"
+              >
+                <ChevronLeft size={14} />
+                <span>Exit Admin</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-grow z-10 relative">
+        <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          <Outlet />
+        </div>
+      </main>
+
+      <footer className="py-6 border-t border-zinc-900 text-center text-[10px] text-zinc-600 tracking-[0.2em] font-mono z-10 bg-black">
+        &copy; {new Date().getFullYear()} FSOCIETY_PK // ADMIN_SHELL // LOG_LEVEL_VERBOSE
+      </footer>
+    </div>
+  );
+};
               !isSidebarOpen && "justify-center"
             )}
           >
