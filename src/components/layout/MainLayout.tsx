@@ -1,12 +1,18 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import Navbar from './Navbar';
 import SideNavigation from './SideNavigation';
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = React.useState(false);
   const hideSideNavigation = ['/login', '/signup'].includes(location.pathname) || location.pathname.startsWith('/admin');
+
+  React.useEffect(() => {
+    setIsMobileSidebarOpen(false);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-black flex flex-col font-mono selection:bg-neon-green/30 selection:text-neon-green overflow-x-hidden">
@@ -18,8 +24,27 @@ const MainLayout: React.FC = () => {
 
       <Navbar />
 
-      <div className="flex-grow z-10 md:flex">
-        {!hideSideNavigation && <SideNavigation />}
+      {!hideSideNavigation && (
+        <button
+          type="button"
+          onClick={() => setIsMobileSidebarOpen((prev) => !prev)}
+          className="fixed bottom-6 right-6 z-[60] rounded-full border border-neon-green/30 bg-zinc-950 p-3 text-neon-green shadow-lg shadow-black/30 transition-colors hover:bg-zinc-900 lg:hidden"
+          aria-label={isMobileSidebarOpen ? 'Close side navigation' : 'Open side navigation'}
+        >
+          {isMobileSidebarOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
+      )}
+
+      <div className="flex-grow z-10 flex">
+        {!hideSideNavigation && (
+          <>
+            <div className="hidden lg:block w-72 shrink-0" aria-hidden="true" />
+            <SideNavigation
+              isMobileOpen={isMobileSidebarOpen}
+              onMobileClose={() => setIsMobileSidebarOpen(false)}
+            />
+          </>
+        )}
 
         <main className="flex-grow min-w-0">
           <Outlet />

@@ -18,7 +18,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { userService, ChangePasswordPayload } from '../services/userService';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import { clsx } from 'clsx';
 
 // ── Components ────────────────────────────────────────────────────
@@ -61,6 +61,15 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'settings'>('overview');
   const [showCurrentPass, setShowCurrentPass] = useState(false);
   const [showNewPass, setShowNewPass] = useState(false);
+
+  const formatSafeDate = (value?: string) => {
+    if (!value) {
+      return 'N/A';
+    }
+
+    const parsed = new Date(value);
+    return isValid(parsed) ? format(parsed, 'yyyy-MM-dd HH:mm') : 'N/A';
+  };
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile'],
@@ -105,7 +114,7 @@ const Profile = () => {
                 <img src={profile.avatar} alt="Avatar" className="w-full h-full object-cover rounded-full" />
               ) : (
                 <div className="w-full h-full bg-surface flex items-center justify-center text-4xl font-bold text-text-muted rounded-full">
-                  {profile?.username[0].toUpperCase()}
+                  {profile?.username?.[0]?.toUpperCase?.() || '?'}
                 </div>
               )}
             </div>
@@ -116,11 +125,11 @@ const Profile = () => {
 
           <div className="text-center md:text-left space-y-2">
             <h1 className="text-4xl font-black italic tracking-tighter text-glow flex items-center gap-3">
-              {profile?.username.toUpperCase()}
+              {(profile?.username || 'operator').toUpperCase()}
               {profile?.role === 'admin' && <Shield className="text-status-error w-6 h-6" />}
             </h1>
             <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-text-muted font-mono">
-              <span className="flex items-center gap-2"><Hash size={14} /> UUID: {profile?._id.slice(-8)}</span>
+              <span className="flex items-center gap-2"><Hash size={14} /> UUID: {profile?._id?.slice(-8) || 'UNKNOWN'}</span>
             </div>
           </div>
 
@@ -132,7 +141,7 @@ const Profile = () => {
              <div className="w-px h-12 bg-surface-border self-center mx-2" />
              <div className="text-right">
                 <p className="text-xs text-text-muted font-mono uppercase">Total Points</p>
-                <p className="text-3xl font-black text-white italic">{profile?.score.toLocaleString()}</p>
+               <p className="text-3xl font-black text-white italic">{Number(profile?.score || 0).toLocaleString()}</p>
              </div>
           </div>
         </div>
@@ -180,10 +189,10 @@ const Profile = () => {
                         Proficiency Index
                       </h3>
                       <div className="space-y-4">
-                        <CategoryProgress category="Web Exploitation" solved={profile?.solvedChallenges.filter((c: any) => c.category === 'web').length || 0} total={12} />
-                        <CategoryProgress category="Reverse Engineering" solved={profile?.solvedChallenges.filter((c: any) => c.category === 'rev').length || 0} total={8} />
-                        <CategoryProgress category="Cryptography" solved={profile?.solvedChallenges.filter((c: any) => c.category === 'crypto').length || 0} total={10} />
-                        <CategoryProgress category="Forensics" solved={profile?.solvedChallenges.filter((c: any) => c.category === 'forensics').length || 0} total={6} />
+                        <CategoryProgress category="Web Exploitation" solved={profile?.solvedChallenges?.filter((c: any) => c.category === 'web').length || 0} total={12} />
+                        <CategoryProgress category="Reverse Engineering" solved={profile?.solvedChallenges?.filter((c: any) => c.category === 'rev').length || 0} total={8} />
+                        <CategoryProgress category="Cryptography" solved={profile?.solvedChallenges?.filter((c: any) => c.category === 'crypto').length || 0} total={10} />
+                        <CategoryProgress category="Forensics" solved={profile?.solvedChallenges?.filter((c: any) => c.category === 'forensics').length || 0} total={6} />
                       </div>
                    </div>
 
@@ -230,7 +239,7 @@ const Profile = () => {
                                       <span className="px-2 py-0.5 rounded border border-surface-border bg-surface uppercase">{solve.challenge?.category}</span>
                                    </td>
                                    <td className="px-6 py-4 text-text-muted text-xs">
-                                      {format(new Date(solve.createdAt), 'yyyy-MM-dd HH:mm')}
+                                      {formatSafeDate(solve?.createdAt)}
                                    </td>
                                    <td className="px-6 py-4 text-right font-bold text-neon-green">+{solve.pointsAwarded}</td>
                                 </tr>
@@ -338,7 +347,7 @@ const Profile = () => {
            <div className="space-y-4">
               <StatCard icon={Trophy} label="Rank" value={`#${profile?.rank}`} color="bg-neon-green" />
               <StatCard icon={CheckCircle2} label="Solves" value={profile?.solvedChallenges?.length || 0} color="bg-status-success" />
-              <StatCard icon={Terminal} label="Points" value={profile?.score.toLocaleString() || 0} color="bg-blue-500" />
+              <StatCard icon={Terminal} label="Points" value={Number(profile?.score || 0).toLocaleString()} color="bg-blue-500" />
            </div>
 
            <div className="bg-neon-green/5 border border-neon-green/20 rounded-xl p-6 space-y-4">
