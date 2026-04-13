@@ -135,15 +135,6 @@ const Dashboard: React.FC = () => {
             </motion.div>
           </div>
         </motion.div>
-                whileHover={{ y: -4 }}
-                className="rounded-xl border border-neon-green/30 bg-neon-green/5 px-4 py-3"
-              >
-                <p className="text-[10px] text-zinc-500 uppercase tracking-[0.24em]">Learning Style</p>
-                <p className="mt-1 text-lg font-bold text-neon-green">Hands-On First</p>
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
 
         <motion.div
           variants={containerVariants}
