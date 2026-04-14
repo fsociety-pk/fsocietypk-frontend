@@ -7,7 +7,11 @@ const Projects: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
-    setProjects(projectService.getProjects());
+    const loadProjects = async () => {
+      const dbProjects = await projectService.getProjects();
+      setProjects(dbProjects);
+    };
+    loadProjects();
   }, []);
 
   return (
@@ -31,7 +35,7 @@ const Projects: React.FC = () => {
         <div className="grid gap-8 lg:grid-cols-2">
           {projects.map((project, index) => (
             <motion.div
-              key={project.id}
+              key={project._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}

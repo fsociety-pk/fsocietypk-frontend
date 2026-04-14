@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Shield, Trophy, User, LogOut, Menu, X, Bell, Film, Folder } from 'lucide-react';
+import { Terminal, Shield, Trophy, User, LogOut, Menu, X, Bell, Folder } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { authService } from '../../services/auth.service';
 import { notificationService } from '../../services/notificationService';

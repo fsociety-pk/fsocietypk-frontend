@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Folder, Plus, Trash2, Link as LinkIcon, Github } from 'lucide-react';
+import { Plus, Trash2, Link as LinkIcon, Github } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { projectService, Project } from '../../../services/projectService';
+import { projectService, Project } from '../../services/projectService';
 
 const ManageProjects: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -20,11 +20,12 @@ const ManageProjects: React.FC = () => {
     loadProjects();
   }, []);
 
-  const loadProjects = () => {
-    setProjects(projectService.getProjects());
+  const loadProjects = async () => {
+    const data = await projectService.getProjects();
+    setProjects(data);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.description) {
       toast.error('Title and description are required');
@@ -34,25 +35,32 @@ const ManageProjects: React.FC = () => {
     const techStack = formData.techStack.split(',').map(s => s.trim()).filter(Boolean);
     const features = formData.features.split(',').map(s => s.trim()).filter(Boolean);
 
-    projectService.addProject({
-      title: formData.title,
-      description: formData.description,
-      techStack,
-      features,
-      websiteUrl: formData.websiteUrl,
-      sourceCodeUrl: formData.sourceCodeUrl
-    });
-
-    toast.success('Project added successfully');
-    setFormData({ title: '', description: '', techStack: '', features: '', websiteUrl: '', sourceCodeUrl: '' });
-    setIsAdding(false);
-    loadProjects();
+    try {
+      await projectService.addProject({
+        title: formData.title,
+        description: formData.description,
+        techStack,
+        features,
+        websiteUrl: formData.websiteUrl,
+        sourceCodeUrl: formData.sourceCodeUrl
+      });
+      toast.success('Project added successfully');
+      setFormData({ title: '', description: '', techStack: '', features: '', websiteUrl: '', sourceCodeUrl: '' });
+      setIsAdding(false);
+      loadProjects();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to add project');
+    }
   };
 
-  const handleDelete = (id: string) => {
-    projectService.deleteProject(id);
-    toast.success('Project deleted');
-    loadProjects();
+  const handleDelete = async (id: string) => {
+    try {
+      await projectService.deleteProject(id);
+      toast.success('Project deleted');
+      loadProjects();
+    } catch (error: any) {
+       toast.error(error.response?.data?.message || error.message || 'Failed to delete');
+    }
   };
 
   return (
@@ -160,21 +168,21 @@ const ManageProjects: React.FC = () => {
 
       <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
         {projects.map((project) => (
-          <div key={project.id} className="relative rounded-lg border border-zinc-800 bg-zinc-900/50 p-5 group flex flex-col justify-between">
+          <div key={project._id} className="relative rounded-lg border border-zinc-800 bg-zinc-900/50 p-5 group flex flex-col justify-between">
              <div>
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-bold text-white text-lg tracking-wider font-display uppercase">{project.title}</h3>
-                  {(project.id === '1' || project.id === '2') ? (
+                  {(project._id === '1' || project._id === '2') ? (
                     <span className="text-[10px] font-mono text-zinc-500 bg-black border border-zinc-800 px-2 py-0.5 rounded">SYSTEM_DEFAULT</span>
                   ) : (
-                    <button onClick={() => handleDelete(project.id)} className="text-zinc-500 hover:text-red-500 transition-colors">
+                    <button onClick={() => handleDelete(project._id!)} className="text-zinc-500 hover:text-red-500 transition-colors">
                       <Trash2 size={16} />
                     </button>
                   )}
                 </div>
                 <p className="text-sm text-zinc-400 mb-4 line-clamp-3">{project.description}</p>
                 <div className="flex flex-wrap gap-2 mb-4">
-                   {project.techStack?.map(tech => (
+                   {project.techStack?.map((tech: string) => (
                      <span key={tech} className="text-[10px] font-mono bg-black border border-zinc-800 text-neon-green px-2 py-1 rounded">{tech}</span>
                    ))}
                 </div>
