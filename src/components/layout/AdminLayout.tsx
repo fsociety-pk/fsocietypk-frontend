@@ -6,7 +6,8 @@ import {
   Flag, 
   Settings, 
   ChevronLeft, 
-  BarChart4
+  BarChart4,
+  Folder
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { clsx } from 'clsx';
@@ -26,6 +27,7 @@ const AdminLayout: React.FC = () => {
     { name: 'Analytics', path: '/admin/analytics', icon: BarChart4 },
     { name: 'Users', path: '/admin/users', icon: Users },
     { name: 'Challenges', path: '/admin/challenges', icon: Flag },
+    { name: 'Projects', path: '/admin/projects', icon: Folder },
     { name: 'Settings', path: '/admin/settings', icon: Settings },
   ];
 

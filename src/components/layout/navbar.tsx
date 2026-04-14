@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Shield, Trophy, User, LogOut, Menu, X, Bell, Film } from 'lucide-react';
+import { Terminal, Shield, Trophy, User, LogOut, Menu, X, Bell, Film, Folder } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { authService } from '../../services/auth.service';
 import { notificationService } from '../../services/notificationService';
@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
         { name: 'MISSIONS', path: '/challenges', icon: Shield },
         { name: 'HALL_OF_FAME', path: '/leaderboard', icon: Trophy },
         { name: 'SUBMIT_MISSION', path: '/submit-challenge', icon: Terminal },
-        { name: 'CYBER_CINEMA', path: '/cyber-cinema', icon: Film },
+        { name: 'PROJECTS', path: '/projects', icon: Folder },
       ]
     : [
         { name: 'LOGIN', path: '/login', icon: User },

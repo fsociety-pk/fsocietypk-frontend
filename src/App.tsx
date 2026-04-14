@@ -23,7 +23,8 @@ import ManageUsers from './pages/admin/ManageUsers';
 import Analytics from './pages/admin/Analytics';
 import AdminSettings from './pages/admin/Settings';
 import SubmitChallenge from './pages/SubmitChallenge';
-import CyberCinema from './pages/CyberCinema';
+import Projects from './pages/Projects';
+import ManageProjects from './pages/admin/ManageProjects';
 
 function App() {
   const { setUser, setLoading, isLoading } = useAuthStore();
@@ -111,7 +112,7 @@ function App() {
 
           {/* Dashboard is public */}
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/cyber-cinema" element={<CyberCinema />} />
+          <Route path="/projects" element={<Projects />} />
 
           {/* Protected Area */}
           <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
@@ -128,6 +129,7 @@ function App() {
             <Route path="analytics" element={<Analytics />} />
             <Route path="challenges" element={<ManageChallenges />} />
             <Route path="users" element={<ManageUsers />} />
+            <Route path="projects" element={<ManageProjects />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
 
