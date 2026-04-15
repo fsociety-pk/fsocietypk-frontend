@@ -155,10 +155,6 @@ const Challenges: React.FC = () => {
                 const isSolvedUI = totalFlagSteps > 1
                   ? completedSteps >= totalFlagSteps
                   : Boolean(challenge.isSolved);
-                const progressPercent = Math.round((completedSteps / totalFlagSteps) * 100);
-                const radius = 13;
-                const circumference = 2 * Math.PI * radius;
-                const dashOffset = circumference * (1 - progressPercent / 100);
 
                 return (
               <motion.div

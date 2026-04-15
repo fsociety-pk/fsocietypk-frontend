@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Trophy,
@@ -11,6 +11,7 @@ import {
   Linkedin,
   Instagram,
   Globe,
+  AlertCircle,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { userService } from '../services/userService';
@@ -116,7 +117,7 @@ const PublicProfile = () => {
   if (error || !profile) {
     return (
       <div className="container mx-auto px-4 py-20 flex flex-col items-center justify-center space-y-4">
-        <div className="w-16 h-16 text-red-500 flex items-center justify-center border-4 border-red-500/20 rounded-full">!</div>
+        <AlertCircle className="w-16 h-16 text-red-500" />
         <p className="font-mono text-red-500 text-center">
           {error
             ? 'PROFILE_ACCESS_DENIED_OR_NOT_FOUND'

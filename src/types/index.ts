@@ -16,7 +16,12 @@ export type ChallengeCategory =
   | 'network'
   | 'mobile'
 
-// ── User ──────────────────────────────────────────────────────────
+export interface ISocialLinks {
+  linkedin?: string
+  github?: string
+  instagram?: string
+}
+
 export interface IUser {
   _id: string
   username: string
@@ -29,12 +34,15 @@ export interface IUser {
   isBanned: boolean
   createdAt: string
   updatedAt: string
+  isProfilePublic: boolean
   socialLinks?: ISocialLinks
 }
 
 export type ChallengeStatus = 'pending' | 'approved' | 'rejected'
 
 // ── Challenge ─────────────────────────────────────────────────
+export type ChallengeLiveStatus = 'live' | 'ended'
+
 export interface IFlag {
   sequence: number
   value: string

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, Share2, X, Copy, Linkedin, Trophy } from 'lucide-react';
+import { Download, X, Copy, Linkedin, Trophy } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { clsx } from 'clsx';
 import {

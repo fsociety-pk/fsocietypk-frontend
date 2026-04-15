@@ -125,7 +125,7 @@ const Profile = () => {
     if (localAvatar && profile?._id) {
       const loadingToast = toast.loading('UPLOADING_AVATAR...');
       updateProfileMutation.mutate({ avatar: localAvatar }, {
-        onSuccess: (response) => {
+        onSuccess: () => {
           toast.dismiss(loadingToast);
           toast.success('✓ AVATAR_SYNC_COMPLETE', {
             style: {
@@ -152,9 +152,9 @@ const Profile = () => {
     setLocalAvatar(authUser?.avatar || null);
   };
 
-  const { register: registerPassword, handleSubmit: handleSubmitPassword, reset: resetPassword, formState: { errors: passwordErrors } } = useForm<ChangePasswordPayload>();
+  const { register: registerPassword, handleSubmit: handleSubmitPassword, reset: resetPassword } = useForm<ChangePasswordPayload>();
 
-  const { register: registerProfile, handleSubmit: handleSubmitProfile, reset: resetProfile, formState: { errors: profileErrors }, setValue } = useForm<UpdateProfilePayload>();
+  const { register: registerProfile, handleSubmit: handleSubmitProfile, reset: resetProfile, setValue } = useForm<UpdateProfilePayload>();
 
   useEffect(() => {
     if (profile) {
