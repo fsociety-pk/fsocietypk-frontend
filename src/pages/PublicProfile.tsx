@@ -5,8 +5,6 @@ import {
   Trophy,
   Hash,
   History,
-  Lock,
-  AlertCircle,
   CheckCircle2,
   Terminal,
   Github,
@@ -79,7 +77,6 @@ const StatCard = ({
 
 const PublicProfile = () => {
   const { username } = useParams<{ username: string }>();
-  const [showFullBio, setShowFullBio] = useState(false);
 
   const formatSafeDate = (value?: string) => {
     if (!value) return 'N/A';
@@ -119,7 +116,7 @@ const PublicProfile = () => {
   if (error || !profile) {
     return (
       <div className="container mx-auto px-4 py-20 flex flex-col items-center justify-center space-y-4">
-        <AlertCircle className="w-16 h-16 text-red-500" />
+        <div className="w-16 h-16 text-red-500 flex items-center justify-center border-4 border-red-500/20 rounded-full">!</div>
         <p className="font-mono text-red-500 text-center">
           {error
             ? 'PROFILE_ACCESS_DENIED_OR_NOT_FOUND'

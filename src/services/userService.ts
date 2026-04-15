@@ -1,5 +1,5 @@
 import apiClient from './apiClient';
-import { ApiResponse, IUser, ISubmission } from '../types';
+import { ApiResponse, IUser } from '../types';
 
 export interface UserProfile extends IUser {
   rank: number;

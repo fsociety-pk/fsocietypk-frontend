@@ -141,11 +141,6 @@ export const downloadCertificateAsImage = async (
  * Generate LinkedIn share description
  */
 export const generateLinkedInDescription = (data: CertificateData): string => {
-  const date = new Date(data.completionDate).toLocaleDateString('en-US', {
-    month: 'short',
-    year: 'numeric'
-  });
-
   return `🎖️ Excited to announce that I've successfully completed "${data.challengeName}" on ${data.platformName}! 
 
 Completed ${data.totalChallenges} challenge(s) as part of my cybersecurity training journey. This experience has strengthened my skills in security assessment and problem-solving.
@@ -158,7 +153,7 @@ ${data.platformName} is a great platform for hands-on learning. Highly recommend
 /**
  * Share to LinkedIn with pre-filled description
  */
-export const shareToLinkedIn = (description: string, certificateImageUrl?: string): void => {
+export const shareToLinkedIn = (description: string): void => {
   const linkedInURL = new URL('https://www.linkedin.com/sharing/share-offsite/');
   linkedInURL.searchParams.append('url', window.location.href);
 

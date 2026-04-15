@@ -29,6 +29,7 @@ export interface IUser {
   isBanned: boolean
   createdAt: string
   updatedAt: string
+  socialLinks?: ISocialLinks
 }
 
 export type ChallengeStatus = 'pending' | 'approved' | 'rejected'
@@ -59,6 +60,7 @@ export interface IChallenge {
   isSolved?: boolean
   createdBy?: string | IUser
   author?: string | IUser
+  liveStatus?: ChallengeLiveStatus
   createdAt: string
   updatedAt: string
 }
