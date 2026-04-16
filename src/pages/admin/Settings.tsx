@@ -1,11 +1,31 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bell, CheckCheck, Trash2, RefreshCw, ShieldCheck } from 'lucide-react';
+import { Bell, CheckCheck, Trash2, RefreshCw, ShieldCheck, Megaphone, Send } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { notificationService } from '../../services/notificationService';
+import { adminService } from '../../services/adminService';
 
 const AdminSettings: React.FC = () => {
   const [isWorking, setIsWorking] = React.useState(false);
+  const [announcement, setAnnouncement] = React.useState({ title: '', message: '' });
+
+  const handleSendAnnouncement = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!announcement.title || !announcement.message) {
+      return toast.error('Please fill in all fields');
+    }
+
+    try {
+      setIsWorking(true);
+      await adminService.createAnnouncement(announcement);
+      toast.success('Announcement broadcasted successfully');
+      setAnnouncement({ title: '', message: '' });
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Failed to send announcement');
+    } finally {
+      setIsWorking(false);
+    }
+  };
 
   const runAction = async (action: () => Promise<void>, successMessage: string, errorMessage: string) => {
     try {
@@ -108,6 +128,55 @@ const AdminSettings: React.FC = () => {
           <p className="text-xs text-zinc-500 font-mono leading-relaxed">
             Use this when you need to force-refresh data after moderation actions or infrastructure changes.
           </p>
+        </motion.section>
+
+        <motion.section
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="card p-6 space-y-4 lg:col-span-2"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-orange-500/10 border border-orange-500/30 flex items-center justify-center">
+              <Megaphone className="w-5 h-5 text-orange-500" />
+            </div>
+            <div>
+              <h2 className="font-display font-bold text-white uppercase tracking-widest">Global Announcements</h2>
+              <p className="text-[11px] text-zinc-500 font-mono uppercase">Broadcast messages to all platform users</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleSendAnnouncement} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">Announcement Title</label>
+              <input
+                type="text"
+                value={announcement.title}
+                onChange={(e) => setAnnouncement({ ...announcement, title: e.target.value })}
+                className="w-full bg-black/40 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:border-neon-green/50 focus:outline-none transition-all font-mono text-sm"
+                placeholder="SYSTEM_UPGRADE_COMPLETE"
+                disabled={isWorking}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">Message Content</label>
+              <textarea
+                rows={4}
+                value={announcement.message}
+                onChange={(e) => setAnnouncement({ ...announcement, message: e.target.value })}
+                className="w-full bg-black/40 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:border-neon-green/50 focus:outline-none transition-all font-mono text-sm"
+                placeholder="ALL_SERVICES_ARE_NOW_OPERATIONAL_HAPPY_HACKING"
+                disabled={isWorking}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isWorking}
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-neon-green text-black hover:shadow-[0_0_15px_rgba(0,255,65,0.4)] transition-all text-xs font-black tracking-widest disabled:opacity-60"
+            >
+              <Send className="w-4 h-4" />
+              BROADCAST_ANNOUNCEMENT
+            </button>
+          </form>
         </motion.section>
       </div>
     </div>

@@ -74,8 +74,13 @@ export default {
         'slide-in-right': 'slide-in-right 0.3s ease-out',
         'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
         'glitch': 'glitch 1s linear infinite',
+        'shimmer': 'shimmer 2s infinite alternate',
       },
       keyframes: {
+        'shimmer': {
+          '0%': { filter: 'drop-shadow(0 0 5px rgba(250, 204, 21, 0.4))' },
+          '100%': { filter: 'drop-shadow(0 0 20px rgba(250, 204, 21, 0.8))' },
+        },
         'shake': {
           '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
           '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },

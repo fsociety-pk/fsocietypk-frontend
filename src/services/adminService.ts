@@ -70,6 +70,17 @@ export const adminService = {
     return data;
   },
 
+  // Announcements
+  createAnnouncement: async (payload: { title: string; message: string; targetRole?: string }): Promise<ApiResponse<any>> => {
+    const { data } = await apiClient.post('/admin/announcements', payload);
+    return data;
+  },
+
+  getAnnouncements: async (): Promise<ApiResponse<any[]>> => {
+    const { data } = await apiClient.get('/admin/announcements');
+    return data;
+  },
+
   getAnalytics: async (): Promise<ApiResponse<IAnalyticsData>> => {
     const { data } = await apiClient.get('/admin/analytics');
     return data;

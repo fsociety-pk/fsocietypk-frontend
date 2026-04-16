@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { io } from 'socket.io-client';
 import { useAuthStore } from './store/authStore';
 import { authService } from './services/auth.service';
 
@@ -27,8 +28,58 @@ import SubmitChallenge from './pages/SubmitChallenge';
 import Projects from './pages/Projects';
 import ManageProjects from './pages/admin/ManageProjects';
 
+import { API_URL } from './services/apiConfig';
+
 function App() {
-  const { setUser, setLoading, isLoading } = useAuthStore();
+  const { user, setUser, setLoading, isLoading } = useAuthStore();
+
+  useEffect(() => {
+    if (!user) return;
+
+    const socket = io(API_URL || window.location.origin, {
+      withCredentials: true,
+    });
+
+    socket.on('newAnnouncement', (data: { title: string; message: string }) => {
+      toast.custom((t) => (
+        <div
+          className={`${
+            t.visible ? 'animate-enter' : 'animate-leave'
+          } max-w-md w-full bg-black/90 border border-orange-500/50 shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 font-mono`}
+        >
+          <div className="flex-1 w-0 p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 pt-0.5">
+                <div className="h-10 w-10 rounded-full bg-orange-500/10 border border-orange-500/30 flex items-center justify-center">
+                   <span className="text-orange-500 font-bold">!</span>
+                </div>
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-sm font-black text-white uppercase tracking-tighter">
+                  ANNOUNCEMENT: {data.title}
+                </p>
+                <p className="mt-1 text-xs text-zinc-400 leading-relaxed uppercase">
+                  {data.message}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex border-l border-white/10">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-xs font-black text-orange-500 hover:text-orange-400 focus:outline-none"
+            >
+              ACK
+            </button>
+          </div>
+        </div>
+      ), { duration: 10000, position: 'top-right' });
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [user]);
 
   useEffect(() => {
     const initAuth = async () => {
@@ -111,16 +162,16 @@ function App() {
           <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
 
-          {/* Dashboard is public */}
+          {/* Public Area */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/profile/:username" element={<PublicProfile />} />
 
           {/* Protected Area */}
           <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
           <Route path="/challenges/:id" element={<ProtectedRoute><ChallengeDetail /></ProtectedRoute>} />
-          <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/profile/:username" element={<ProtectedRoute><PublicProfile /></ProtectedRoute>} />
           <Route path="/submit-challenge" element={<ProtectedRoute><SubmitChallenge /></ProtectedRoute>} />
           <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
 

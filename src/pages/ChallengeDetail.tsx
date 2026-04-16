@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Terminal, FileDown, HelpCircle, Trophy, Send, CheckCircle2, Loader2, Lock, Unlock } from 'lucide-react';
+import { ArrowLeft, Terminal, FileDown, HelpCircle, Trophy, Send, CheckCircle2, Loader2, Lock, Unlock, Users } from 'lucide-react';
 import { challengeService } from '../services/challenge.service';
 import { useAuthStore } from '../store/authStore';
+import { useQuery } from '@tanstack/react-query';
 
 import { IChallenge } from '../types';
 import { toast } from 'react-hot-toast';
@@ -27,6 +28,13 @@ const ChallengeDetail: React.FC = () => {
   const [flagValues, setFlagValues] = useState<string[]>([]);
   const [flagFeedback, setFlagFeedback] = useState<FlagFeedback | null>(null);
   const [roastError, setRoastError] = useState(false);
+
+  const { data: recentSolvers } = useQuery({
+    queryKey: ['challenge-solvers', id],
+    queryFn: () => challengeService.getRecentSolvers(id!),
+    enabled: !!id,
+    select: (res) => res.data,
+  });
 
   const getProgressStorageKey = (challengeId: string) => {
     const userScope = user?._id ?? 'anonymous';
@@ -293,6 +301,42 @@ const ChallengeDetail: React.FC = () => {
                   </div>
                 </div>
               )}
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6"
+            >
+              <h3 className="text-sm font-bold text-zinc-500 uppercase flex items-center gap-2 mb-4">
+                <Users className="w-4 h-4" /> RECENT_SOLVERS
+              </h3>
+              <div className="space-y-3">
+                {recentSolvers && recentSolvers.length > 0 ? (
+                  recentSolvers.map((solver: any, i: number) => (
+                    <div key={i} className="flex items-center justify-between p-2 bg-black/30 border border-zinc-800/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full border border-neon-green/30 flex items-center justify-center overflow-hidden">
+                          {solver.avatar ? (
+                            <img src={solver.avatar} alt={solver.username} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-xs text-neon-green/50">{solver.username[0].toUpperCase()}</span>
+                          )}
+                        </div>
+                        <span className="text-sm text-zinc-300 font-bold">{solver.username}</span>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] text-neon-green font-mono">{solver.score} PTS</p>
+                        <p className="text-[9px] text-zinc-500 uppercase font-mono">
+                          {new Date(solver.timestamp).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-zinc-600 font-mono italic">NO_SOLVERS_DETECTED_YET</p>
+                )}
+              </div>
             </motion.div>
 
             {/* Flag Submission */}

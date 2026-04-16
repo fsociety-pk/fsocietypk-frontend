@@ -47,6 +47,11 @@ export const challengeService = {
     return data
   },
 
+  getRecentSolvers: async (id: string): Promise<ApiResponse<any[]>> => {
+    const { data } = await apiClient.get(`/challenges/${id}/solvers`)
+    return data
+  },
+
   unlockHint: async (challengeId: string, hintId: string): Promise<ApiResponse<{ content: string }>> => {
     const { data } = await apiClient.post(`/challenges/${challengeId}/hints/${hintId}/unlock`)
     return data

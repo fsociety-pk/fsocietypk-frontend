@@ -251,42 +251,54 @@ const PublicProfile = () => {
               Challenge Proficiency
             </h3>
             <div className="space-y-4">
-              <CategoryProgress
-                category="Web Exploitation"
-                solved={
-                  profile.solvedChallenges?.filter(
-                    (c: any) => c.category === 'web'
-                  ).length || 0
-                }
-                total={12}
-              />
-              <CategoryProgress
-                category="Reverse Engineering"
-                solved={
-                  profile.solvedChallenges?.filter(
-                    (c: any) => c.category === 'rev'
-                  ).length || 0
-                }
-                total={8}
-              />
-              <CategoryProgress
-                category="Cryptography"
-                solved={
-                  profile.solvedChallenges?.filter(
-                    (c: any) => c.category === 'crypto'
-                  ).length || 0
-                }
-                total={10}
-              />
-              <CategoryProgress
-                category="Forensics"
-                solved={
-                  profile.solvedChallenges?.filter(
-                    (c: any) => c.category === 'forensics'
-                  ).length || 0
-                }
-                total={6}
-              />
+              {(profile as any).proficiencyIndex?.filter((s: any) => ['web', 'rev', 'crypto', 'forensics'].includes(s.category)).map((stat: any) => (
+                <CategoryProgress 
+                  key={stat.category}
+                  category={stat.category === 'rev' ? 'Reverse Engineering' : stat.category === 'web' ? 'Web Exploitation' : stat.category.charAt(0).toUpperCase() + stat.category.slice(1)} 
+                  solved={stat.solved} 
+                  total={stat.total || 10} 
+                />
+              ))}
+              {!(profile as any).proficiencyIndex && (
+                <>
+                  <CategoryProgress
+                    category="Web Exploitation"
+                    solved={
+                      profile.solvedChallenges?.filter(
+                        (c: any) => c.category === 'web'
+                      ).length || 0
+                    }
+                    total={12}
+                  />
+                  <CategoryProgress
+                    category="Reverse Engineering"
+                    solved={
+                      profile.solvedChallenges?.filter(
+                        (c: any) => c.category === 'rev'
+                      ).length || 0
+                    }
+                    total={8}
+                  />
+                  <CategoryProgress
+                    category="Cryptography"
+                    solved={
+                      profile.solvedChallenges?.filter(
+                        (c: any) => c.category === 'crypto'
+                      ).length || 0
+                    }
+                    total={10}
+                  />
+                  <CategoryProgress
+                    category="Forensics"
+                    solved={
+                      profile.solvedChallenges?.filter(
+                        (c: any) => c.category === 'forensics'
+                      ).length || 0
+                    }
+                    total={6}
+                  />
+                </>
+              )}
             </div>
           </div>
 

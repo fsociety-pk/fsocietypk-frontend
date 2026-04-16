@@ -14,6 +14,7 @@ export interface ChangePasswordPayload {
 }
 
 export interface UpdateProfilePayload {
+  username?: string;
   avatar?: string;
   bio?: string;
   country?: string;
