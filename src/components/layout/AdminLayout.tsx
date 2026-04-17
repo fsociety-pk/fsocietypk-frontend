@@ -44,7 +44,7 @@ const AdminLayout: React.FC = () => {
       <header className="sticky top-0 z-50 w-full border-b border-zinc-900 bg-black/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center gap-2">
                 <img src={companyLogo} alt="FsocietyPK logo" className="w-8 h-8 object-contain" />
                 <span className="font-display font-bold text-white tracking-widest hidden sm:block">FSOCIETY_ADMIN</span>
