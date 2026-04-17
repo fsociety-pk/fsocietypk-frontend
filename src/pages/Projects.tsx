@@ -36,15 +36,17 @@ const Projects: React.FC = () => {
           {projects.map((project, index) => (
             <motion.div
               key={project._id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative flex flex-col justify-between rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 sm:p-6 md:p-8 backdrop-blur-sm transition-all hover:border-neon-green/40 hover:bg-zinc-900/80 hover:shadow-[0_0_30px_rgba(0,255,65,0.1)]"
+              transition={{ duration: 0.6, delay: index * 0.1, type: "spring", stiffness: 100 }}
+              whileHover={{ scale: 1.02, y: -5, boxShadow: "0 0 40px rgba(0,255,65,0.15)" }}
+              className="group relative flex flex-col justify-between rounded-2xl border border-zinc-800 bg-black/60 p-6 sm:p-8 md:p-10 backdrop-blur-md transition-all hover:border-neon-green/60 hover:bg-zinc-900/90 overflow-hidden"
             >
-              {/* Card Decoration */}
-              <div className="absolute right-4 top-4 text-zinc-800 transition-colors group-hover:text-neon-green/20">
-                <Folder className="h-24 w-24" strokeWidth={1} />
+              {/* Card Background Decoration */}
+              <div className="absolute -right-10 -top-10 text-neon-green/5 transition-colors duration-500 group-hover:text-neon-green/20 group-hover:rotate-12 group-hover:scale-110">
+                <Folder className="h-48 w-48" strokeWidth={0.5} />
               </div>
+              <div className="absolute inset-0 bg-gradient-to-br from-neon-green/0 via-transparent to-neon-green/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               
               <div className="relative z-10">
                 <div className="mb-4 inline-flex items-center rounded-sm bg-neon-green/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-neon-green">

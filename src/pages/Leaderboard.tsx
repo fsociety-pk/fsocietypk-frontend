@@ -8,6 +8,25 @@ import { useQuery } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import { toast } from 'react-hot-toast';
 
+const getCountryEmoji = (code: string) => {
+  switch (code) {
+    case 'US': return '🇺🇸';
+    case 'GB': return '🇬🇧';
+    case 'PK': return '🇵🇰';
+    case 'IN': return '🇮🇳';
+    case 'CA': return '🇨🇦';
+    case 'AU': return '🇦🇺';
+    case 'FR': return '🇫🇷';
+    case 'DE': return '🇩🇪';
+    case 'BR': return '🇧🇷';
+    case 'JP': return '🇯🇵';
+    case 'CN': return '🇨🇳';
+    case 'RU': return '🇷🇺';
+    case 'OTHER': return '🌍';
+    default: return '';
+  }
+};
+
 // ── Components ────────────────────────────────────────────────────
 
 const CrownIcon = ({ rank }: { rank: number }) => {
@@ -71,12 +90,17 @@ const PodiumItem = ({ entry, rank, color }: { entry: LeaderboardEntry; rank: num
       </div>
 
       <div className="flex flex-col items-center mb-1">
-        <Link 
-          to={`/profile/${entry.username}`}
-          className="text-lg font-bold text-text-primary hover:text-neon-green transition-colors"
-        >
-          {entry.username}
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link 
+            to={`/profile/${entry.username}`}
+            className="text-lg font-bold text-text-primary hover:text-neon-green transition-colors"
+          >
+            {entry.username}
+          </Link>
+          {entry.country && (
+            <span className="text-lg" title={entry.country}>{getCountryEmoji(entry.country)}</span>
+          )}
+        </div>
         <span className={clsx(
           "text-[10px] px-2 py-0.5 rounded font-black tracking-widest mt-1",
           rank === 1 && "bg-neon-green text-background shadow-[0_0_10px_rgba(20,255,100,0.5)]",
@@ -256,7 +280,9 @@ const Leaderboard = () => {
                               {entry.username.toUpperCase()}
                             </Link>
                             {entry.country && (
-                              <span className="text-[10px] text-zinc-500 font-mono">[{entry.country}]</span>
+                              <span className="text-[14px]" title={entry.country}>
+                                {getCountryEmoji(entry.country)}
+                              </span>
                             )}
                           </div>
                         </td>

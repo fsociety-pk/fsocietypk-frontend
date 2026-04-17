@@ -201,7 +201,7 @@ const Challenges: React.FC = () => {
                   {/* Top Bar (Meta tags) */}
                   <div className="flex items-center justify-between mb-5 mt-6 sm:mt-8">
                      <div className="flex items-center gap-2">
-                        <span className="text-[9px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded bg-zinc-800/50 text-zinc-300 border border-zinc-700/50">
+                        <span className="text-[11px] font-black uppercase tracking-[0.15em] px-2.5 py-1.5 rounded bg-neon-green/10 text-neon-green border border-neon-green/30 shadow-[0_0_10px_rgba(0,255,65,0.1)]">
                           {challenge.category}
                         </span>
                         <span className={`text-[9px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded border ${getDifficultyColor(challenge.difficulty)} bg-black/20`}>

@@ -149,8 +149,8 @@ const Navbar: React.FC = () => {
                     <div className="absolute inset-0 shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]" />
                   </div>
                   <div className="flex flex-col min-w-0">
-                    <span className="text-[6px] xl:text-[7px] text-zinc-600 tracking-[0.2em] xl:tracking-[0.3em] font-black uppercase leading-none mb-0.5 group-hover:text-neon-green/50 transition-colors">ROOT_SESSION</span>
-                    <span className="text-[10px] xl:text-[11px] font-bold text-zinc-300 group-hover:text-white transition-colors font-mono truncate leading-none uppercase">{user?.username}</span>
+                    <span className="text-[6px] xl:text-[7px] text-zinc-600 tracking-[0.2em] xl:tracking-[0.3em] font-black uppercase mb-1.5 group-hover:text-neon-green/50 transition-colors">ROOT_SESSION</span>
+                    <span className="text-[10px] xl:text-[11px] font-bold text-zinc-300 group-hover:text-white transition-colors font-mono truncate leading-tight uppercase">{user?.username}</span>
                   </div>
                 </Link>
 

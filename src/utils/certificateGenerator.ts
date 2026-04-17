@@ -21,74 +21,58 @@ export const generateCertificateSVG = (data: CertificateData): string => {
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background with gradient -->
   <defs>
     <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:rgb(10,10,15);stop-opacity:1" />
-      <stop offset="100%" style="stop-color:rgb(20,30,50);stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#050505;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0a1a10;stop-opacity:1" />
     </linearGradient>
-    
-    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:rgb(255,215,0);stop-opacity:0.8" />
-      <stop offset="100%" style="stop-color:rgb(200,150,0);stop-opacity:0.8" />
+    <linearGradient id="neonGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00FF41;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#00A32A;stop-opacity:1"/>
     </linearGradient>
-
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-      <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
     </filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00FF41" stroke-width="0.5" stroke-opacity="0.1"/>
+    </pattern>
   </defs>
 
-  <!-- Main background -->
   <rect width="1200" height="800" fill="url(#bgGradient)"/>
+  <rect width="1200" height="800" fill="url(#grid)"/>
 
-  <!-- Decorative border -->
-  <rect x="30" y="30" width="1140" height="740" fill="none" stroke="url(#goldGradient)" stroke-width="3"/>
-  <rect x="40" y="40" width="1120" height="720" fill="none" stroke="url(#goldGradient)" stroke-width="1" opacity="0.5"/>
+  <path d="M 40 40 L 1160 40 L 1160 760 L 40 760 Z" fill="none" stroke="#00FF41" stroke-width="1" stroke-opacity="0.3"/>
+  <path d="M 30 60 L 30 30 L 60 30" fill="none" stroke="#00FF41" stroke-width="4" filter="url(#glow)"/>
+  <path d="M 1170 60 L 1170 30 L 1140 30" fill="none" stroke="#00FF41" stroke-width="4" filter="url(#glow)"/>
+  <path d="M 30 740 L 30 770 L 60 770" fill="none" stroke="#00FF41" stroke-width="4" filter="url(#glow)"/>
+  <path d="M 1170 740 L 1170 770 L 1140 770" fill="none" stroke="#00FF41" stroke-width="4" filter="url(#glow)"/>
 
-  <!-- Corner decorations -->
-  <circle cx="50" cy="50" r="15" fill="url(#goldGradient)" filter="url(#glow)"/>
-  <circle cx="1150" cy="50" r="15" fill="url(#goldGradient)" filter="url(#glow)"/>
-  <circle cx="50" cy="750" r="15" fill="url(#goldGradient)" filter="url(#glow)"/>
-  <circle cx="1150" cy="750" r="15" fill="url(#goldGradient)" filter="url(#glow)"/>
+  <rect x="50" y="50" width="4" height="60" fill="#00FF41" opacity="0.6"/>
+  <rect x="60" y="50" width="4" height="20" fill="#00FF41" opacity="0.8"/>
 
-  <!-- Decorative lines -->
-  <line x1="100" y1="100" x2="300" y2="100" stroke="url(#goldGradient)" stroke-width="2"/>
-  <line x1="900" y1="100" x2="1100" y2="100" stroke="url(#goldGradient)" stroke-width="2"/>
-
-  <!-- Platform Logo/Badge -->
-  <text x="600" y="80" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="url(#goldGradient)" letter-spacing="3">${data.platformName}</text>
+  <text x="600" y="140" font-family="'Courier New', monospace" font-size="20" font-weight="bold" fill="#00FF41" letter-spacing="12" text-anchor="middle">SYSTEM_OPERATIVE_CERTIFICATION</text>
   
-  <!-- Certificate of Achievement text -->
-  <text x="600" y="160" font-family="Georgia, serif" font-size="48" font-weight="bold" text-anchor="middle" fill="url(#goldGradient)" letter-spacing="2">CERTIFICATE</text>
-  <text x="600" y="215" font-family="Georgia, serif" font-size="36" text-anchor="middle" fill="rgb(150,150,150)">OF ACHIEVEMENT</text>
+  <text x="600" y="240" font-family="'Arial Black', sans-serif" font-size="75" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="6">CERTIFICATE</text>
+  <text x="600" y="295" font-family="'Courier New', monospace" font-size="24" fill="#00FF41" text-anchor="middle" letter-spacing="8">OF ACHIEVEMENT</text>
 
-  <!-- Main content -->
-  <text x="600" y="290" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="rgb(180,180,180)">This is proudly presented to</text>
+  <rect x="400" y="340" width="400" height="1" fill="url(#neonGradient)"/>
+
+  <text x="600" y="415" font-family="Arial, sans-serif" font-size="16" fill="#888888" text-anchor="middle" letter-spacing="3">THIS DOCUMENT VERIFIES THAT</text>
   
-  <!-- User name (large and prominent) -->
-  <text x="600" y="370" font-family="Georgia, serif" font-size="52" font-weight="bold" text-anchor="middle" fill="url(#goldGradient)" letter-spacing="1">${data.userName.toUpperCase()}</text>
+  <text x="600" y="500" font-family="'Courier New', monospace" font-size="52" font-weight="900" fill="url(#neonGradient)" text-anchor="middle" filter="url(#glow)">${data.userName.toUpperCase()}</text>
 
-  <!-- Achievement description -->
-  <text x="600" y="440" font-family="Arial, sans-serif" font-size="20" text-anchor="middle" fill="rgb(200,200,200)">For successfully completing</text>
-  <text x="600" y="475" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="url(#goldGradient)">${data.challengeName}</text>
-  <text x="600" y="520" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="rgb(180,180,180)">on ${data.platformName}</text>
-
-  <!-- Statistics -->
-  <text x="600" y="590" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="rgb(150,150,150)">Challenges Completed: ${data.totalChallenges}</text>
-
-  <!-- Completion date -->
-  <text x="600" y="650" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="rgb(150,150,150)">Completed on ${currentDate}</text>
-
-  <!-- Signature line -->
-  <line x1="350" y1="700" x2="550" y2="700" stroke="url(#goldGradient)" stroke-width="2"/>
-  <text x="450" y="730" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="rgb(150,150,150)">The ${data.platformName} Community</text>
-
-  <!-- Verification -->
-  <text x="1050" y="730" font-family="Arial, sans-serif" font-size="12" text-anchor="end" fill="rgb(100,100,100)">Verified Certificate</text>
+  <text x="600" y="575" font-family="Arial, sans-serif" font-size="16" fill="#888888" text-anchor="middle" letter-spacing="2">HAS SUCCESSFULLY CLEARANCE LEVEL ON</text>
+  <text x="600" y="625" font-family="'Arial Black', sans-serif" font-size="28" fill="#FFFFFF" text-anchor="middle" letter-spacing="3">[ ${data.challengeName.toUpperCase()} ]</text>
+  
+  <path d="M 300 700 L 500 700 M 700 700 L 900 700" stroke="#00FF41" stroke-width="1" stroke-opacity="0.4"/>
+  <text x="400" y="690" font-family="'Courier New', monospace" font-size="14" fill="#00FF41" text-anchor="middle">DATE</text>
+  <text x="400" y="725" font-family="'Courier New', monospace" font-size="14" fill="#888888" text-anchor="middle">${currentDate}</text>
+  
+  <text x="800" y="690" font-family="'Courier New', monospace" font-size="14" fill="#00FF41" text-anchor="middle">AUTHORITY</text>
+  <text x="800" y="725" font-family="'Courier New', monospace" font-size="14" fill="#888888" text-anchor="middle">${data.platformName.toUpperCase()}</text>
+  
+  <text x="600" y="770" font-family="'Courier New', monospace" font-size="10" fill="#333333" text-anchor="middle" letter-spacing="4">VERIFICATION_HASH: ${Math.random().toString(36).substring(2, 10).toUpperCase()}-${Date.now().toString(16).toUpperCase()}</text>
 </svg>`;
 };
 

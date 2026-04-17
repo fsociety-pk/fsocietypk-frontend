@@ -7,7 +7,6 @@ import {
   generateCertificateSVG,
   downloadCertificateAsImage,
   generateLinkedInDescription,
-  shareToLinkedIn,
   CertificateData,
 } from "../../utils/certificateGenerator";
 
@@ -49,9 +48,33 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
     toast.success('LinkedIn description copied to clipboard!');
   };
 
-  const handleShareLinkedIn = () => {
-    shareToLinkedIn(linkedInDescription);
-    if (onShare) onShare(linkedInDescription);
+  const handleShareLinkedIn = async () => {
+    try {
+      // Auto-download certificate
+      setIsDownloading(true);
+      await downloadCertificateAsImage(
+        certificateSVG,
+        `${data.userName}-${data.platformName}-Certificate`
+      );
+      
+      // Copy to clipboard
+      navigator.clipboard.writeText(linkedInDescription);
+      
+      toast.success(
+        'Certificate downloaded! Drop it into the LinkedIn post we just opened for you.',
+        { duration: 5000, icon: '🚀' }
+      );
+
+      // Open LinkedIn Feed
+      window.open('https://www.linkedin.com/feed/', '_blank');
+      
+      if (onShare) onShare(linkedInDescription);
+    } catch (error) {
+      toast.error('Share process encountered an error.');
+      console.error(error);
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
