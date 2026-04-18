@@ -120,11 +120,11 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
               </div>
 
               {/* Certificate Preview - Responsive Container */}
-              <div className="bg-black/40 border border-surface-border rounded-xl p-4 md:p-6 mb-8 flex justify-center w-full overflow-x-auto">
+              <div className="bg-black/40 border border-surface-border rounded-xl p-4 md:p-6 mb-8 w-full">
                 <div
                   dangerouslySetInnerHTML={{ __html: certificateSVG }}
-                  className="flex-shrink-0"
-                  style={{ width: '100%', maxWidth: '800px', aspectRatio: '1200/800' }}
+                  className="w-full"
+                  style={{ maxWidth: '100%', height: 'auto' }}
                 />
               </div>
 
