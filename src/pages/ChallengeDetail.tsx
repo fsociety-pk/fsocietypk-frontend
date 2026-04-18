@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Terminal, FileDown, HelpCircle, Trophy, Send, CheckCircle2, Loader2, Lock, Unlock, Users } from 'lucide-react';
+import { ArrowLeft, Terminal, FileDown, HelpCircle, Trophy, Send, CheckCircle2, Loader2, Lock, Unlock, Users, Linkedin, Share2 } from 'lucide-react';
 import { challengeService } from '../services/challenge.service';
 import { useAuthStore } from '../store/authStore';
 import { useQuery } from '@tanstack/react-query';
@@ -363,11 +363,31 @@ const ChallengeDetail: React.FC = () => {
                 </h3>
                 
                 {isChallengeSolvedUI ? (
-                  <div className="flex items-center gap-3 text-neon-green bg-neon-green/5 p-4 rounded-lg border border-neon-green/20">
-                    <CheckCircle2 className="w-6 h-6 shrink-0" />
-                    <div>
-                      <p className="font-bold">MISSION ACCOMPLISHED</p>
-                      <p className="text-xs text-neon-green/70">YOU HAVE ALREADY DEPLOYED THE CORRECT FLAG</p>
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3 text-neon-green bg-neon-green/5 p-4 rounded-lg border border-neon-green/20">
+                      <CheckCircle2 className="w-6 h-6 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-bold">MISSION ACCOMPLISHED</p>
+                        <p className="text-xs text-neon-green/70">YOU HAVE ALREADY DEPLOYED THE CORRECT FLAG</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <button
+                        onClick={() => setShowCertificateModal(true)}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-neon-green/10 border border-neon-green/40 text-neon-green hover:bg-neon-green/20 rounded-lg transition-colors text-xs font-bold uppercase tracking-widest"
+                      >
+                        <Trophy className="w-4 h-4" />
+                        View Certificate
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowCertificateModal(true);
+                        }}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600/10 border border-blue-600/40 text-blue-400 hover:bg-blue-600/20 rounded-lg transition-colors text-xs font-bold uppercase tracking-widest"
+                      >
+                        <Linkedin className="w-4 h-4" />
+                        Share LinkedIn
+                      </button>
                     </div>
                   </div>
                 ) : (
