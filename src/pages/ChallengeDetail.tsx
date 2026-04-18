@@ -6,6 +6,8 @@ import { challengeService } from '../services/challenge.service';
 import { useAuthStore } from '../store/authStore';
 import { useQuery } from '@tanstack/react-query';
 import WriteupSubmissionModal from '../components/common/WriteupSubmissionModal';
+import CertificateModal from '../components/common/CertificateModal';
+import { CertificateData } from '../utils/certificateGenerator';
 
 import { IChallenge } from '../types';
 import { toast } from 'react-hot-toast';
@@ -30,6 +32,8 @@ const ChallengeDetail: React.FC = () => {
   const [flagFeedback, setFlagFeedback] = useState<FlagFeedback | null>(null);
   const [roastError, setRoastError] = useState(false);
   const [showWriteupModal, setShowWriteupModal] = useState(false);
+  const [showCertificateModal, setShowCertificateModal] = useState(false);
+  const [certificateData, setCertificateData] = useState<CertificateData | null>(null);
 
   const { data: recentSolvers } = useQuery({
     queryKey: ['challenge-solvers', id],
@@ -167,8 +171,23 @@ const ChallengeDetail: React.FC = () => {
           setCompletedFlagSteps(allDone);
           saveFlagProgress(id, allDone);
           setChallenge(prev => prev ? { ...prev, isSolved: true } : null);
-          // Show writeup submission modal
-          setTimeout(() => setShowWriteupModal(true), 800);
+          
+          // Create certificate data
+          const certData: CertificateData = {
+            userName: user?.username || 'Hacker',
+            challengeName: challenge?.title || 'Unknown Challenge',
+            completionDate: new Date(),
+            totalChallenges: user?.solvedChallenges.length || 1,
+            platformName: 'fsociety',
+            platformURL: window.location.href,
+          };
+          setCertificateData(certData);
+          
+          // Show certificate and writeup modals
+          setTimeout(() => {
+            setShowCertificateModal(true);
+            setShowWriteupModal(true);
+          }, 800);
         } else {
           const nextStep = result.nextSequence ?? (step + 1);
           setFlagFeedback({
@@ -246,6 +265,18 @@ const ChallengeDetail: React.FC = () => {
         onClose={() => setShowWriteupModal(false)}
         challengeId={id || ''}
         challengeTitle={challenge?.title || ''}
+      />
+      <CertificateModal
+        data={certificateData || {
+          userName: user?.username || 'Hacker',
+          challengeName: challenge?.title || 'Unknown Challenge',
+          completionDate: new Date(),
+          totalChallenges: 1,
+          platformName: 'fsociety',
+          platformURL: window.location.href,
+        }}
+        isOpen={showCertificateModal}
+        onClose={() => setShowCertificateModal(false)}
       />
       <div className="max-w-4xl mx-auto">
         {/* ── Navigation ────────────────────────────────────────────── */}
