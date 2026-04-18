@@ -97,7 +97,7 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="bg-background-card border border-neon-green/30 rounded-2xl p-8 max-w-4xl w-full pointer-events-auto max-h-[90vh] overflow-y-auto">
+            <div className="bg-background-card border border-neon-green/30 rounded-2xl p-6 md:p-8 max-w-6xl w-full pointer-events-auto max-h-[90vh] overflow-y-auto">
               {/* Close button */}
               <button
                 onClick={onClose}
@@ -108,23 +108,23 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
 
               {/* Header */}
               <div className="text-center mb-8">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <Trophy className="w-8 h-8 text-neon-green" />
-                  <h2 className="text-3xl font-black italic text-glow uppercase">
+                <div className="flex items-center justify-center gap-3 mb-4 flex-wrap">
+                  <Trophy className="w-8 h-8 text-neon-green shrink-0" />
+                  <h2 className="text-2xl md:text-3xl font-black italic text-glow uppercase">
                     MISSION ACCOMPLISHED!
                   </h2>
                 </div>
-                <p className="text-text-muted font-mono">
+                <p className="text-text-muted font-mono text-sm md:text-base">
                   You've successfully completed all challenges. Here's your certificate of achievement.
                 </p>
               </div>
 
-              {/* Certificate Preview */}
-              <div className="bg-black/40 border border-surface-border rounded-xl p-6 mb-8 flex justify-center">
+              {/* Certificate Preview - Responsive Container */}
+              <div className="bg-black/40 border border-surface-border rounded-xl p-4 md:p-6 mb-8 flex justify-center w-full overflow-x-auto">
                 <div
                   dangerouslySetInnerHTML={{ __html: certificateSVG }}
-                  className="max-w-full"
-                  style={{ maxWidth: '600px' }}
+                  className="flex-shrink-0"
+                  style={{ width: '100%', maxWidth: '800px', aspectRatio: '1200/800' }}
                 />
               </div>
 
