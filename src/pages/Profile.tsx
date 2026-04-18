@@ -493,7 +493,7 @@ const Profile: React.FC = () => {
                             <tr>
                               <td colSpan={4} className="px-6 py-12 text-center text-zinc-600 italic text-xs">No missions cleared yet. Gear up!</td>
                             </tr>
-                          ) : profile?.solveHistory?.map((solve: any) => (
+                          ) : profile?.solveHistory?.filter((solve: any) => solve.pointsAwarded > 0).map((solve: any) => (
                             <tr key={solve._id} className="hover:bg-zinc-900/50 transition-colors">
                               <td className="px-6 py-3.5 font-bold text-zinc-100 capitalize text-xs">{solve.challengeId?.title}</td>
                               <td className="px-6 py-3.5">

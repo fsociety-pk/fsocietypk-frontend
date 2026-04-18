@@ -168,12 +168,12 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/profile/:username" element={<PublicProfile />} />
 
           {/* Protected Area */}
           <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
           <Route path="/challenges/:id" element={<ProtectedRoute><ChallengeDetail /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/profile/:username" element={<PublicProfile />} />
           <Route path="/submit-challenge" element={<ProtectedRoute><SubmitChallenge /></ProtectedRoute>} />
           <Route path="/submit-writeup" element={<ProtectedRoute><SubmitWriteup /></ProtectedRoute>} />
           <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />

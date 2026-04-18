@@ -27,22 +27,148 @@ const getCountryEmoji = (code: string) => {
   }
 };
 
+// ── CSS Animations ────────────────────────────────────────────────
+// Inject custom CSS animations for Hall of Fame
+const injectHallOfFameStyles = () => {
+  if (document.getElementById('hall-of-fame-styles')) return;
+  
+  const style = document.createElement('style');
+  style.id = 'hall-of-fame-styles';
+  style.textContent = `
+    @keyframes rotate-3d {
+      0% { transform: rotateX(20deg) rotateY(0deg); }
+      100% { transform: rotateX(20deg) rotateY(360deg); }
+    }
+    @keyframes levitate {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    .hall-of-fame-avatar {
+      animation: rotate-3d 8s linear infinite, levitate 4s ease-in-out infinite;
+    }
+  `;
+  document.head.appendChild(style);
+};
+
+injectHallOfFameStyles();
+
 // ── Components ────────────────────────────────────────────────────
 
-const CrownIcon = ({ rank }: { rank: number }) => {
-  if (rank !== 1) return null;
+const HallOfFameCard = ({ entry }: { entry: LeaderboardEntry }) => {
+  const particles = Array.from({ length: 6 }, (_, i) => i);
+
   return (
-    <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-      <Crown className="text-yellow-400 w-10 h-10 drop-shadow-[0_0_15px_rgba(250,204,21,0.8)] animate-[shimmer_2s_infinite_alternate]" />
-    </div>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6 }}
+      className="hall-of-fame relative flex flex-col items-center p-8 md:p-12 rounded-2xl border-2 border-neon-green bg-gradient-to-br from-neon-green/10 via-background-card to-background-card transition-all duration-300 md:col-span-1 md:col-start-2"
+    >
+      {/* Animated background glow */}
+      <div className="absolute inset-0 rounded-2xl blur-xl bg-neon-green/20 -z-10 animate-pulse" />
+      
+      {/* Top label */}
+      <motion.div
+        animate={{ y: [0, -5, 0] }}
+        transition={{ duration: 2, repeat: Infinity }}
+        className="mb-6"
+      >
+        <span className="px-4 py-2 bg-neon-green/20 border border-neon-green/50 rounded-lg text-[10px] font-black tracking-widest text-neon-green uppercase">
+          ⭐ HALL OF FAME
+        </span>
+      </motion.div>
+
+      {/* 3D rotating avatar */}
+      <div className="relative mb-8 perspective">
+        {/* Floating particles */}
+        {particles.map((i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-neon-green rounded-full"
+            style={{
+              left: `${Math.cos((i / 6) * Math.PI * 2) * 80}px`,
+              top: `${Math.sin((i / 6) * Math.PI * 2) * 80}px`,
+              '--tx': `${Math.cos((i / 6) * Math.PI * 2) * 100}px`,
+            } as React.CSSProperties}
+            animate={{ opacity: [0.3, 0.8, 0.3] }}
+            transition={{ duration: 3, delay: i * 0.2, repeat: Infinity }}
+          />
+        ))}
+
+        <motion.div
+          className="hall-of-fame-avatar relative w-32 h-32 rounded-full bg-gradient-to-tr from-neon-green/40 to-neon-green/10 p-1 shadow-[0_0_40px_rgba(20,255,100,0.4)]"
+          style={{
+            boxShadow: '0 0 40px rgba(20, 255, 100, 0.6), inset 0 0 40px rgba(20, 255, 100, 0.2), 0 0 80px rgba(20, 255, 100, 0.3)',
+          }}
+        >
+          <Link to={`/profile/${entry.username}`} className="relative block w-full h-full group">
+            <div className="w-full h-full rounded-full overflow-hidden border-2 border-neon-green/50 bg-zinc-900 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+              {entry.avatar ? (
+                <img 
+                  src={entry.avatar} 
+                  alt={entry.username} 
+                  className="w-full h-full object-cover" 
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-5xl font-black text-neon-green/40">
+                  {entry.username[0].toUpperCase()}
+                </div>
+              )}
+            </div>
+          </Link>
+        </motion.div>
+
+        {/* Rotating ring */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, linear: true }}
+          className="absolute inset-0 rounded-full border border-dashed border-neon-green/30 pointer-events-none"
+        />
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 15, repeat: Infinity, linear: true }}
+          className="absolute inset-4 rounded-full border border-dashed border-neon-green/20 pointer-events-none"
+        />
+      </div>
+
+      {/* Username and info */}
+      <div className="text-center space-y-2 mb-6">
+        <Link 
+          to={`/profile/${entry.username}`}
+          className="block text-2xl md:text-3xl font-black text-neon-green hover:text-white transition-colors"
+        >
+          {entry.username.toUpperCase()}
+        </Link>
+        <div className="flex items-center justify-center gap-2">
+          {entry.country && (
+            <span className="text-2xl" title={entry.country}>{getCountryEmoji(entry.country)}</span>
+          )}
+          <span className="px-3 py-1 bg-neon-green/20 border border-neon-green/50 rounded text-[11px] font-black tracking-widest text-neon-green uppercase">
+            GODLIKE
+          </span>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="space-y-2 text-center w-full border-t border-neon-green/20 pt-6">
+        <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Infinity }}>
+          <div className="flex items-center justify-center gap-2 text-neon-green font-mono font-bold text-lg">
+            <Trophy size={20} />
+            <span>{entry.score.toLocaleString()} PTS</span>
+          </div>
+        </motion.div>
+        {entry.solveCount !== undefined && (
+          <p className="text-xs text-text-muted/80">{entry.solveCount} CHALLENGES MASTERED</p>
+        )}
+      </div>
+    </motion.div>
   );
 };
 
 const PodiumItem = ({ entry, rank, color }: { entry: LeaderboardEntry; rank: number; color: string }) => {
-  const Icon = rank === 1 ? Crown : (rank === 2 ? Trophy : Medal);
+  const Icon = rank === 2 ? Trophy : Medal;
   
   const motivationTags = {
-    1: "GODLIKE",
     2: "ELITE",
     3: "PRODIGY"
   };
@@ -54,15 +180,13 @@ const PodiumItem = ({ entry, rank, color }: { entry: LeaderboardEntry; rank: num
       transition={{ delay: rank * 0.1 }}
       className={clsx(
         "relative flex flex-col items-center p-6 rounded-xl border bg-background-card transition-all duration-300",
-        rank === 1 ? "scale-110 z-10 -translate-y-4" : "scale-100",
-        color === 'gold' && "border-neon-green shadow-neon-sm",
+        rank === 2 ? "scale-100" : "scale-95",
         color === 'silver' && "border-blue-400/50 shadow-[0_0_15px_rgba(96,165,250,0.3)]",
         color === 'bronze' && "border-orange-400/50 shadow-[0_0_15px_rgba(251,146,60,0.3)]"
       )}
     >
       <div className={clsx(
         "absolute -top-4 w-8 h-8 rounded-full flex items-center justify-center font-bold text-background",
-        color === 'gold' && "bg-neon-green",
         color === 'silver' && "bg-blue-400",
         color === 'bronze' && "bg-orange-400"
       )}>
@@ -70,21 +194,17 @@ const PodiumItem = ({ entry, rank, color }: { entry: LeaderboardEntry; rank: num
       </div>
       
       <div className="relative mb-4">
-        <CrownIcon rank={rank} />
         <Link to={`/profile/${entry.username}`} className="relative group cursor-pointer block">
-          <div className="relative w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-neon-green/40 to-transparent shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-transform duration-300 group-hover:scale-105">
+          <div className="relative w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-white/20 to-transparent shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-transform duration-300 group-hover:scale-105">
             <div className="w-full h-full rounded-full overflow-hidden border border-zinc-800 bg-surface flex items-center justify-center">
               {entry.avatar ? (
                 <img src={entry.avatar} alt={entry.username} className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-zinc-900 text-neon-green/30 text-3xl font-black italic">
+                <div className="w-full h-full flex items-center justify-center bg-zinc-900 text-gray-400/30 text-3xl font-black italic">
                   {entry.username[0].toUpperCase()}
                 </div>
               )}
             </div>
-            {rank === 1 && (
-              <div className="absolute inset-0 rounded-full bg-neon-green/10 animate-pulse blur-md" />
-            )}
           </div>
         </Link>
       </div>
@@ -103,25 +223,20 @@ const PodiumItem = ({ entry, rank, color }: { entry: LeaderboardEntry; rank: num
         </div>
         <span className={clsx(
           "text-[10px] px-2 py-0.5 rounded font-black tracking-widest mt-1",
-          rank === 1 && "bg-neon-green text-background shadow-[0_0_10px_rgba(20,255,100,0.5)]",
-          rank === 2 && "bg-blue-400 text-background shadow-[0_0_10px_rgba(96,165,250,0.5)]",
-          rank === 3 && "bg-orange-400 text-background shadow-[0_0_10px_rgba(251,146,60,0.5)]"
+          color === 'silver' && "bg-blue-400 text-background shadow-[0_0_10px_rgba(96,165,250,0.5)]",
+          color === 'bronze' && "bg-orange-400 text-background shadow-[0_0_10px_rgba(251,146,60,0.5)]"
         )}>
           {motivationTags[rank as keyof typeof motivationTags]}
         </span>
       </div>
 
-      <div className="flex items-center gap-2 text-neon-green font-mono font-bold">
+      <div className="flex items-center gap-2 text-white font-mono font-bold">
         <Icon size={16} />
         <span>{entry.score.toLocaleString()} pts</span>
       </div>
       
       {entry.solveCount !== undefined && (
         <p className="text-xs text-text-muted mt-2">{entry.solveCount} challenges solved</p>
-      )}
-
-      {rank === 1 && (
-        <div className="absolute inset-0 rounded-xl bg-neon-green/5 animate-pulse -z-1" />
       )}
     </motion.div>
   );
@@ -221,12 +336,21 @@ const Leaderboard = () => {
         </div>
       ) : (
         <>
-          {/* Top 3 Podium */}
+          {/* Top 3 Podium with Hall of Fame for Rank 1 */}
           {filteredData.length > 0 && !search && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 px-4">
-              {topThree[1] && <PodiumItem entry={topThree[1]} rank={2} color="silver" />}
-              {topThree[0] && <PodiumItem entry={topThree[0]} rank={1} color="gold" />}
-              {topThree[2] && <PodiumItem entry={topThree[2]} rank={3} color="bronze" />}
+            <div className="mb-16">
+              {/* Hall of Fame - Rank 1 */}
+              {topThree[0] && (
+                <div className="grid grid-cols-1 mb-16">
+                  <HallOfFameCard entry={topThree[0]} />
+                </div>
+              )}
+              
+              {/* Rank 2 & 3 Podium */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+                {topThree[1] && <PodiumItem entry={topThree[1]} rank={2} color="silver" />}
+                {topThree[2] && <PodiumItem entry={topThree[2]} rank={3} color="bronze" />}
+              </div>
             </div>
           )}
 
