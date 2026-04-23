@@ -170,7 +170,7 @@ const PodiumItem = ({ entry, rank, color }: { entry: LeaderboardEntry; rank: num
             "absolute w-32 h-32 rounded-full animate-spin z-15",
             color === 'silver' && "border-1 border-blue-400/60",
             color === 'bronze' && "border-1 border-orange-400/60"
-          )}add
+          )}
           style={{ animationDuration: '6s' }}
         />
 
