@@ -8,8 +8,7 @@ import {
   ChevronLeft, 
   BarChart4,
   Folder,
-  Menu,
-  X
+  Menu
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { clsx } from 'clsx';
