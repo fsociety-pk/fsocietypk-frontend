@@ -33,7 +33,7 @@ const ResourceCard = ({ resource }: { resource: IResource }) => (
   <motion.div
     variants={itemVariants}
     whileHover={{ y: -4 }}
-    className="group bg-zinc-950 border border-zinc-800 rounded-xl p-6 hover:border-neon-green/30 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,255,65,0.08)]"
+    className="group rounded-lg border border-zinc-800 bg-zinc-950 p-6 transition-colors hover:border-neon-green/40"
   >
     <div className="flex items-start justify-between mb-3">
       <div className="flex-1">
@@ -171,14 +171,8 @@ export const Resources: React.FC<ResourcesProps> = ({ showDashboardSection = fal
   }
 
   return (
-    <div className="relative min-h-screen bg-black font-mono text-white overflow-hidden">
-      {/* Ambient background glows */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-neon-green/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[400px] bg-neon-green/3 blur-[150px] rounded-full" />
-      </div>
-
-      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8 py-12">
+    <div className="relative min-w-0 bg-background text-white">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 md:px-8">
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-12">
           {/* Header */}
           <motion.section variants={itemVariants} className="space-y-6">

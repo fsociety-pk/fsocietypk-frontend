@@ -54,8 +54,8 @@ const ManageUsers: React.FC = () => {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black italic tracking-tighter text-glow uppercase">OPERATIVE_DATABASE</h1>
-          <p className="text-text-muted font-mono text-sm uppercase">Manage and audit system participants.</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">Users</h1>
+          <p className="text-sm text-zinc-400">Manage accounts and review platform activity.</p>
         </div>
 
         <div className="relative w-full md:w-64">

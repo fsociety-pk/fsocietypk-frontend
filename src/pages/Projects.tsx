@@ -15,12 +15,8 @@ const Projects: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black px-4 py-6 sm:py-8 md:py-10 sm:px-6 md:px-8 text-white">
-      {/* Background Decor */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(0,255,65,0.2)_1.5px,transparent_1.5px),linear-gradient(90deg,rgba(0,255,65,0.2)_1.5px,transparent_1.5px)] bg-[size:30px_30px]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(0,255,65,0.1),transparent_34%),radial-gradient(circle_at_75%_5%,rgba(0,255,65,0.1),transparent_28%)]" />
-      
-      <div className="relative mx-auto max-w-6xl z-10">
+    <div className="relative min-w-0 bg-background px-4 py-8 text-white sm:px-6 md:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl">
         <div className="mb-8 sm:mb-10 md:mb-12 border-l-4 border-neon-green pl-4 sm:pl-6">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-widest text-white">
             OUR <span className="text-neon-green">PROJECTS</span>
@@ -39,8 +35,7 @@ const Projects: React.FC = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1, type: "spring", stiffness: 100 }}
-              whileHover={{ scale: 1.02, y: -5, boxShadow: "0 0 40px rgba(0,255,65,0.15)" }}
-              className="group relative flex flex-col justify-between rounded-2xl border border-zinc-800 bg-black/60 p-6 sm:p-8 md:p-10 backdrop-blur-md transition-all hover:border-neon-green/60 hover:bg-zinc-900/90 overflow-hidden"
+              className="group relative flex flex-col justify-between overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 p-6 transition-colors hover:border-neon-green/50 sm:p-8 md:p-10"
             >
               {/* Card Background Decoration */}
               <div className="absolute -right-10 -top-10 text-neon-green/5 transition-colors duration-500 group-hover:text-neon-green/20 group-hover:rotate-12 group-hover:scale-110">
@@ -94,7 +89,7 @@ const Projects: React.FC = () => {
                     href={project.websiteUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-2 rounded-lg bg-neon-green px-5 py-2 font-mono text-xs font-bold text-black transition-all hover:bg-transparent hover:text-neon-green border border-neon-green hover:shadow-[0_0_15px_rgba(0,255,65,0.4)]"
+                    className="flex min-h-11 items-center gap-2 rounded-md border border-neon-green bg-neon-green px-5 py-2 text-xs font-semibold text-black transition-colors hover:bg-transparent hover:text-neon-green"
                   >
                     <ExternalLink className="h-4 w-4" />
                     Visit App

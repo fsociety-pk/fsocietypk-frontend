@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const COLORS = ['#00FF41', '#00e5ff', '#ff0055', '#ffaa00', '#9c27b0', '#3f51b5'];
+const COLORS = ['#32d17b', '#00a5c8', '#e45b73', '#d99822', '#9c6ade', '#536fc0'];
 
 const Analytics: React.FC = () => {
   const { data: analytics, isLoading } = useQuery({
@@ -43,8 +43,8 @@ const Analytics: React.FC = () => {
   return (
     <div className="space-y-8 pb-12">
       <div>
-        <h1 className="text-3xl font-black italic tracking-tighter text-glow uppercase mb-2">GRID_ANALYTICS</h1>
-        <p className="text-text-muted font-mono text-sm uppercase">Deep-dive into platform performance and user activity.</p>
+        <h1 className="mb-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">Platform analytics</h1>
+        <p className="text-sm text-zinc-400">Platform performance and user activity.</p>
       </div>
 
       {/* KPI Overview */}
@@ -94,12 +94,12 @@ const Analytics: React.FC = () => {
               />
               <YAxis stroke="#6b7280" fontSize={10} axisLine={false} tickLine={false} />
               <Tooltip 
-                contentStyle={{ backgroundColor: '#000', border: '1px solid #00FF41', fontSize: '12px', fontFamily: 'monospace' }}
+                contentStyle={{ backgroundColor: '#121914', border: '1px solid #29352d', borderRadius: '8px', fontSize: '12px', fontFamily: 'sans-serif' }}
                 itemStyle={{ color: '#fff' }}
               />
               <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ fontSize: '10px', textTransform: 'uppercase', fontFamily: 'monospace' }} />
-              <Line type="monotone" dataKey="solves" name="SOLVES" stroke="#00FF41" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
-              <Line type="monotone" dataKey="users" name="NEW USERS" stroke="#00e5ff" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
+              <Line type="monotone" dataKey="solves" name="SOLVES" stroke="#32d17b" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
+              <Line type="monotone" dataKey="users" name="NEW USERS" stroke="#00a5c8" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -117,9 +117,9 @@ const Analytics: React.FC = () => {
               <YAxis dataKey="title" type="category" stroke="#fff" fontSize={10} width={100} />
               <Tooltip 
                 cursor={{ fill: '#ffffff10' }}
-                contentStyle={{ backgroundColor: '#000', border: '1px solid #00FF41', fontSize: '12px', fontFamily: 'monospace' }}
+                contentStyle={{ backgroundColor: '#121914', border: '1px solid #29352d', borderRadius: '8px', fontSize: '12px', fontFamily: 'sans-serif' }}
               />
-              <Bar dataKey="solveCount" name="Solves" fill="#00FF41" radius={[0, 4, 4, 0]}>
+              <Bar dataKey="solveCount" name="Solves" fill="#32d17b" radius={[0, 4, 4, 0]}>
                 {analytics?.topChallenges.map((_, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
@@ -153,7 +153,7 @@ const Analytics: React.FC = () => {
                   ))}
                 </Pie>
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#000', border: '1px solid #00FF41', fontSize: '12px', fontFamily: 'monospace' }}
+                  contentStyle={{ backgroundColor: '#121914', border: '1px solid #29352d', borderRadius: '8px', fontSize: '12px', fontFamily: 'sans-serif' }}
                 />
               </PieChart>
             </ResponsiveContainer>

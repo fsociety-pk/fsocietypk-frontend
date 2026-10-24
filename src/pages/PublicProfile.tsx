@@ -128,9 +128,9 @@ const PublicProfile = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8 md:py-10 lg:py-12 max-w-7xl font-mono">
+    <div className="container mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 lg:py-12">
       {/* ── PROFILE HEADER ── */}
-      <div className="relative mb-8 sm:mb-10 md:mb-12 rounded-2xl border border-zinc-800 overflow-hidden bg-black/40 p-4 sm:p-6 md:p-8 backdrop-blur-md">
+      <div className="relative mb-8 overflow-hidden rounded-xl border border-zinc-800 bg-background-card p-4 sm:mb-10 sm:p-6 md:mb-12 md:p-8">
         <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5 pointer-events-none">
           <Terminal size={100} />
         </div>
@@ -150,7 +150,7 @@ const PublicProfile = () => {
                 </div>
               )}
             </div>
-            <div className="absolute -bottom-2 sm:-bottom-3 -right-2 sm:-right-3 bg-neon-green text-black text-[9px] sm:text-[11px] font-black italic px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg uppercase shadow-neon">
+            <div className="absolute -bottom-2 -right-2 rounded-md bg-neon-green px-3 py-1.5 text-xs font-semibold uppercase text-black">
               LVL {Math.floor((profile.score || 0) / 1000) + 1}
             </div>
           </div>
@@ -158,7 +158,7 @@ const PublicProfile = () => {
           <div className="text-center md:text-left space-y-3 sm:space-y-4 flex-grow">
             <div>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-4 mb-1 sm:mb-2">
-                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black italic tracking-tighter text-glow break-all">
+                <h1 className="break-all text-xl font-semibold tracking-tight text-white sm:text-2xl md:text-3xl lg:text-4xl">
                   {(profile.username || 'operator').toUpperCase()}
                 </h1>
                 {profile.role === 'admin' && (
@@ -309,7 +309,8 @@ const PublicProfile = () => {
               RECENT OPERATIONS
             </h2>
             <div className="card overflow-hidden">
-              <table className="w-full text-left font-mono text-sm">
+              <div className="overflow-x-auto">
+              <table className="w-full min-w-[620px] text-left text-sm">
                 <thead className="bg-surface border-b border-surface-border text-text-muted text-[10px] uppercase tracking-widest">
                   <tr>
                     <th className="px-6 py-4 font-medium">MISSION</th>
@@ -350,6 +351,7 @@ const PublicProfile = () => {
                   )}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         </div>

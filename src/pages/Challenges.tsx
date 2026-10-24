@@ -174,7 +174,7 @@ const Challenges: React.FC = () => {
                   {/* Status Badge Group */}
                   <div className="absolute top-0 left-0 flex items-center">
                     {challenge.liveStatus === 'live' && (
-                      <div className="px-3 py-1 bg-neon-green text-black text-[9px] font-black tracking-widest flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,255,65,0.3)]">
+                      <div className="flex items-center gap-1.5 bg-neon-green px-3 py-1 text-[9px] font-semibold tracking-widest text-black">
                         <span className="w-1.5 h-1.5 bg-black rounded-full animate-pulse"></span>
                         LIVE
                       </div>
@@ -201,7 +201,7 @@ const Challenges: React.FC = () => {
                   {/* Top Bar (Meta tags) */}
                   <div className="flex items-center justify-between mb-5 mt-6 sm:mt-8">
                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-black uppercase tracking-[0.15em] px-2.5 py-1.5 rounded bg-neon-green/10 text-neon-green border border-neon-green/30 shadow-[0_0_10px_rgba(0,255,65,0.1)]">
+                        <span className="rounded border border-neon-green/30 bg-neon-green/10 px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-neon-green">
                           {challenge.category}
                         </span>
                         <span className={`text-[9px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded border ${getDifficultyColor(challenge.difficulty)} bg-black/20`}>

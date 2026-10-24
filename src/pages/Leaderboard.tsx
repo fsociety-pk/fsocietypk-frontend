@@ -7,9 +7,6 @@ import { socketService } from '../utils/socket';
 import { useQuery } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import { toast } from 'react-hot-toast';
-import Lottie from 'lottie-react';
-import winnerBadge from '../../images/rank_1.json';
-import podiumBadge from '../../images/rank_2and3.json';
 
 const getCountryEmoji = (code: string) => {
   switch (code) {
@@ -30,21 +27,6 @@ const getCountryEmoji = (code: string) => {
   }
 };
 
-// ── CSS Animations ────────────────────────────────────────────────
-// Inject custom CSS animations for Hall of Fame
-const injectHallOfFameStyles = () => {
-  if (document.getElementById('hall-of-fame-styles')) return;
-
-  const style = document.createElement('style');
-  style.id = 'hall-of-fame-styles';
-  style.textContent = `
-    /* Animations removed - using animate-pulse for static blinking effect */
-  `;
-  document.head.appendChild(style);
-};
-
-injectHallOfFameStyles();
-
 // ── Components ────────────────────────────────────────────────────
 
 const HallOfFameCard = ({ entry }: { entry: LeaderboardEntry }) => {
@@ -53,20 +35,18 @@ const HallOfFameCard = ({ entry }: { entry: LeaderboardEntry }) => {
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6 }}
-      className="relative flex flex-col items-center p-8 rounded-2xl border-2 border-neon-green bg-zinc-900/50 transition-all duration-300 gap-6 w-[400px] mx-auto overflow-hidden"
+      className="relative mx-auto flex w-full max-w-[400px] flex-col items-center gap-6 overflow-hidden rounded-xl border border-neon-green/50 bg-background-card p-5 sm:p-8"
     >
-      {/* Background Glow */}
-      <div className="absolute inset-0 blur-[60px] bg-neon-green/10 -z-10 animate-pulse" />
-      
-
-
       {/* Avatar Section */}
-      <div className="relative w-40 h-40 flex items-center justify-center">
+      <div className="relative flex h-32 w-32 items-center justify-center">
+        <div className="absolute -right-1 -top-1 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-neon-green/40 bg-background text-neon-green">
+          <Crown aria-hidden="true" size={18} />
+        </div>
         <Link
           to={`/profile/${entry.username}`}
-          className="relative block w-32 h-32 z-10"
+          className="relative z-10 block h-28 w-28"
         >
-          <div className="w-full h-full rounded-full overflow-hidden border-2 border-neon-green bg-zinc-900 shadow-[0_0_30px_rgba(20,255,100,0.3)]">
+          <div className="w-full h-full overflow-hidden rounded-full border-2 border-neon-green/60 bg-zinc-900">
             {entry.avatar ? (
               <img
                 src={entry.avatar}
@@ -81,14 +61,6 @@ const HallOfFameCard = ({ entry }: { entry: LeaderboardEntry }) => {
           </div>
         </Link>
 
-        {/* 🔥 Lottie Frame Overlay */}
-        <div className="absolute z-30 pointer-events-none top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72">
-          <Lottie
-            animationData={winnerBadge}
-            loop={true}
-            style={{ width: '100%', height: '100%' }}
-          />
-        </div>
       </div>
 
       {/* Info Section */}
@@ -96,7 +68,7 @@ const HallOfFameCard = ({ entry }: { entry: LeaderboardEntry }) => {
         <div className="flex items-center gap-2">
           <Link
             to={`/profile/${entry.username}`}
-            className="text-3xl font-black text-white hover:text-neon-green transition-colors uppercase tracking-tight"
+            className="break-all text-center text-xl font-semibold text-white transition-colors hover:text-neon-green sm:text-3xl"
           >
             {entry.username}
           </Link>
@@ -107,9 +79,8 @@ const HallOfFameCard = ({ entry }: { entry: LeaderboardEntry }) => {
           )}
         </div>
 
-        {/* Red Tag */}
-        <span className="px-4 py-1 bg-red-500/20 border border-red-500/50 rounded-full text-[12px] font-black tracking-[0.2em] text-red-500 uppercase shadow-[0_0_15px_rgba(239,68,68,0.3)] animate-pulse">
-          GODLIKE
+        <span className="rounded-full border border-neon-green/30 bg-neon-green/10 px-3 py-1 text-xs font-semibold tracking-wide text-neon-green">
+          Top ranked
         </span>
 
         {/* Stats */}
@@ -143,41 +114,19 @@ const PodiumItem = ({ entry, rank, color }: { entry: LeaderboardEntry; rank: num
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: rank * 0.1 }}
       className={clsx(
-        "relative flex flex-col items-center p-6 rounded-xl border-2 bg-background-card transition-all duration-300",
-        rank === 2 ? "scale-100" : "scale-95",
-        color === 'silver' && "border-blue-400/50 shadow-[0_0_30px_rgba(96,165,250,0.5)]",
-        color === 'bronze' && "border-orange-400/50 shadow-[0_0_30px_rgba(251,146,60,0.5)]"
+        "relative flex flex-col items-center rounded-xl border bg-background-card p-5 transition-colors sm:p-6",
+        rank === 2 ? "border-blue-400/40" : "border-orange-400/40"
       )}
     >
-
-
-      <div className="relative mb-4 w-40 h-40 flex items-center justify-center">
-        {/* Lottie Badge Frame - Behind avatar */}
-        <div className="absolute z-5 pointer-events-none top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-56 h-56">
-          <Lottie
-            animationData={podiumBadge}
-            loop={true}
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
-          />
-        </div>
-
-        {/* Rotating Frame Border - Around Avatar */}
-        <div 
+      <div className="relative mb-4 flex h-28 w-28 items-center justify-center">
+        <Link
+          to={`/profile/${entry.username}`}
           className={clsx(
-            "absolute w-32 h-32 rounded-full animate-spin z-15",
-            color === 'silver' && "border-1 border-blue-400/60",
-            color === 'bronze' && "border-1 border-orange-400/60"
+            'relative block h-24 w-24 overflow-hidden rounded-full border-2 bg-surface transition-transform hover:scale-[1.03]',
+            color === 'silver' ? 'border-blue-400/50' : 'border-orange-400/50'
           )}
-          style={{ animationDuration: '6s' }}
-        />
-
-        {/* User Avatar Overlay */}
-        <Link to={`/profile/${entry.username}`} className="relative group cursor-pointer z-20">
-          <div className="relative w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-white/20 to-transparent shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-transform duration-300 group-hover:scale-105">
-            <div className="w-full h-full rounded-full overflow-hidden border border-zinc-800 bg-surface flex items-center justify-center">
+        >
+            <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-surface">
               {entry.avatar ? (
                 <img src={entry.avatar} alt={entry.username} className="w-full h-full object-cover transition-transform duration-500 hover:scale-110 opacity-90" />
               ) : (
@@ -186,7 +135,6 @@ const PodiumItem = ({ entry, rank, color }: { entry: LeaderboardEntry; rank: num
                 </div>
               )}
             </div>
-          </div>
         </Link>
       </div>
 
@@ -269,7 +217,7 @@ const Leaderboard = () => {
           <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black italic tracking-tighter text-glow"
+            className="text-2xl font-semibold tracking-tight text-white sm:text-3xl md:text-4xl"
           >
             RANKINGS
           </motion.h1>
@@ -284,7 +232,7 @@ const Leaderboard = () => {
                 key={f.id}
                 onClick={() => setFilter(f.id)}
                 className={clsx(
-                  "flex items-center gap-2 px-4 py-2 rounded-md font-mono text-sm transition-all duration-200",
+                  "flex min-h-11 items-center gap-2 rounded-md px-4 py-2 font-sans text-sm transition-colors",
                   filter === f.id
                     ? "bg-neon-green text-background font-bold shadow-neon-sm"
                     : "text-text-secondary hover:text-text-primary hover:bg-surface-border"

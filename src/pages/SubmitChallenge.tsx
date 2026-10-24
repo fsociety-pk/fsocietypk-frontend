@@ -312,9 +312,6 @@ const SubmitChallenge: React.FC = () => {
   // ── Main Form ───────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-black text-white font-mono p-4 md:p-8">
-      {/* Background scanline pattern */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.02] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,255,65,0.5)_2px,rgba(0,255,65,0.5)_4px)]" />
-
       <div className="max-w-3xl mx-auto">
         {/* ── Header ──────────────────────────────────────────────── */}
         <motion.div
@@ -566,7 +563,7 @@ const SubmitChallenge: React.FC = () => {
           </FormSection>
 
           {/* ── Hints ───────────────────────────────────────────── */}
-          <FormSection label="Hints" hint="Optional — provide hints to help players (can add multiple)">
+          <FormSection label="Hints" hint="Optional. Add hints to help players progress through the challenge.">
             <div className="space-y-3">
               {form.hints.map((hint, i) => (
                 <motion.div
@@ -608,7 +605,7 @@ const SubmitChallenge: React.FC = () => {
           </FormSection>
 
           {/* ── Attachments ─────────────────────────────────────── */}
-          <FormSection label="Attachments" hint="Optional — paste URLs to challenge files or resources">
+          <FormSection label="Attachments" hint="Optional. Add URLs to challenge files or resources.">
             <div className="space-y-3">
               {form.attachments.map((att, i) => (
                 <motion.div
@@ -653,7 +650,7 @@ const SubmitChallenge: React.FC = () => {
             disabled={isSubmitting}
             whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
             whileTap={{ scale: isSubmitting ? 1 : 0.99 }}
-            className="w-full py-4 bg-neon-green text-black font-bold rounded-xl hover:bg-neon-green/90 transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-sm disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_30px_rgba(0,255,65,0.2)]"
+            className="w-full min-h-12 rounded-lg bg-neon-green px-4 py-3 text-sm font-semibold text-black transition-colors hover:bg-neon-green/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? (
               <>

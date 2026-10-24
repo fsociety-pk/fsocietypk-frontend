@@ -71,9 +71,9 @@ const Login: React.FC = () => {
         <div className="fixed inset-0 bg-red-900/20 pointer-events-none z-0 border-[20px] border-red-600/30 animate-pulse" />
       )}
 
-      <div className={`max-w-md w-full space-y-8 bg-zinc-900/50 p-8 rounded-2xl border ${isSqlInjectionDetected ? 'border-red-600 shadow-[0_0_40px_rgba(220,38,38,0.3)] animate-glitch' : 'border-neon-green/20 shadow-[0_0_20px_rgba(0,255,65,0.05)]'} backdrop-blur-sm z-10 transition-all duration-300`}>
+      <div className={`relative z-10 w-full max-w-md space-y-8 rounded-xl border bg-zinc-900/50 p-6 backdrop-blur-sm transition-colors sm:p-8 ${isSqlInjectionDetected ? 'border-red-600 shadow-[0_0_40px_rgba(220,38,38,0.3)] animate-glitch' : 'border-neon-green/20'}`}>
         {isSqlInjectionDetected ? (
-          <div className="text-center space-y-4 animate-bounce">
+          <div className="text-center space-y-4 animate-fade-in">
             <div className="flex justify-center">
               <div className="p-3 rounded-full bg-red-600/20 border-2 border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.5)]">
                 <AlertTriangle className="w-10 h-10 text-red-600" />

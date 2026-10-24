@@ -86,8 +86,8 @@ const ManageChallenges: React.FC = () => {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black italic tracking-tighter text-glow uppercase">MISSION_CONTROL</h1>
-          <p className="text-text-muted font-mono text-sm uppercase">Oversee and moderate challenge deployment.</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">Challenges</h1>
+          <p className="text-sm text-zinc-400">Review submissions and manage published challenges.</p>
         </div>
 
         <div className="flex bg-surface p-1 rounded-lg border border-surface-border">

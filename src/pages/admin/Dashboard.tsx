@@ -59,8 +59,8 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="space-y-12">
       <div>
-        <h1 className="text-3xl font-black italic tracking-tighter text-glow uppercase mb-2">SYSTEM_OVERVIEW</h1>
-        <p className="text-text-muted font-mono text-sm tracking-tight text-zinc-500 uppercase">Real-time status of the FSOCIETY grid.</p>
+        <h1 className="mb-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">System overview</h1>
+        <p className="text-sm text-zinc-400">Platform activity and moderation status.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -60,8 +60,8 @@ const AdminSettings: React.FC = () => {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-black italic tracking-tighter text-glow uppercase">PLATFORM_SETTINGS</h1>
-        <p className="text-text-muted font-mono text-sm uppercase">Administrative controls and notification maintenance.</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">Platform settings</h1>
+        <p className="text-sm text-zinc-400">Administrative controls and notification management.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -171,7 +171,7 @@ const AdminSettings: React.FC = () => {
             <button
               type="submit"
               disabled={isWorking}
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-neon-green text-black hover:shadow-[0_0_15px_rgba(0,255,65,0.4)] transition-all text-xs font-black tracking-widest disabled:opacity-60"
+              className="flex min-h-11 items-center justify-center gap-2 rounded-md bg-neon-green px-6 py-3 text-xs font-semibold tracking-wide text-black transition-colors hover:brightness-105 disabled:opacity-60"
             >
               <Send className="w-4 h-4" />
               BROADCAST_ANNOUNCEMENT

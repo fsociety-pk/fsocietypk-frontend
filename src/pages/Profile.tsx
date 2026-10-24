@@ -198,13 +198,8 @@ const Profile: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black font-mono text-white">
-      {/* Ambient glow */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-neon-green/5 blur-[100px] rounded-full" />
-      </div>
-
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 py-10 max-w-7xl">
+    <div className="min-h-screen bg-black text-white">
+      <div className="container mx-auto max-w-7xl px-4 py-10 sm:px-6">
 
         {/* ── PROFILE HERO BANNER ── */}
         <motion.div
@@ -241,7 +236,7 @@ const Profile: React.FC = () => {
                   </div>
                 </label>
                 {/* Level badge */}
-                <div className="absolute -bottom-2 -right-2 bg-neon-green text-black text-[10px] font-black px-2.5 py-1 rounded-lg shadow-[0_0_10px_rgba(0,255,65,0.5)]">
+                <div className="absolute -bottom-2 -right-2 rounded-md bg-neon-green px-2.5 py-1 text-[10px] font-bold text-black">
                   LVL {Math.floor((profile?.score || 0) / 1000) + 1}
                 </div>
               </div>
@@ -276,7 +271,7 @@ const Profile: React.FC = () => {
               <div className="flex-1 text-center md:text-left space-y-4">
                 <div>
                   <div className="flex flex-col md:flex-row items-center md:items-center gap-3 mb-3">
-                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-white leading-none drop-shadow-[0_0_20px_rgba(0,255,65,0.3)]">
+                    <h1 className="text-3xl font-bold leading-tight text-white md:text-5xl">
                       {profile?.username || 'OPERATIVE'}
                     </h1>
                     <div className="flex gap-2 flex-wrap justify-center md:justify-start">
@@ -324,7 +319,7 @@ const Profile: React.FC = () => {
                 <div className="flex flex-wrap justify-center md:justify-start gap-3 pt-2">
                   <div className="bg-zinc-900/60 border border-zinc-800 hover:border-neon-green/40 px-5 py-3 rounded-xl transition-colors group">
                     <p className="text-[9px] text-zinc-500 uppercase tracking-widest mb-0.5 group-hover:text-neon-green/60 transition-colors">GLOBAL RANK</p>
-                    <p className="text-2xl font-black text-neon-green italic">#{profile?.rank || '—'}</p>
+                    <p className="text-2xl font-semibold text-neon-green">{profile?.rank ? `#${profile.rank}` : 'Unranked'}</p>
                   </div>
                   <div className="bg-zinc-900/60 border border-zinc-800 hover:border-blue-500/40 px-5 py-3 rounded-xl transition-colors group">
                     <p className="text-[9px] text-zinc-500 uppercase tracking-widest mb-0.5 group-hover:text-blue-400/60 transition-colors">TOTAL EXP</p>
@@ -358,7 +353,7 @@ const Profile: React.FC = () => {
                   className={clsx(
                     'flex items-center gap-2 px-5 py-2.5 rounded-lg text-[10px] font-bold tracking-widest transition-all',
                     activeTab === tab.id
-                      ? 'bg-neon-green text-black shadow-[0_0_15px_rgba(0,255,65,0.3)]'
+                      ? 'bg-neon-green text-black'
                       : 'text-zinc-500 hover:text-white hover:bg-zinc-900'
                   )}
                 >
@@ -571,7 +566,7 @@ const Profile: React.FC = () => {
                       </div>
 
                       <div className="flex gap-3 pt-2">
-                        <button type="submit" disabled={updateProfileMutation.isPending} className="flex-1 py-3 bg-neon-green text-black font-black text-xs uppercase tracking-widest rounded-lg hover:brightness-110 disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,255,65,0.2)]">
+                        <button type="submit" disabled={updateProfileMutation.isPending} className="flex-1 min-h-11 rounded-md bg-neon-green py-3 text-xs font-semibold uppercase tracking-wide text-black transition-colors hover:brightness-105 disabled:opacity-50">
                           {updateProfileMutation.isPending ? 'SAVING...' : 'SAVE PROFILE'}
                         </button>
                         <button type="button" onClick={() => resetProfile()} className="px-4 py-3 bg-zinc-900 border border-zinc-800 text-zinc-400 font-bold text-xs uppercase rounded-lg hover:text-white hover:border-zinc-600 transition-all">
@@ -601,7 +596,7 @@ const Profile: React.FC = () => {
                         <input type="text" placeholder="Your new username..." className="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2.5 text-sm font-mono focus:border-neon-green/50 outline-none transition-colors text-white placeholder-zinc-700" {...registerProfile('username')} />
                       </div>
 
-                      <button type="submit" disabled={updateProfileMutation.isPending} className="w-full py-3 bg-neon-green text-black font-black text-xs uppercase tracking-widest rounded-lg hover:brightness-110 disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,255,65,0.2)]">
+                      <button type="submit" disabled={updateProfileMutation.isPending} className="w-full min-h-11 rounded-md bg-neon-green py-3 text-xs font-semibold uppercase tracking-wide text-black transition-colors hover:brightness-105 disabled:opacity-50">
                         {updateProfileMutation.isPending ? 'UPDATING...' : 'UPDATE USERNAME'}
                       </button>
                     </form>
@@ -643,7 +638,7 @@ const Profile: React.FC = () => {
                         <input type="password" className={clsx('w-full bg-black border rounded-lg px-4 py-2.5 text-sm font-mono outline-none transition-colors text-white placeholder-zinc-700', passwordErrors.confirmPassword ? 'border-red-500/50' : 'border-zinc-800 focus:border-neon-green/50')} placeholder="••••••••" {...registerPassword('confirmPassword', { required: true })} />
                       </div>
 
-                      <button type="submit" disabled={passwordMutation.isPending} className="w-full py-3 bg-neon-green text-black font-black text-xs uppercase tracking-widest rounded-lg hover:brightness-110 disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,255,65,0.2)] mt-2">
+                      <button type="submit" disabled={passwordMutation.isPending} className="mt-2 w-full min-h-11 rounded-md bg-neon-green py-3 text-xs font-semibold uppercase tracking-wide text-black transition-colors hover:brightness-105 disabled:opacity-50">
                         {passwordMutation.isPending ? 'UPDATING...' : 'OVERRIDE SECURITY'}
                       </button>
                     </form>
@@ -657,7 +652,7 @@ const Profile: React.FC = () => {
           <div className="lg:col-span-4 space-y-6">
             <h2 className="text-[10px] font-black uppercase tracking-widest text-zinc-500 border-b border-zinc-800 pb-3">Mission Status</h2>
             <div className="space-y-3">
-              <StatCard icon={Trophy} label="Global Rank" value={`#${profile?.rank || '—'}`} color="bg-neon-green" />
+              <StatCard icon={Trophy} label="Global Rank" value={profile?.rank ? `#${profile.rank}` : 'Unranked'} color="bg-neon-green" />
               <StatCard icon={CheckCircle2} label="Challenges Solved" value={profile?.solvedChallenges?.length || 0} color="bg-green-500" />
               <StatCard icon={Activity} label="Total Points" value={Number(profile?.score || 0).toLocaleString()} color="bg-blue-500" />
             </div>

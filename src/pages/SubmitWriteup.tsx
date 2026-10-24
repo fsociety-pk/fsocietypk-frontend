@@ -90,12 +90,8 @@ const SubmitWriteup: React.FC = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-black font-mono text-white p-4 sm:p-6 md:p-8">
-        <div className="fixed inset-0 pointer-events-none z-0">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-neon-green/5 blur-[100px] rounded-full" />
-        </div>
-
-        <div className="relative z-10 max-w-2xl mx-auto">
+      <div className="min-h-screen bg-black p-4 text-white sm:p-6 md:p-8">
+        <div className="mx-auto max-w-2xl">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -157,13 +153,8 @@ const SubmitWriteup: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black font-mono text-white p-4 sm:p-6 md:p-8">
-      {/* Ambient glow */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-neon-green/5 blur-[100px] rounded-full" />
-      </div>
-
-      <div className="relative z-10 max-w-2xl mx-auto">
+    <div className="min-h-screen bg-black p-4 text-white sm:p-6 md:p-8">
+      <div className="mx-auto max-w-2xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}

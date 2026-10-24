@@ -41,13 +41,8 @@ const Writeups: React.FC = () => {
   const totalPages = pagination?.pages || 1;
 
   return (
-    <div className="min-h-screen bg-black font-mono text-white p-4 sm:p-6 md:p-8">
-      {/* Ambient glow */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-neon-green/5 blur-[100px] rounded-full" />
-      </div>
-
-      <div className="relative z-10 max-w-4xl mx-auto">
+    <div className="min-h-screen bg-black p-4 text-white sm:p-6 md:p-8">
+      <div className="mx-auto max-w-4xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -79,7 +74,7 @@ const Writeups: React.FC = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className="bg-zinc-950 border border-zinc-800 rounded-xl p-6 hover:border-neon-green/30 transition-all group"
+                className="group rounded-lg border border-zinc-800 bg-zinc-950 p-6 transition-colors hover:border-neon-green/40"
               >
                 {/* Title and Challenge */}
                 <div className="mb-4">

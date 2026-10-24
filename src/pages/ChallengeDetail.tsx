@@ -164,8 +164,8 @@ const ChallengeDetail: React.FC = () => {
             message: `ACCESS_GRANTED :: FLAG_${step}_VERIFIED :: MISSION_COMPLETE`,
           });
           toast.success(`MISSION COMPLETE: +${result.points ?? 0} PTS`, {
-            style: { border: '1px solid #00ff41', padding: '16px', color: '#00ff41', background: '#0a0a0a' },
-            iconTheme: { primary: '#00ff41', secondary: '#0a0a0a' },
+            style: { border: '1px solid #32d17b', padding: '16px', color: '#32d17b', background: '#0d130f' },
+            iconTheme: { primary: '#32d17b', secondary: '#0d130f' },
           });
           const allDone = Array.from({ length: totalFlagSteps }, (_, index) => index + 1);
           setCompletedFlagSteps(allDone);
@@ -196,8 +196,8 @@ const ChallengeDetail: React.FC = () => {
           });
           setCurrentFlagStep(nextStep);
           toast.success(`FLAG VERIFIED: +${result.points ?? 0} PTS | FLAG ${nextStep} UNLOCKED`, {
-            style: { border: '1px solid #00ff41', padding: '16px', color: '#00ff41', background: '#0a0a0a' },
-            iconTheme: { primary: '#00ff41', secondary: '#0a0a0a' },
+            style: { border: '1px solid #32d17b', padding: '16px', color: '#32d17b', background: '#0d130f' },
+            iconTheme: { primary: '#32d17b', secondary: '#0d130f' },
           });
         }
       } else {
@@ -278,7 +278,7 @@ const ChallengeDetail: React.FC = () => {
         isOpen={showCertificateModal}
         onClose={() => setShowCertificateModal(false)}
       />
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto max-w-6xl">
         {/* ── Navigation ────────────────────────────────────────────── */}
         <button
           onClick={() => navigate('/challenges')}
@@ -288,9 +288,9 @@ const ChallengeDetail: React.FC = () => {
           &gt; ABORT_MISSION
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-3">
           {/* ── Main Content ────────────────────────────────────────── */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="min-w-0 space-y-8 lg:col-span-2">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -303,11 +303,11 @@ const ChallengeDetail: React.FC = () => {
                   MISSION_ID: #{challenge._id.slice(-6)}
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 tracking-tight">
+              <h1 className="mb-4 break-words text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl [overflow-wrap:anywhere]">
                 {challenge.title}
               </h1>
               
-              <div className="prose prose-invert max-w-none text-zinc-400 leading-relaxed mb-6">
+              <div className="prose prose-invert mb-6 max-w-none break-words leading-relaxed text-zinc-300 [overflow-wrap:anywhere]">
                 {challenge.description}
               </div>
 
@@ -417,7 +417,7 @@ const ChallengeDetail: React.FC = () => {
                               {isCompleted ? 'Verified' : isActive ? 'Active' : 'Locked'}
                             </span>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex min-w-0 flex-wrap gap-2 sm:flex-nowrap">
                             <input
                               type="text"
                               placeholder="fsociety{your_flag_here}"
@@ -427,13 +427,13 @@ const ChallengeDetail: React.FC = () => {
                                 setFlagValues((prev) => prev.map((item, i) => (i === index ? value : item)));
                               }}
                               disabled={submitting || isLocked || isCompleted}
-                              className="flex-grow bg-black border border-zinc-800 rounded-lg px-4 py-2.5 outline-none focus:border-neon-green transition-all text-sm disabled:opacity-60"
+                              className="min-h-11 min-w-0 flex-grow rounded-lg border border-zinc-800 bg-black px-4 py-2.5 text-sm outline-none transition-colors focus:border-neon-green disabled:opacity-60"
                             />
                             <button
                               type="button"
                               onClick={() => handleSubmitFlag(step)}
                               disabled={submitting || isLocked || isCompleted || !(flagValues[index] || '').trim()}
-                              className="bg-neon-green text-black px-4 rounded-lg font-bold hover:bg-neon-green/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-xs"
+                              className="flex min-h-11 shrink-0 items-center gap-2 rounded-lg bg-neon-green px-4 text-xs font-bold text-black transition-colors hover:bg-neon-green/90 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                               {submitting && isActive ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                               {isCompleted ? 'DONE' : isLocked ? 'LOCKED' : 'SUBMIT'}

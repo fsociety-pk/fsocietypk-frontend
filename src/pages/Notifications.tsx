@@ -115,7 +115,7 @@ const Notifications: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black font-mono text-white py-6 sm:py-8 md:py-10 lg:py-12 px-4 sm:px-6 md:px-8">
+    <div className="min-h-screen bg-black px-4 py-6 text-white sm:px-6 sm:py-8 md:px-8 md:py-10 lg:py-12">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
@@ -124,14 +124,14 @@ const Notifications: React.FC = () => {
           className="mb-6 sm:mb-8"
         >
           <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-            <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-lg bg-neon-green/10 border border-neon-green/30 flex items-center justify-center">
-              <Bell className="w-4 sm:w-5 h-4 sm:h-5 text-neon-green" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-neon-green/30 bg-neon-green/10">
+              <Bell className="h-5 w-5 text-neon-green" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-neon-green tracking-widest uppercase">
+              <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl md:text-4xl">
                 Notifications
               </h1>
-              <p className="text-zinc-500 text-[9px] sm:text-xs mt-0.5 sm:mt-1">&gt; Receive updates about your challenges</p>
+              <p className="mt-1 text-sm text-zinc-400">Updates about your challenges and account</p>
             </div>
           </div>
 
@@ -141,7 +141,7 @@ const Notifications: React.FC = () => {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded text-[8px] sm:text-xs font-bold uppercase tracking-widest transition-all ${
+                className={`min-h-11 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${
                   filter === f
                     ? 'bg-neon-green text-black'
                     : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-neon-green/50'
@@ -157,14 +157,14 @@ const Notifications: React.FC = () => {
             <div className="flex flex-wrap gap-1 sm:gap-2">
               <button
                 onClick={handleMarkAllAsRead}
-                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 bg-blue-600/20 border border-blue-500/50 rounded text-[8px] sm:text-xs font-bold text-blue-400 hover:bg-blue-600/30 transition-all"
+                className="flex min-h-11 items-center gap-2 rounded-md border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-300 transition-colors hover:bg-blue-500/20"
               >
                 <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4" />
                 MARK ALL READ
               </button>
               <button
                 onClick={handleClearAll}
-                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 bg-red-600/20 border border-red-500/50 rounded text-[8px] sm:text-xs font-bold text-red-400 hover:bg-red-600/30 transition-all"
+                className="flex min-h-11 items-center gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-300 transition-colors hover:bg-red-500/20"
               >
                 <Trash2 className="w-3 sm:w-4 h-3 sm:h-4" />
                 CLEAR ALL
@@ -207,7 +207,7 @@ const Notifications: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ delay: index * 0.05 }}
-                className={`border rounded-lg p-4 transition-all ${
+                className={`rounded-lg border p-4 transition-colors sm:p-5 ${
                   notif.read
                     ? 'bg-zinc-900/30 border-zinc-800/30'
                     : `${getNotificationBgColor(notif.type)} active:scale-95`
@@ -249,7 +249,8 @@ const Notifications: React.FC = () => {
                         {!notif.read && (
                           <button
                             onClick={() => handleMarkAsRead(notif._id)}
-                            className="p-1.5 text-zinc-500 hover:text-neon-green hover:bg-neon-green/10 rounded transition-all"
+                            aria-label={`Mark ${notif.title} as read`}
+                            className="flex h-10 w-10 items-center justify-center rounded-md text-zinc-400 transition-colors hover:bg-neon-green/10 hover:text-neon-green"
                             title="Mark as read"
                           >
                             <Check className="w-4 h-4" />
@@ -257,7 +258,8 @@ const Notifications: React.FC = () => {
                         )}
                         <button
                           onClick={() => handleDelete(notif._id)}
-                          className="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-all"
+                          aria-label={`Delete ${notif.title}`}
+                          className="flex h-10 w-10 items-center justify-center rounded-md text-zinc-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />

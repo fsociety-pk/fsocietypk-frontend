@@ -37,7 +37,7 @@ const Signup: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black px-4 font-mono">
-      <div className="max-w-md w-full space-y-8 bg-zinc-900/50 p-8 rounded-2xl border border-neon-green/20 shadow-[0_0_20px_rgba(0,255,65,0.05)] backdrop-blur-sm">
+      <div className="w-full max-w-md space-y-8 rounded-xl border border-neon-green/20 bg-zinc-900/50 p-6 backdrop-blur-sm sm:p-8">
         <div className="text-center">
           <div className="flex justify-center">
             <div className="p-3 rounded-full bg-neon-green/10 border border-neon-green/30">

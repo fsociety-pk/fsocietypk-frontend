@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -16,12 +16,9 @@
   }
 
   body {
-    @apply bg-background text-text-primary font-mono antialiased;
-    background-image:
-      linear-gradient(rgba(0, 255, 65, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 255, 65, 0.02) 1px, transparent 1px);
-    background-size: 40px 40px;
-    background-attachment: fixed;
+    @apply bg-background text-text-primary font-sans antialiased;
+    min-width: 320px;
+    overflow-x: clip;
   }
 
   /* Custom scrollbar */
@@ -41,15 +38,23 @@
 
   /* Selection */
   ::selection {
-    background: rgba(0, 255, 65, 0.2);
-    color: #00ff41;
+    background: rgba(50, 209, 123, 0.24);
+    color: #d9f8e7;
   }
 
   /* Focus ring */
   :focus-visible {
-    outline: 2px solid #00ff41;
+    outline: 2px solid #32d17b;
     outline-offset: 2px;
     border-radius: 4px;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -58,32 +63,32 @@
 
   /* Buttons */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded font-mono text-sm font-medium transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 px-4 py-2 rounded-md font-sans text-sm font-medium transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed;
   }
   .btn-primary {
-    @apply btn bg-neon-green text-background hover:shadow-neon hover:brightness-110 active:scale-95;
+    @apply btn bg-neon-green text-background hover:brightness-105 active:scale-[0.98];
   }
   .btn-outline {
-    @apply btn border border-neon-green text-neon-green bg-transparent hover:bg-neon-green-muted hover:shadow-neon-sm active:scale-95;
+    @apply btn border border-neon-green/50 text-neon-green bg-transparent hover:bg-neon-green/10 active:scale-[0.98];
   }
   .btn-ghost {
-    @apply btn text-text-secondary hover:text-text-primary hover:bg-surface active:scale-95;
+    @apply btn text-text-secondary hover:text-text-primary hover:bg-surface active:scale-[0.98];
   }
   .btn-danger {
-    @apply btn bg-status-error text-white hover:brightness-110 active:scale-95;
+    @apply btn bg-status-error text-white hover:brightness-105 active:scale-[0.98];
   }
 
   /* Cards */
   .card {
-    @apply bg-background-card border border-surface-border rounded-lg shadow-card transition-all duration-200;
+    @apply bg-background-card border border-surface-border rounded-lg;
   }
   .card-hover {
-    @apply card hover:border-neon-green hover:shadow-neon-sm hover:-translate-y-0.5;
+    @apply card transition-colors duration-150 hover:border-neon-green/50;
   }
 
   /* Inputs */
   .input {
-    @apply w-full bg-background-elevated border border-surface-border rounded px-3 py-2 text-sm text-text-primary font-mono placeholder:text-text-muted transition-colors duration-200;
+    @apply w-full min-h-11 bg-background-elevated border border-surface-border rounded-md px-3 py-2 text-sm text-text-primary font-sans placeholder:text-text-muted transition-colors duration-150;
     @apply focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green;
   }
   .input-error {
@@ -108,14 +113,14 @@
     @apply text-neon-green;
   }
 
-  /* Neon divider */
+  /* Brand divider */
   .divider-neon {
-    @apply border-t border-neon-green/20;
+    @apply border-t border-neon-green/15;
   }
 
-  /* Glow text */
+  /* Legacy utility retained without the former glow effect. */
   .text-glow {
-    text-shadow: 0 0 10px rgba(0, 255, 65, 0.6), 0 0 20px rgba(0, 255, 65, 0.3);
+    text-shadow: none;
   }
 }
 
@@ -140,31 +145,56 @@
   max-width: 92vw;
   backdrop-filter: blur(8px);
   letter-spacing: 0.02em;
-  position: relative;
-  overflow: hidden;
-}
-
-.cyber-toast::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: linear-gradient(180deg, rgba(0, 255, 127, 1), rgba(0, 255, 127, 0.15));
 }
 
 .cyber-toast-success {
-  border-color: rgba(0, 255, 127, 0.45) !important;
-  background: linear-gradient(135deg, rgba(0, 30, 18, 0.96), rgba(7, 12, 10, 0.96)) !important;
+  border-color: rgba(50, 209, 123, 0.45) !important;
+  background: rgba(13, 19, 15, 0.98) !important;
 }
 
 .cyber-toast-error {
   border-color: rgba(255, 77, 109, 0.55) !important;
-  background: linear-gradient(135deg, rgba(42, 9, 17, 0.96), rgba(18, 8, 11, 0.96)) !important;
+  background: rgba(24, 12, 14, 0.98) !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 18px rgba(255, 77, 109, 0.2) !important;
 }
 
-.cyber-toast-error::before {
-  background: linear-gradient(180deg, rgba(255, 77, 109, 1), rgba(255, 77, 109, 0.15));
+.site-main {
+  min-width: 0;
+  width: 100%;
+}
+
+.site-main > * {
+  min-width: 0;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+.site-main :where(p, li, h1, h2, h3, h4, a, button, label) {
+  overflow-wrap: anywhere;
+}
+
+.site-main :where(input, select, textarea) {
+  color-scheme: dark;
+}
+
+.site-main :where(table) {
+  width: 100%;
+}
+
+.site-main :where(td, th) {
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
