@@ -1,39 +1,55 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <script>
+      try {
+        var theme =
+          localStorage.getItem("fsociety-theme") === "dark" ? "dark" : "light";
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      } catch (_) {}
+    </script>
     <!-- SEO -->
-    <title>fsociety pk</title>
-    <meta name="description" content="FsocietyPK — Capture The Flag competitions, hacking challenges, and cybersecurity training for Pakistani hackers." />
-    <meta name="keywords" content="CTF, Capture The Flag, Pakistan, hacking, cybersecurity, challenges, FsocietyPK" />
+    <title>Fsociety PK — Learn cybersecurity together</title>
+    <meta
+      name="description"
+      content="FsocietyPK — Capture The Flag competitions, hacking challenges, and cybersecurity training for Pakistani hackers."
+    />
+    <meta
+      name="keywords"
+      content="CTF, Capture The Flag, Pakistan, hacking, cybersecurity, challenges, FsocietyPK"
+    />
     <meta name="author" content="FsocietyPK" />
     <meta name="robots" content="index, follow" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="FsocietyPK | Pakistan's Premier CTF Platform" />
-    <meta property="og:description" content="Compete. Hack. Dominate. Join Pakistan's elite CTF community." />
+    <meta
+      property="og:title"
+      content="Fsociety PK — Learn cybersecurity together"
+    />
+    <meta
+      property="og:description"
+      content="Explore security challenges, share discoveries, and learn with the Fsociety PK community."
+    />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://fsocietypk.tech" />
-    <meta property="og:image" content="/images/logo.png" />
+    <meta property="og:image" content="/brand/fsociety-logo.png" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="images/logo.png" />
-    <link rel="apple-touch-icon" href="images/logo.png" />
+    <link rel="icon" type="image/png" href="/brand/fsociety-logo.png" />
+    <link rel="apple-touch-icon" href="/brand/fsociety-logo.png" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
 
     <!-- Theme color -->
-    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="theme-color" content="#ffffff" />
   </head>
-  <body class="bg-background text-text-primary font-mono antialiased">
+  <body class="bg-background text-text-primary font-sans antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

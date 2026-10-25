@@ -15,7 +15,7 @@ const DEFAULT_PROJECTS: Project[] = [
   {
     _id: '1',
     title: 'WebShield',
-    description: 'An advanced vulnerability scanner leveraging four powerful Kali Linux tools (Nmap, Nikto, SQLMap, SSLScan). WebShield scans your website and provides a comprehensive, AI-generated security report.',
+    description: 'Check your website with Nmap, Nikto, SQLMap, and SSLScan. WebShield brings the results together in a security report.',
     techStack: ['Nmap', 'Nikto', 'SQLMap', 'SSLScan', 'AI Report'],
     websiteUrl: 'https://webshield.tech',
     features: ['Automated Scanning', 'AI-Driven Analysis', 'Comprehensive Reporting']
@@ -23,7 +23,7 @@ const DEFAULT_PROJECTS: Project[] = [
   {
     _id: '2',
     title: 'WriteupForge',
-    description: 'A powerful CLI and GUI tool designed for structuring raw security writeup notes. It uses AI to automatically format and organize chaotic notes into clean, structured documentation.',
+    description: 'Turn your security notes into a clear writeup. Use the command line or desktop app to format and organize your work.',
     techStack: ['CLI', 'GUI', 'AI Structuring', 'Documentation'],
     sourceCodeUrl: 'https://github.com/fsociety-pk/writeupforge',
     features: ['Auto-formatting', 'Standardized Templates', 'Cross-Platform']

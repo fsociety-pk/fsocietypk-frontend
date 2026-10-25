@@ -1,7 +1,7 @@
+import PageHeading from "../components/common/PageHeading";
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  BookOpen,
   ArrowLeft,
   Loader2,
   CheckCircle2,
@@ -53,7 +53,7 @@ const SubmitWriteup: React.FC = () => {
         status: res.data.status,
       });
       setForm(INITIAL_FORM);
-      toast.success('WRITEUP_SUBMITTED_SUCCESSFULLY');
+      toast.success('Writeup submitted for review.');
     },
     onError: (err: any) => {
       const message = err.response?.data?.message || 'Failed to submit writeup';
@@ -90,41 +90,45 @@ const SubmitWriteup: React.FC = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-black p-4 text-white sm:p-6 md:p-8">
-        <div className="mx-auto max-w-2xl">
+      <div className="min-h-screen bg-background font-sans text-text-primary p-4 sm:p-6 md:p-8">
+        <div className="fixed inset-0 pointer-events-none z-0">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-brand/5 blur-[100px] rounded-full" />
+        </div>
+
+        <div className="relative z-10 max-w-2xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={false}
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-20"
           >
             <div className="flex justify-center mb-6">
               <div className="relative">
-                <div className="absolute inset-0 bg-neon-green/20 blur-xl rounded-full" />
-                <CheckCircle2 className="w-24 h-24 text-neon-green relative" />
+                <div className="absolute inset-0 bg-brand/20 blur-xl rounded-full" />
+                <CheckCircle2 className="w-24 h-24 text-brand relative" />
               </div>
             </div>
 
-            <h2 className="text-4xl font-black mb-4 uppercase tracking-tight">
-              WRITEUP <span className="text-neon-green">SUBMITTED</span>
+            <h2 className="text-4xl font-semibold mb-4 uppercase tracking-tight">
+              WRITEUP <span className="text-brand">SUBMITTED</span>
             </h2>
 
-            <div className="bg-neon-green/10 border border-neon-green/30 rounded-xl p-6 mb-8 text-left">
-              <p className="text-sm text-zinc-300 mb-4">
+            <div className="bg-brand/10 border border-brand/30 rounded-xl p-6 mb-8 text-left">
+              <p className="text-sm text-text-secondary mb-4">
                 Your writeup has been submitted successfully and is awaiting admin approval.
               </p>
 
-              <div className="space-y-3 text-xs font-mono">
+              <div className="space-y-3 text-xs font-sans">
                 <div className="flex justify-between">
-                  <span className="text-zinc-600">SUBMISSION_ID:</span>
-                  <span className="text-neon-green font-bold">{submitted.id.slice(-8)}</span>
+                  <span className="text-text-muted">Challenge ID:</span>
+                  <span className="text-brand font-bold">{submitted.id.slice(-8)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-600">TITLE:</span>
-                  <span className="text-white">{submitted.title}</span>
+                  <span className="text-text-muted">TITLE:</span>
+                  <span className="text-text-primary">{submitted.title}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-600">STATUS:</span>
-                  <span className="text-yellow-400 uppercase font-bold">{submitted.status}</span>
+                  <span className="text-text-muted">STATUS:</span>
+                  <span className="text-status-warning uppercase font-bold">{submitted.status}</span>
                 </div>
               </div>
             </div>
@@ -135,15 +139,15 @@ const SubmitWriteup: React.FC = () => {
                   setSubmitted(null);
                   setForm(INITIAL_FORM);
                 }}
-                className="flex-1 py-3 bg-neon-green text-black font-black text-sm uppercase rounded-lg hover:brightness-110 transition-all"
+                className="flex-1 py-3 bg-brand text-on-brand font-semibold text-sm uppercase rounded-lg hover:brightness-110 transition-all"
               >
-                SUBMIT_ANOTHER
+                Submit another
               </button>
               <button
                 onClick={() => navigate('/writeups')}
-                className="flex-1 py-3 bg-zinc-900 border border-zinc-800 text-zinc-300 font-black text-sm uppercase rounded-lg hover:border-neon-green/30 transition-all"
+                className="flex-1 py-3 bg-background-elevated border border-surface-border text-text-secondary font-semibold text-sm uppercase rounded-lg hover:border-brand/30 transition-all"
               >
-                VIEW_WRITEUPS
+                View writeups
               </button>
             </div>
           </motion.div>
@@ -153,64 +157,61 @@ const SubmitWriteup: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black p-4 text-white sm:p-6 md:p-8">
-      <div className="mx-auto max-w-2xl">
+    <div className="min-h-screen bg-background font-sans text-text-primary p-4 sm:p-6 md:p-8">
+      {/* Ambient glow */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-brand/5 blur-[100px] rounded-full" />
+      </div>
+
+      <div className="relative z-10 max-w-2xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           className="mb-10"
         >
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-zinc-500 hover:text-neon-green transition-colors mb-6 uppercase tracking-widest text-sm"
+            className="flex items-center gap-2 text-text-muted hover:text-brand transition-colors mb-6 uppercase tracking-widest text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
-            &gt; BACK
+            Back
           </button>
 
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-neon-green/10 border border-neon-green/30 rounded-lg">
-              <BookOpen className="w-6 h-6 text-neon-green" />
-            </div>
-            <h1 className="text-4xl font-black uppercase tracking-tight">
-              SUBMIT <span className="text-neon-green">WRITEUP</span>
-            </h1>
-          </div>
-          <p className="text-zinc-400 text-sm">Share your knowledge and help other operatives master these challenges</p>
+          <PageHeading eyebrow="Share what you learned" title="Write a solution" description="Explain how you solved a challenge so others can learn from your steps." />
         </motion.div>
 
         {/* Form */}
         <motion.form
-          initial={{ opacity: 0, y: 20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           onSubmit={handleSubmit}
-          className="bg-zinc-950 border border-zinc-800 rounded-xl p-8 space-y-6"
+          className="bg-background-card border border-surface-border rounded-xl p-8 space-y-6"
         >
           {/* Error Banner */}
           {errors.form && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               className="flex gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
             >
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-300">{errors.form}</p>
+              <AlertCircle className="w-5 h-5 text-status-error flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-status-error">{errors.form}</p>
             </motion.div>
           )}
 
           {/* Challenge Selection */}
           <div className="space-y-2">
-            <label className="text-xs font-black uppercase tracking-widest text-zinc-400 flex justify-between">
+            <label className="text-xs font-semibold uppercase tracking-widest text-text-secondary flex justify-between">
               <span>Select Challenge</span>
-              {errors.challengeId && <span className="text-red-400 font-bold">{errors.challengeId}</span>}
+              {errors.challengeId && <span className="text-status-error font-bold">{errors.challengeId}</span>}
             </label>
             <select
               value={form.challengeId}
               onChange={set('challengeId')}
               disabled={challengesLoading}
-              className={`w-full bg-black border rounded-lg px-4 py-3 text-sm font-mono outline-none transition-colors text-white ${
-                errors.challengeId ? 'border-red-500/50' : 'border-zinc-800 focus:border-neon-green/50'
+              className={`w-full bg-background border rounded-lg px-4 py-3 text-sm font-sans outline-none transition-colors text-text-primary ${
+                errors.challengeId ? 'border-red-500/50' : 'border-surface-border focus:border-brand/50'
               }`}
             >
               <option value="">
@@ -223,15 +224,15 @@ const SubmitWriteup: React.FC = () => {
               ))}
             </select>
             {!challengesLoading && (!challengesData || challengesData.length === 0) && (
-              <p className="text-xs text-zinc-600 italic">You haven't solved any challenges yet. Solve challenges to submit writeups.</p>
+              <p className="text-xs text-text-muted ">You haven't solved any challenges yet. Solve challenges to submit writeups.</p>
             )}
           </div>
 
           {/* Title */}
           <div className="space-y-2">
-            <label className="text-xs font-black uppercase tracking-widest text-zinc-400 flex justify-between">
+            <label className="text-xs font-semibold uppercase tracking-widest text-text-secondary flex justify-between">
               <span>Writeup Title</span>
-              <span className="text-zinc-600">{form.title.length}/200</span>
+              <span className="text-text-muted">{form.title.length}/200</span>
             </label>
             <input
               type="text"
@@ -239,42 +240,42 @@ const SubmitWriteup: React.FC = () => {
               onChange={set('title')}
               placeholder="e.g., SQL Injection Through Error Messages"
               maxLength={200}
-              className={`w-full bg-black border rounded-lg px-4 py-3 text-sm font-mono outline-none transition-colors text-white placeholder-zinc-700 ${
-                errors.title ? 'border-red-500/50' : 'border-zinc-800 focus:border-neon-green/50'
+              className={`w-full bg-background border rounded-lg px-4 py-3 text-sm font-sans outline-none transition-colors text-text-primary placeholder-zinc-700 ${
+                errors.title ? 'border-red-500/50' : 'border-surface-border focus:border-brand/50'
               }`}
             />
-            {errors.title && <p className="text-xs text-red-400">{errors.title}</p>}
+            {errors.title && <p className="text-xs text-status-error">{errors.title}</p>}
           </div>
 
           {/* Content */}
           <div className="space-y-2">
-            <label className="text-xs font-black uppercase tracking-widest text-zinc-400 flex justify-between">
+            <label className="text-xs font-semibold uppercase tracking-widest text-text-secondary flex justify-between">
               <span>Content</span>
-              <span className="text-zinc-600">{form.content.length}/10000</span>
+              <span className="text-text-muted">{form.content.length}/10000</span>
             </label>
             <textarea
               value={form.content}
               onChange={set('content')}
-              placeholder="Explain your approach, key insights, and solution methodology. Include code snippets if helpful..."
+              placeholder="Explain each step you took. Add commands or code where they help."
               maxLength={10000}
               rows={12}
-              className={`w-full bg-black border rounded-lg px-4 py-3 text-sm font-mono outline-none transition-colors text-white placeholder-zinc-700 resize-none ${
-                errors.content ? 'border-red-500/50' : 'border-zinc-800 focus:border-neon-green/50'
+              className={`w-full bg-background border rounded-lg px-4 py-3 text-sm font-sans outline-none transition-colors text-text-primary placeholder-zinc-700 resize-none ${
+                errors.content ? 'border-red-500/50' : 'border-surface-border focus:border-brand/50'
               }`}
             />
-            {errors.content && <p className="text-xs text-red-400">{errors.content}</p>}
-            <p className="text-xs text-zinc-600">Minimum 50 characters • Maximum 10,000 characters</p>
+            {errors.content && <p className="text-xs text-status-error">{errors.content}</p>}
+            <p className="text-xs text-text-muted">Minimum 50 characters • Maximum 10,000 characters</p>
           </div>
 
           {/* Info Box */}
           <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 flex gap-3">
-            <AlertCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-            <div className="text-xs text-blue-300 space-y-1">
-              <p className="font-bold">Guidelines for Quality Writeups:</p>
-              <ul className="list-disc list-inside space-y-0.5 text-blue-300/80">
+            <AlertCircle className="w-5 h-5 text-status-info flex-shrink-0 mt-0.5" />
+            <div className="text-xs text-status-info space-y-1">
+              <p className="font-bold">Before you submit:</p>
+              <ul className="list-disc list-inside space-y-0.5 text-status-info/80">
                 <li>Explain your reasoning and approach</li>
-                <li>Share key insights and techniques</li>
-                <li>Include relevant code snippets</li>
+                <li>Explain what worked and why</li>
+                <li>Include useful commands or code</li>
                 <li>Help readers learn, not just copy</li>
                 <li>Admin review required before publication</li>
               </ul>
@@ -286,7 +287,7 @@ const SubmitWriteup: React.FC = () => {
             <button
               type="submit"
               disabled={submitMutation.isPending || challengesLoading}
-              className="flex-1 py-3 bg-neon-green text-black font-black text-sm uppercase rounded-lg hover:brightness-110 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-brand text-on-brand font-semibold text-sm uppercase rounded-lg hover:brightness-110 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
             >
               {submitMutation.isPending ? (
                 <>
@@ -296,7 +297,7 @@ const SubmitWriteup: React.FC = () => {
               ) : (
                 <>
                   <Send className="w-4 h-4" />
-                  SUBMIT_WRITEUP
+                  Submit writeup
                 </>
               )}
             </button>
@@ -306,9 +307,9 @@ const SubmitWriteup: React.FC = () => {
                 setForm(INITIAL_FORM);
                 setErrors({});
               }}
-              className="flex-1 py-3 bg-zinc-900 border border-zinc-800 text-zinc-300 font-black text-sm uppercase rounded-lg hover:border-neon-green/30 transition-all"
+              className="flex-1 py-3 bg-background-elevated border border-surface-border text-text-secondary font-semibold text-sm uppercase rounded-lg hover:border-brand/30 transition-all"
             >
-              CLEAR
+              Clear
             </button>
           </div>
         </motion.form>

@@ -1,29 +1,39 @@
-import React, { Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
-import Navbar from './navbar';
-
-const MainLayout: React.FC = () => {
+import { useEffect } from "react";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import { MotionConfig } from "framer-motion";
+import Navbar from "./navbar";
+import { useAuthStore } from "../../store/authStore";
+export default function MainLayout() {
+  const authenticated = useAuthStore((state) => state.isAuthenticated);
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [pathname]);
   return (
-    <div className="min-h-[100dvh] bg-background flex flex-col selection:bg-neon-green/30 selection:text-neon-green">
-      <Navbar />
-
-      <main className="site-main flex-grow min-w-0">
-        <Suspense
-          fallback={
-            <div className="flex min-h-[50vh] items-center justify-center" role="status" aria-live="polite">
-              <span className="text-sm text-zinc-400">Loading page...</span>
-            </div>
-          }
-        >
+    <MotionConfig reducedMotion="user">
+      <div className={"app-shell " + (authenticated ? "is-authenticated" : "")}>
+        <Navbar />
+        <main id="main-content" className="app-content" tabIndex={-1}>
           <Outlet />
-        </Suspense>
-      </main>
-
-      <footer className="relative z-10 border-t border-surface-border bg-background px-4 py-5 text-center text-xs text-zinc-500">
-        &copy; {new Date().getFullYear()} FSocietyPK
-      </footer>
-    </div>
+        </main>
+        <footer className="site-footer">
+          <span>
+            © {new Date().getFullYear()} Fsociety PK. Learn. Practice. Share.
+          </span>
+          <span className="flex gap-5">
+            <Link to="/resources">Learn</Link>
+            {authenticated && <Link to="/about-admin">About the admin</Link>}
+            <Link to="/submit-challenge">Contribute</Link>
+            <a
+              href="https://github.com/fsociety-pk"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub ↗
+            </a>
+          </span>
+        </footer>
+      </div>
+    </MotionConfig>
   );
-};
-
-export default MainLayout;
+}

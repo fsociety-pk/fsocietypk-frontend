@@ -4,6 +4,7 @@ import { ApiResponse, IUser } from '../types';
 export interface UserProfile extends IUser {
   rank: number;
   grade?: string;
+  proficiencyIndex?: { category: string; solved: number; total: number }[];
   solveHistory: any[];
 }
 

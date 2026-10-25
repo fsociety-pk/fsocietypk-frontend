@@ -1,289 +1,324 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useRef, useState } from "react";
+import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Bell,
-  BookOpen,
-  ChevronDown,
-  Folder,
-  LogOut,
-  Menu,
-  Shield,
-  Terminal,
+  LayoutDashboard,
+  Flag,
   Trophy,
+  BookOpen,
+  Folder,
+  Library,
+  Send,
   User,
+  Shield,
+  Menu,
   X,
-} from 'lucide-react';
-import { useAuthStore } from '../../store/authStore';
-import { authService } from '../../services/auth.service';
+  Bell,
+  LogOut,
+  ArrowUpRight,
+  ChevronRight,
+} from "lucide-react";
+import { useAuthStore } from "../../store/authStore";
+import { authService } from "../../services/auth.service";
 import {
-  NOTIFICATION_UNREAD_COUNT_UPDATED,
   notificationService,
-} from '../../services/notificationService';
-import { toast } from 'react-hot-toast';
-import companyLogo from '../../../images/logo.png';
-
-const Navbar: React.FC = () => {
+  NOTIFICATION_UNREAD_COUNT_UPDATED,
+} from "../../services/notificationService";
+import ThemeToggle from "../common/ThemeToggle";
+import BrandLogo from "../common/BrandLogo";
+import { toast } from "react-hot-toast";
+const workspaceLinks = [
+  { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  { to: "/challenges", label: "Challenges", icon: Flag },
+  { to: "/leaderboard", label: "Hall of Fame", icon: Trophy },
+  { to: "/writeups", label: "Writeups", icon: BookOpen },
+  { to: "/resources", label: "Resources", icon: Library },
+  { to: "/projects", label: "Projects", icon: Folder },
+];
+export function Brand() {
+  return (
+    <Link to="/" className="brand-lockup" aria-label="Fsociety PK home">
+      <BrandLogo />
+      <span>
+        Fsociety<small>PK</small>
+      </span>
+    </Link>
+  );
+}
+export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuthStore();
-  const [isOpen, setIsOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [unread, setUnread] = useState(0);
+  const [loggingOut, setLoggingOut] = useState(false);
   const location = useLocation();
-
+  const navigate = useNavigate();
+  const drawer = useRef<HTMLDivElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    if (!isAuthenticated) {
-      setUnreadCount(0);
-      return;
-    }
-
-    const fetchUnreadCount = async () => {
-      try {
-        setUnreadCount(await notificationService.getUnreadCount());
-      } catch (error) {
-        console.warn('Unable to refresh notification count', error);
+    setOpen(false);
+  }, [location.pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const before = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    drawer.current?.querySelector<HTMLElement>("a,button")?.focus();
+    const key = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        menuButton.current?.focus();
+      }
+      if (e.key === "Tab") {
+        const elements =
+          drawer.current?.querySelectorAll<HTMLElement>("a,button");
+        if (!elements?.length) return;
+        if (e.shiftKey && document.activeElement === elements[0]) {
+          e.preventDefault();
+          elements[elements.length - 1].focus();
+        } else if (
+          !e.shiftKey &&
+          document.activeElement === elements[elements.length - 1]
+        ) {
+          e.preventDefault();
+          elements[0].focus();
+        }
       }
     };
-
-    const handleUnreadCountUpdated = (event: Event) => {
-      const customEvent = event as CustomEvent<{ count: number }>;
-      setUnreadCount(Number(customEvent.detail?.count ?? 0));
-    };
-
-    fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000);
-    window.addEventListener(NOTIFICATION_UNREAD_COUNT_UPDATED, handleUnreadCountUpdated);
-
+    document.addEventListener("keydown", key);
     return () => {
-      clearInterval(interval);
-      window.removeEventListener(NOTIFICATION_UNREAD_COUNT_UPDATED, handleUnreadCountUpdated);
+      document.body.style.overflow = before;
+      document.removeEventListener("keydown", key);
+    };
+  }, [open]);
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setUnread(0);
+      return;
+    }
+    let active = true;
+    const fetchCount = () =>
+      notificationService
+        .getUnreadCount()
+        .then((n) => {
+          if (active) setUnread(n);
+        })
+        .catch(() => {});
+    const update = (e: Event) =>
+      setUnread(
+        Number((e as CustomEvent<{ count: number }>).detail?.count || 0),
+      );
+    fetchCount();
+    const timer = setInterval(fetchCount, 30000);
+    window.addEventListener(NOTIFICATION_UNREAD_COUNT_UPDATED, update);
+    return () => {
+      active = false;
+      clearInterval(timer);
+      window.removeEventListener(NOTIFICATION_UNREAD_COUNT_UPDATED, update);
     };
   }, [isAuthenticated]);
-
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location.pathname]);
-
   const handleLogout = async () => {
-    setIsOpen(false);
+    setLoggingOut(true);
     try {
       await authService.logout();
       logout();
-      toast.success('DECONNECTED_SUCCESSFULLY');
-      navigate('/login');
+      navigate("/login");
+      toast.success("You are signed out.");
     } catch {
-      toast.error('LOGOUT_FAILURE');
+      toast.error("Could not sign out. Please try again.");
+    } finally {
+      setLoggingOut(false);
     }
   };
-
-  const navLinks = isAuthenticated
-    ? [
-        { name: 'DASHBOARD', path: '/dashboard', icon: Terminal },
-        { name: 'MISSIONS', path: '/challenges', icon: Shield },
-        { name: 'HALL_OF_FAME', path: '/leaderboard', icon: Trophy },
-        { name: 'WRITEUPS', path: '/writeups', icon: BookOpen },
-        { name: 'RESOURCES', path: '/resources', icon: BookOpen },
-        { name: 'SUBMIT_MISSION', path: '/submit-challenge', icon: Terminal },
-        { name: 'SUBMIT_WRITEUP', path: '/submit-writeup', icon: BookOpen },
-        { name: 'PROJECTS', path: '/projects', icon: Folder },
-      ]
-    : [
-        { name: 'LOGIN', path: '/login', icon: User },
-        { name: 'JOIN_US', path: '/signup', icon: Terminal },
-      ];
-
-  if (user?.role === 'admin' && isAuthenticated) {
-    navLinks.push({ name: 'ADMIN_CONTROL', path: '/admin', icon: Shield });
-  }
-
-  const primaryLinks = navLinks.filter(({ name }) =>
-    ['DASHBOARD', 'MISSIONS', 'HALL_OF_FAME'].includes(name)
+  const personal = [
+    { to: "/submissions", label: "My submissions", icon: Send },
+    { to: "/profile", label: "My profile", icon: User },
+    ...(user?.role === "admin"
+      ? [{ to: "/admin", label: "Admin workspace", icon: Shield }]
+      : []),
+  ];
+  const navigation = (
+    <>
+      <div className="sidebar-caption">Workspace</div>
+      <nav className="sidebar-nav" aria-label="Workspace">
+        {workspaceLinks.map(({ to, label, icon: Icon }) => (
+          <NavLink to={to} key={to}>
+            <Icon size={17} />
+            {label}
+          </NavLink>
+        ))}
+      </nav>
+      <div className="sidebar-caption">Personal</div>
+      <nav className="sidebar-nav" aria-label="Personal">
+        {personal.map(({ to, label, icon: Icon }) => (
+          <NavLink to={to} key={to}>
+            <Icon size={17} />
+            {label}
+          </NavLink>
+        ))}
+      </nav>
+    </>
   );
-  const moreLinks = navLinks.filter(({ name }) =>
-    !['DASHBOARD', 'MISSIONS', 'HALL_OF_FAME'].includes(name)
-  );
-  const isActive = (path: string) =>
-    location.pathname === path ||
-    (path !== '/dashboard' && location.pathname.startsWith(`${path}/`));
-  const linkLabel = (name: string) => name.replace(/_/g, ' ');
-  const linkClass = (path: string) =>
-    `inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-xs font-semibold tracking-wide transition-colors ${
-      isActive(path)
-        ? 'bg-neon-green/10 text-neon-green'
-        : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-100'
-    }`;
-
+  const title =
+    [
+      ...workspaceLinks,
+      ...personal,
+      { to: "/submit-challenge", label: "Create challenge" },
+      { to: "/submit-writeup", label: "Write a solution" },
+      { to: "/notifications", label: "Notifications" },
+      { to: "/about-admin", label: "About the admin" },
+    ].find((item) => location.pathname.startsWith(item.to))?.label ||
+    "Workspace";
   return (
-    <nav className="sticky top-0 z-50 border-b border-surface-border bg-background/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-[1480px] items-center gap-3 px-4 sm:px-6">
-        <Link to="/" aria-label="FSocietyPK home" className="flex shrink-0 items-center gap-2.5">
-          <img src={companyLogo} alt="" className="h-9 w-9 rounded-full object-contain" />
-          <span className="hidden whitespace-nowrap font-display text-base font-bold tracking-[0.12em] text-white sm:block">
-            FSOCIETY<span className="text-neon-green">PK</span>
-          </span>
-        </Link>
-
-        {isAuthenticated ? (
-          <div className="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex">
-            {primaryLinks.map((link) => (
-              <Link key={link.path} to={link.path} className={linkClass(link.path)}>
-                <link.icon aria-hidden="true" className="h-4 w-4 shrink-0" />
-                <span>{linkLabel(link.name)}</span>
-              </Link>
-            ))}
-            {moreLinks.length > 0 && (
-              <details className="group relative">
-                <summary
-                  className={`inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-md px-3 text-xs font-semibold tracking-wide transition-colors [&::-webkit-details-marker]:hidden ${
-                    moreLinks.some((link) => isActive(link.path))
-                      ? 'bg-neon-green/10 text-neon-green'
-                      : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-100'
-                  }`}
-                >
-                  <span>MORE</span>
-                  <ChevronDown aria-hidden="true" className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
-                </summary>
-                <div className="absolute left-0 top-full z-50 mt-2 min-w-56 rounded-lg border border-surface-border bg-background-card p-1.5 shadow-card">
-                  {moreLinks.map((link) => (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      className={`flex min-h-11 items-center gap-3 rounded-md px-3 text-xs font-medium transition-colors ${
-                        isActive(link.path)
-                          ? 'bg-neon-green/10 text-neon-green'
-                          : 'text-zinc-300 hover:bg-white/[0.05] hover:text-white'
-                      }`}
-                    >
-                      <link.icon aria-hidden="true" className="h-4 w-4 text-zinc-500" />
-                      {linkLabel(link.name)}
-                    </Link>
-                  ))}
-                </div>
-              </details>
-            )}
-          </div>
-        ) : (
-          <div className="hidden flex-1 items-center justify-end gap-2 lg:flex">
-            {navLinks.map((link) => (
+    <>
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
+      {isAuthenticated && (
+        <aside className="app-sidebar">
+          <Brand />
+          {navigation}
+          <div className="sidebar-footer">
+            <div className="sidebar-community">
+              <Flag size={20} />
+              <strong>Have a challenge idea?</strong>
+              <p>Turn what you learn into someone else's next challenge.</p>
               <Link
-                key={link.path}
-                to={link.path}
-                className={`inline-flex min-h-11 items-center rounded-md px-4 text-xs font-semibold tracking-wide transition-colors ${
-                  link.path === '/signup'
-                    ? 'bg-neon-green text-background hover:brightness-105'
-                    : 'text-zinc-300 hover:text-white'
-                }`}
+                to="/submit-challenge"
+                className="inline-flex items-center gap-2 mt-3 text-brand"
               >
-                {linkLabel(link.name)}
+                Create a challenge <ArrowUpRight size={14} />
               </Link>
-            ))}
-          </div>
-        )}
-
-        {isAuthenticated && (
-          <div className="ml-auto hidden shrink-0 items-center gap-2 lg:flex">
-            <Link
-              to="/profile"
-              aria-label={`View ${user?.username ?? 'your'} profile`}
-              className="inline-flex min-h-11 max-w-40 items-center gap-2 rounded-md px-2.5 text-zinc-300 transition-colors hover:bg-white/[0.04] hover:text-white"
-            >
-              {user?.avatar ? (
-                <img src={user.avatar} alt="" className="h-8 w-8 rounded-full object-cover" />
-              ) : (
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-sm text-neon-green">
-                  {user?.username?.[0]?.toUpperCase() ?? 'U'}
-                </span>
-              )}
-              <span className="truncate text-xs font-medium">{user?.username}</span>
-            </Link>
-            <Link
-              to="/notifications"
-              aria-label={unreadCount ? `Notifications, ${unreadCount} unread` : 'Notifications'}
-              className="relative flex h-11 w-11 items-center justify-center rounded-md border border-surface-border text-zinc-400 transition-colors hover:border-neon-green/40 hover:text-neon-green"
-            >
-              <Bell aria-hidden="true" className="h-4 w-4" />
-              {unreadCount > 0 && (
-                <span className="absolute right-1 top-1 min-w-4 rounded-full bg-neon-green px-1 text-center text-[9px] font-bold leading-4 text-background">
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </span>
-              )}
-            </Link>
+            </div>
             <button
+              className="btn-ghost w-full justify-start"
+              disabled={loggingOut}
               onClick={handleLogout}
-              aria-label="Log out"
-              className="flex h-11 w-11 items-center justify-center rounded-md border border-surface-border text-zinc-400 transition-colors hover:border-red-500/40 hover:text-red-400"
             >
-              <LogOut aria-hidden="true" className="h-4 w-4" />
+              <LogOut size={16} />
+              Sign out
             </button>
           </div>
+        </aside>
+      )}
+      <header className="site-header">
+        {isAuthenticated ? (
+          <div className="app-header-title">
+            <span>Workspace</span>
+            <ChevronRight size={13} />
+            <strong>{title}</strong>
+          </div>
+        ) : (
+          <Brand />
         )}
-
-        <button
-          type="button"
-          aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen((open) => !open)}
-          className="ml-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-surface-border text-zinc-300 transition-colors hover:border-neon-green/40 hover:text-neon-green lg:hidden"
-        >
-          {isOpen ? <X aria-hidden="true" className="h-5 w-5" /> : <Menu aria-hidden="true" className="h-5 w-5" />}
-        </button>
-      </div>
-
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="overflow-hidden border-t border-surface-border bg-background-card lg:hidden"
+        {!isAuthenticated && (
+          <nav className="public-nav" aria-label="Main">
+            <NavLink to="/challenges">Challenges</NavLink>
+            <NavLink to="/leaderboard">Hall of Fame</NavLink>
+            <NavLink to="/resources">Resources</NavLink>
+            <NavLink to="/projects">Projects</NavLink>
+          </nav>
+        )}
+        <div className="header-actions">
+          <ThemeToggle />
+          {isAuthenticated ? (
+            <>
+              <Link
+                to="/notifications"
+                className="icon-button relative"
+                aria-label={
+                  "Notifications" + (unread ? ", " + unread + " unread" : "")
+                }
+              >
+                <Bell size={17} />
+                {unread > 0 && <i className="notification-dot" />}
+              </Link>
+              <Link to="/profile" className="user-chip">
+                <span className="avatar-small">
+                  {user?.avatar ? (
+                    <img src={user.avatar} alt="" />
+                  ) : (
+                    user?.username?.[0]?.toUpperCase()
+                  )}
+                </span>
+                <span>{user?.username}</span>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="login-link text-sm">
+                Log in
+              </Link>
+              <Link to="/signup" className="btn-primary join-button">
+                Create account <ArrowUpRight size={15} />
+              </Link>
+            </>
+          )}
+          <button
+            ref={menuButton}
+            className="icon-button menu-toggle"
+            aria-label={open ? "Close navigation" : "Open navigation"}
+            aria-expanded={open}
+            aria-controls="mobile-navigation"
+            onClick={() => setOpen(!open)}
           >
-            <div className="mx-auto grid max-w-[1480px] gap-1 px-4 py-3 sm:grid-cols-2 sm:px-6">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors ${
-                    isActive(link.path)
-                      ? 'bg-neon-green/10 text-neon-green'
-                      : 'text-zinc-300 hover:bg-white/[0.04] hover:text-white'
-                  }`}
-                >
-                  <link.icon aria-hidden="true" className="h-4 w-4" />
-                  {linkLabel(link.name)}
+            {open ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+      </header>
+      {open && (
+        <div
+          ref={drawer}
+          className="mobile-drawer"
+          id="mobile-navigation"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation"
+        >
+          <button
+            className="btn-ghost mb-2"
+            onClick={() => {
+              setOpen(false);
+              menuButton.current?.focus();
+            }}
+          >
+            <X size={16} />
+            Close navigation
+          </button>
+          {isAuthenticated ? (
+            navigation
+          ) : (
+            <nav className="sidebar-nav">
+              {workspaceLinks
+                .filter((x) => x.to !== "/writeups")
+                .map(({ to, label, icon: Icon }) => (
+                  <NavLink to={to} key={to}>
+                    <Icon size={18} />
+                    {label}
+                  </NavLink>
+                ))}
+            </nav>
+          )}
+          <div className="mobile-drawer-footer">
+            {isAuthenticated ? (
+              <button
+                className="btn-outline"
+                onClick={handleLogout}
+                disabled={loggingOut}
+              >
+                <LogOut size={16} />
+                Sign out
+              </button>
+            ) : (
+              <>
+                <Link to="/login" className="btn-outline">
+                  Log in
                 </Link>
-              ))}
-              {isAuthenticated && (
-                <>
-                  <Link
-                    to="/profile"
-                    className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/[0.04] hover:text-white"
-                  >
-                    <User aria-hidden="true" className="h-4 w-4" />
-                    {user?.username}
-                  </Link>
-                  <Link
-                    to="/notifications"
-                    className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/[0.04] hover:text-white"
-                  >
-                    <Bell aria-hidden="true" className="h-4 w-4" />
-                    Notifications{unreadCount > 0 ? ` (${unreadCount > 99 ? '99+' : unreadCount})` : ''}
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="flex min-h-11 items-center gap-3 rounded-md px-3 text-left text-sm font-medium text-zinc-300 transition-colors hover:bg-red-500/10 hover:text-red-300"
-                  >
-                    <LogOut aria-hidden="true" className="h-4 w-4" />
-                    Log out
-                  </button>
-                </>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+                <Link to="/signup" className="btn-primary">
+                  Create account
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
-};
-
-export default Navbar;
+}

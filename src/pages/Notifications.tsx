@@ -1,3 +1,4 @@
+import PageHeading from "../components/common/PageHeading";
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -87,15 +88,15 @@ const Notifications: React.FC = () => {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'challenge_approved':
-        return <CheckCircle2 className="w-5 h-5 text-emerald-400" />;
+        return <CheckCircle2 className="w-5 h-5 text-status-success" />;
       case 'challenge_rejected':
-        return <XCircle className="w-5 h-5 text-red-400" />;
+        return <XCircle className="w-5 h-5 text-status-error" />;
       case 'challenge_submitted':
-        return <AlertCircle className="w-5 h-5 text-blue-400" />;
+        return <AlertCircle className="w-5 h-5 text-status-info" />;
       case 'challenge_solved':
-        return <Trophy className="w-5 h-5 text-yellow-400" />;
+        return <Trophy className="w-5 h-5 text-status-warning" />;
       default:
-        return <Bell className="w-5 h-5 text-neon-green" />;
+        return <Bell className="w-5 h-5 text-brand" />;
     }
   };
 
@@ -110,30 +111,20 @@ const Notifications: React.FC = () => {
       case 'challenge_solved':
         return 'bg-yellow-500/10 border-yellow-500/30';
       default:
-        return 'bg-zinc-900/40 border-zinc-800/50';
+        return 'bg-background-elevated/40 border-surface-border/50';
     }
   };
 
   return (
-    <div className="min-h-screen bg-black px-4 py-6 text-white sm:px-6 sm:py-8 md:px-8 md:py-10 lg:py-12">
+    <div className="page-wrap">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           className="mb-6 sm:mb-8"
         >
-          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-neon-green/30 bg-neon-green/10">
-              <Bell className="h-5 w-5 text-neon-green" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl md:text-4xl">
-                Notifications
-              </h1>
-              <p className="mt-1 text-sm text-zinc-400">Updates about your challenges and account</p>
-            </div>
-          </div>
+          <PageHeading eyebrow="Your updates" title="Notifications" description="Updates about your challenges and submissions." />
 
           {/* Filters */}
           <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-4 sm:mb-6">
@@ -141,13 +132,13 @@ const Notifications: React.FC = () => {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`min-h-11 rounded-md px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded text-xs sm:text-xs font-bold uppercase tracking-widest transition-all ${
                   filter === f
-                    ? 'bg-neon-green text-black'
-                    : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-neon-green/50'
+                    ? 'bg-brand text-on-brand'
+                    : 'bg-background-elevated text-text-secondary border border-surface-border hover:border-brand/50'
                 }`}
               >
-                {f.toUpperCase()}
+                {f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
             ))}
           </div>
@@ -157,17 +148,17 @@ const Notifications: React.FC = () => {
             <div className="flex flex-wrap gap-1 sm:gap-2">
               <button
                 onClick={handleMarkAllAsRead}
-                className="flex min-h-11 items-center gap-2 rounded-md border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-300 transition-colors hover:bg-blue-500/20"
+                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 bg-blue-600/20 border border-blue-500/50 rounded text-xs sm:text-xs font-bold text-status-info hover:bg-blue-600/30 transition-all"
               >
                 <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4" />
-                MARK ALL READ
+                Mark all as read
               </button>
               <button
                 onClick={handleClearAll}
-                className="flex min-h-11 items-center gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-300 transition-colors hover:bg-red-500/20"
+                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 bg-red-600/20 border border-red-500/50 rounded text-xs sm:text-xs font-bold text-status-error hover:bg-red-600/30 transition-all"
               >
                 <Trash2 className="w-3 sm:w-4 h-3 sm:h-4" />
-                CLEAR ALL
+                Clear all
               </button>
             </div>
           )}
@@ -176,20 +167,20 @@ const Notifications: React.FC = () => {
         {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-neon-green animate-spin" />
+            <Loader2 className="w-8 h-8 text-brand animate-spin" />
           </div>
         )}
 
         {/* Empty State */}
         {!loading && notifications.length === 0 && (
           <motion.div
-            initial={{ opacity: 0 }}
+            initial={false}
             animate={{ opacity: 1 }}
             className="text-center py-20"
           >
-            <Bell className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
-            <p className="text-zinc-400 text-lg">No notifications yet</p>
-            <p className="text-zinc-600 text-sm mt-2">
+            <Bell className="w-16 h-16 text-text-muted mx-auto mb-4" />
+            <p className="text-text-secondary text-lg">No notifications yet</p>
+            <p className="text-text-muted text-sm mt-2">
               {filter === 'unread' && 'All caught up!'}
               {filter === 'read' && 'No read notifications'}
               {filter === 'all' && 'Stay tuned for updates about your challenges'}
@@ -203,13 +194,13 @@ const Notifications: React.FC = () => {
             {notifications.map((notif, index) => (
               <motion.div
                 key={notif._id}
-                initial={{ opacity: 0, x: -20 }}
+                initial={false}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ delay: index * 0.05 }}
-                className={`rounded-lg border p-4 transition-colors sm:p-5 ${
+                className={`border rounded-lg p-4 transition-all ${
                   notif.read
-                    ? 'bg-zinc-900/30 border-zinc-800/30'
+                    ? 'bg-background-elevated/30 border-surface-border/30'
                     : `${getNotificationBgColor(notif.type)} active:scale-95`
                 } ${!notif.read ? 'border-solid' : 'border-dashed'}`}
               >
@@ -222,22 +213,22 @@ const Notifications: React.FC = () => {
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <h3 className={`font-bold text-sm uppercase tracking-widest ${
-                          notif.read ? 'text-zinc-400' : 'text-white'
+                          notif.read ? 'text-text-secondary' : 'text-text-primary'
                         }`}>
                           {notif.title}
                         </h3>
-                        <p className="text-sm text-zinc-400 mt-1 leading-relaxed">
+                        <p className="text-sm text-text-secondary mt-1 leading-relaxed">
                           {notif.message}
                         </p>
                       </div>
 
                       {!notif.read && (
-                        <div className="w-2 h-2 bg-neon-green rounded-full flex-shrink-0 mt-2" />
+                        <div className="w-2 h-2 bg-brand rounded-full flex-shrink-0 mt-2" />
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-zinc-800/30">
-                      <span className="text-[10px] text-zinc-600">
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-surface-border/30">
+                      <span className="text-xs text-text-muted">
                         {new Date(notif.createdAt).toLocaleDateString()} at{' '}
                         {new Date(notif.createdAt).toLocaleTimeString([], {
                           hour: '2-digit',
@@ -249,8 +240,7 @@ const Notifications: React.FC = () => {
                         {!notif.read && (
                           <button
                             onClick={() => handleMarkAsRead(notif._id)}
-                            aria-label={`Mark ${notif.title} as read`}
-                            className="flex h-10 w-10 items-center justify-center rounded-md text-zinc-400 transition-colors hover:bg-neon-green/10 hover:text-neon-green"
+                            className="p-1.5 text-text-muted hover:text-brand hover:bg-brand/10 rounded transition-all"
                             title="Mark as read"
                           >
                             <Check className="w-4 h-4" />
@@ -258,8 +248,7 @@ const Notifications: React.FC = () => {
                         )}
                         <button
                           onClick={() => handleDelete(notif._id)}
-                          aria-label={`Delete ${notif.title}`}
-                          className="flex h-10 w-10 items-center justify-center rounded-md text-zinc-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                          className="p-1.5 text-text-muted hover:text-status-error hover:bg-red-500/10 rounded transition-all"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />

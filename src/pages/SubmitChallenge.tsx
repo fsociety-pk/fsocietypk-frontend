@@ -1,7 +1,8 @@
+import PageHeading from "../components/common/PageHeading";
+import { CHALLENGE_CATEGORIES, CATEGORY_LABELS } from '../utils/categories';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Terminal,
   Plus,
   Trash2,
   Send,
@@ -20,7 +21,7 @@ import { challengeService } from '../services/challenge.service';
 import { useAuthStore } from '../store/authStore';
 
 // ── Constants ────────────────────────────────────────────────────────────────
-const CATEGORIES = ['web', 'crypto', 'forensics', 'misc', 'pwn', 'rev'] as const;
+const CATEGORIES = CHALLENGE_CATEGORIES;
 const DIFFICULTIES = ['easy', 'medium', 'hard', 'insane'] as const;
 const POINTS_MAP: Record<string, number> = {
   easy: 50,
@@ -61,9 +62,9 @@ const INITIAL_FORM: FormState = {
 
 // ── Difficulty badge colors ───────────────────────────────────────────────────
 const difficultyColors: Record<string, string> = {
-  easy: 'text-emerald-400 border-emerald-400/40 bg-emerald-400/10',
-  medium: 'text-yellow-400 border-yellow-400/40 bg-yellow-400/10',
-  hard: 'text-red-400 border-red-400/40 bg-red-400/10',
+  easy: 'text-status-success border-emerald-400/40 bg-emerald-400/10',
+  medium: 'text-status-warning border-yellow-400/40 bg-yellow-400/10',
+  hard: 'text-status-error border-red-400/40 bg-red-400/10',
   insane: 'text-purple-400 border-purple-400/40 bg-purple-400/10',
 };
 
@@ -235,30 +236,30 @@ const SubmitChallenge: React.FC = () => {
   // ── Success State ───────────────────────────────────────────────────────────
   if (submitted) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4 font-mono">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4 font-sans">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={false}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-lg w-full text-center border border-neon-green/30 rounded-2xl p-10 bg-zinc-900/50 backdrop-blur"
+          className="max-w-lg w-full text-center border border-brand/30 rounded-2xl p-10 bg-background-elevated/50 backdrop-blur"
         >
           {/* Success Icon */}
-          <div className="mx-auto w-20 h-20 rounded-full bg-neon-green/10 border border-neon-green/30 flex items-center justify-center mb-6">
-            <CheckCircle2 className="w-10 h-10 text-neon-green" />
+          <div className="mx-auto w-20 h-20 rounded-full bg-brand/10 border border-brand/30 flex items-center justify-center mb-6">
+            <CheckCircle2 className="w-10 h-10 text-brand" />
           </div>
 
-          <h2 className="text-2xl font-bold text-neon-green mb-2 tracking-widest uppercase">
-            {submitted.status === 'approved' ? 'MISSION DEPLOYED' : 'SUBMISSION QUEUED'}
+          <h2 className="text-2xl font-bold text-brand mb-2 tracking-widest uppercase">
+            {submitted.status === 'approved' ? 'Challenge published' : 'Challenge submitted'}
           </h2>
-          <p className="text-zinc-400 text-sm mb-6 leading-relaxed">
+          <p className="text-text-secondary text-sm mb-6 leading-relaxed">
             {submitted.status === 'approved'
               ? (
                 <>
-                  Your challenge <span className="text-white font-bold">"{submitted.title}"</span> is approved and now visible to players.
+                  Your challenge <span className="text-text-primary font-bold">"{submitted.title}"</span> is approved and now visible to players.
                 </>
               )
               : (
                 <>
-                  Your challenge <span className="text-white font-bold">"{submitted.title}"</span> has been submitted and is awaiting admin review.
+                  Your challenge <span className="text-text-primary font-bold">"{submitted.title}"</span> has been submitted and is awaiting admin review.
                 </>
               )}
           </p>
@@ -269,22 +270,22 @@ const SubmitChallenge: React.FC = () => {
               ? 'bg-emerald-500/10 border border-emerald-500/30'
               : 'bg-orange-500/10 border border-orange-500/30'
           }`}>
-            <Clock className={`w-5 h-5 ${submitted.status === 'approved' ? 'text-emerald-400' : 'text-orange-400'}`} />
+            <Clock className={`w-5 h-5 ${submitted.status === 'approved' ? 'text-status-success' : 'text-status-warning'}`} />
             <span className={`text-sm font-bold tracking-widest uppercase ${
-              submitted.status === 'approved' ? 'text-emerald-300' : 'text-orange-300'
+              submitted.status === 'approved' ? 'text-status-success' : 'text-status-warning'
             }`}>
-              {submitted.status === 'approved' ? 'APPROVED & PUBLISHED' : 'PENDING APPROVAL'}
+              {submitted.status === 'approved' ? 'Approved and published' : 'Waiting for review'}
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
-            <div className="p-2 sm:p-3 bg-zinc-900 rounded-lg border border-zinc-800">
-              <p className="text-[8px] sm:text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Points</p>
-              <p className="text-lg sm:text-xl font-bold text-yellow-400">{submitted.points}</p>
+            <div className="p-2 sm:p-3 bg-background-elevated rounded-lg border border-surface-border">
+              <p className="text-xs sm:text-xs text-text-muted uppercase tracking-widest mb-1">Points</p>
+              <p className="text-lg sm:text-xl font-bold text-status-warning">{submitted.points}</p>
             </div>
-            <div className="p-2 sm:p-3 bg-zinc-900 rounded-lg border border-zinc-800">
-              <p className="text-[8px] sm:text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Status</p>
-              <p className={`text-lg sm:text-xl font-bold ${submitted.status === 'approved' ? 'text-emerald-400' : 'text-orange-400'}`}>
+            <div className="p-2 sm:p-3 bg-background-elevated rounded-lg border border-surface-border">
+              <p className="text-xs sm:text-xs text-text-muted uppercase tracking-widest mb-1">Status</p>
+              <p className={`text-lg sm:text-xl font-bold ${submitted.status === 'approved' ? 'text-status-success' : 'text-status-warning'}`}>
                 {submitted.status === 'approved' ? 'Approved' : 'Pending'}
               </p>
             </div>
@@ -293,15 +294,15 @@ const SubmitChallenge: React.FC = () => {
           <div className="flex flex-col gap-3">
             <button
               onClick={() => setSubmitted(null)}
-              className="w-full py-3 px-6 bg-neon-green text-black font-bold rounded-lg hover:bg-neon-green/90 transition-colors uppercase tracking-widest text-sm"
+              className="w-full py-3 px-6 bg-brand text-on-brand font-bold rounded-lg hover:bg-brand/90 transition-colors uppercase tracking-widest text-sm"
             >
               Submit Another
             </button>
             <a
-              href="/dashboard"
-              className="w-full py-3 px-6 border border-zinc-700 text-zinc-400 font-bold rounded-lg hover:border-neon-green/50 hover:text-white transition-all uppercase tracking-widest text-sm text-center"
+              href="/challenges"
+              className="w-full py-3 px-6 border border-surface-border text-text-secondary font-bold rounded-lg hover:border-brand/50 hover:text-text-primary transition-all uppercase tracking-widest text-sm text-center"
             >
-              View Missions
+              View challenges
             </a>
           </div>
         </motion.div>
@@ -311,35 +312,28 @@ const SubmitChallenge: React.FC = () => {
 
   // ── Main Form ───────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-black text-white font-mono p-4 md:p-8">
+    <div className="form-page">
+      {/* Background scanline pattern */}
+
+
       <div className="max-w-3xl mx-auto">
         {/* ── Header ──────────────────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           className="mb-10"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-lg bg-neon-green/10 border border-neon-green/30 flex items-center justify-center">
-              <Terminal className="w-5 h-5 text-neon-green" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-neon-green tracking-widest uppercase">
-                Submit Challenge
-              </h1>
-              <p className="text-zinc-500 text-xs mt-0.5">&gt; Craft your mission for FsocietyPK operators</p>
-            </div>
-          </div>
+          <PageHeading eyebrow="Share with the community" title="Create a challenge" description="Write the task, add a flag, and send it for review." />
 
           {/* Info Banner */}
           <div className="flex gap-3 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl mt-6">
-            <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-            <div className="text-xs text-blue-300 leading-relaxed">
+            <Info className="w-5 h-5 text-status-info shrink-0 mt-0.5" />
+            <div className="text-xs text-status-info leading-relaxed">
               <p className="font-bold mb-1 uppercase tracking-widest">Review Process</p>
               <p>
                 {isAdmin
-                  ? 'As admin, your challenge will be published immediately after submission.'
-                  : 'Your challenge will be queued for admin review. Once approved, it will appear in the public missions list and players can solve it.'}
+                  ? 'After you submit, you can check the challenge status in My submissions.'
+                  : 'An admin will check your challenge. Once approved, it will be available for everyone to solve.'}
               </p>
             </div>
           </div>
@@ -351,10 +345,10 @@ const SubmitChallenge: React.FC = () => {
           <AnimatePresence>
             {errors.form && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
+                initial={false}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm"
+                className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-status-error text-sm"
               >
                 <AlertTriangle className="w-5 h-5 shrink-0" />
                 {errors.form}
@@ -402,10 +396,10 @@ const SubmitChallenge: React.FC = () => {
                 >
                   <option value="">Select Category</option>
                   {CATEGORIES.map((c) => (
-                    <option key={c} value={c}>{c.toUpperCase()}</option>
+                    <option key={c} value={c}>{CATEGORY_LABELS[c] || c}</option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
               </div>
               {errors.category && <FieldError msg={errors.category} />}
             </FormSection>
@@ -425,12 +419,12 @@ const SubmitChallenge: React.FC = () => {
                       <option key={d} value={d}>{d.toUpperCase()}</option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
                 </div>
                 {/* Points preview */}
                 {form.difficulty && (
                   <motion.div
-                    initial={{ opacity: 0 }}
+                    initial={false}
                     animate={{ opacity: 1 }}
                     className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-bold w-fit ${difficultyColors[form.difficulty]}`}
                   >
@@ -446,19 +440,19 @@ const SubmitChallenge: React.FC = () => {
           {/* ── Flag ────────────────────────────────────────────── */}
           <FormSection label="Flag(s)" required hint='Must follow format: fsociety{your_flag_here}'>
             {/* Toggle for single vs multiple flags */}
-            <div className="flex items-center gap-3 p-3 bg-zinc-900/50 rounded-lg border border-zinc-800 mb-4">
+            <div className="flex items-center gap-3 p-3 bg-background-elevated/50 rounded-lg border border-surface-border mb-4">
               <button
                 type="button"
                 onClick={toggleMultiFlag}
                 className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-widest transition-all ${
                   form.isMultiFlag
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                    : 'bg-neon-green/20 text-neon-green border border-neon-green/30'
+                    ? 'bg-emerald-500/20 text-status-success border border-emerald-500/30'
+                    : 'bg-brand/20 text-brand border border-brand/30'
                 }`}
               >
-                {form.isMultiFlag ? 'MULTI-FLAG MODE' : 'SINGLE FLAG MODE'}
+                {form.isMultiFlag ? 'Multiple flags' : 'Single flag'}
               </button>
-              <span className="text-[10px] text-zinc-500">
+              <span className="text-xs text-text-muted">
                 {form.isMultiFlag ? 'Story-based challenge with multiple sequential flags' : 'Single flag for standard challenges'}
               </span>
             </div>
@@ -466,7 +460,7 @@ const SubmitChallenge: React.FC = () => {
             {/* Single Flag Input */}
             {!form.isMultiFlag && (
               <div className="relative">
-                <Flag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <Flag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
                 <input
                   id="challenge-flag"
                   type="text"
@@ -484,12 +478,12 @@ const SubmitChallenge: React.FC = () => {
                 {form.flags.map((flag, i) => (
                   <motion.div
                     key={i}
-                    initial={{ opacity: 0, x: -10 }}
+                    initial={false}
                     animate={{ opacity: 1, x: 0 }}
                     className="flex items-end gap-3"
                   >
                     <div className="flex-shrink-0">
-                      <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold block mb-1">
+                      <label className="text-xs text-text-muted uppercase tracking-widest font-bold block mb-1">
                         Sequence
                       </label>
                       <input
@@ -497,11 +491,11 @@ const SubmitChallenge: React.FC = () => {
                         min="1"
                         value={i + 1}
                         readOnly
-                        className="w-16 bg-zinc-900 border border-zinc-800 rounded-lg px-2 py-2 text-sm outline-none text-zinc-400"
+                        className="w-16 bg-background-elevated border border-surface-border rounded-lg px-2 py-2 text-sm outline-none text-text-secondary"
                       />
                     </div>
                     <div className="flex-1">
-                      <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold block mb-1">
+                      <label className="text-xs text-text-muted uppercase tracking-widest font-bold block mb-1">
                         Flag #{i + 1}
                       </label>
                       <input
@@ -509,14 +503,14 @@ const SubmitChallenge: React.FC = () => {
                         value={flag.value}
                         onChange={(e) => setMulFlag(i, e.target.value)}
                         placeholder="fsociety{...}"
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:border-neon-green outline-none transition-all text-white placeholder-zinc-600"
+                        className="w-full bg-background-elevated border border-surface-border rounded-lg px-3 py-2 text-sm focus:border-brand outline-none transition-all text-text-primary placeholder-zinc-600"
                       />
                     </div>
                     {form.flags.length > 1 && (
                       <button
                         type="button"
                         onClick={() => removeFlag(i)}
-                        className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                        className="p-2 text-status-error hover:bg-red-500/10 rounded-lg transition-all"
                         title="Remove flag"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -527,7 +521,7 @@ const SubmitChallenge: React.FC = () => {
                 <button
                   type="button"
                   onClick={addFlag}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-neon-green/30 text-neon-green text-xs font-bold uppercase tracking-widest hover:border-neon-green/60 transition-all"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-brand/30 text-brand text-xs font-bold uppercase tracking-widest hover:border-brand/60 transition-all"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Add Flag
@@ -539,9 +533,9 @@ const SubmitChallenge: React.FC = () => {
             {form.isMultiFlag ? (
               form.flags.some(f => f.value && FLAG_REGEX.test(f.value.trim())) && !errors.flag && (
                 <motion.p
-                  initial={{ opacity: 0 }}
+                  initial={false}
                   animate={{ opacity: 1 }}
-                  className="flex items-center gap-1.5 text-emerald-400 text-xs mt-2"
+                  className="flex items-center gap-1.5 text-status-success text-xs mt-2"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   {form.flags.filter(f => f.value.trim()).length} valid flag(s)
@@ -550,9 +544,9 @@ const SubmitChallenge: React.FC = () => {
             ) : (
               form.flag && !errors.flag && FLAG_REGEX.test(form.flag.trim()) && (
                 <motion.p
-                  initial={{ opacity: 0 }}
+                  initial={false}
                   animate={{ opacity: 1 }}
-                  className="flex items-center gap-1.5 text-emerald-400 text-xs mt-2"
+                  className="flex items-center gap-1.5 text-status-success text-xs mt-2"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5" /> Valid flag format
                 </motion.p>
@@ -563,30 +557,30 @@ const SubmitChallenge: React.FC = () => {
           </FormSection>
 
           {/* ── Hints ───────────────────────────────────────────── */}
-          <FormSection label="Hints" hint="Optional. Add hints to help players progress through the challenge.">
+          <FormSection label="Hints" hint="Optional — provide hints to help players (can add multiple)">
             <div className="space-y-3">
               {form.hints.map((hint, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={false}
                   animate={{ opacity: 1, x: 0 }}
                   className="flex items-center gap-2"
                 >
-                  <div className="w-6 h-6 rounded bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0">
-                    <span className="text-[10px] text-zinc-500 font-bold">{i + 1}</span>
+                  <div className="w-6 h-6 rounded bg-surface border border-surface-border flex items-center justify-center shrink-0">
+                    <span className="text-xs text-text-muted font-bold">{i + 1}</span>
                   </div>
                   <input
                     type="text"
                     value={hint}
                     onChange={(e) => setHint(i, e.target.value)}
                     placeholder={`Hint ${i + 1}...`}
-                    className="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:border-neon-green outline-none transition-all text-white placeholder-zinc-600"
+                    className="flex-1 bg-background-elevated border border-surface-border rounded-lg px-3 py-2 text-sm focus:border-brand outline-none transition-all text-text-primary placeholder-zinc-600"
                   />
                   {form.hints.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeHint(i)}
-                      className="p-2 text-zinc-600 hover:text-red-400 transition-colors"
+                      className="p-2 text-text-muted hover:text-status-error transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -596,7 +590,7 @@ const SubmitChallenge: React.FC = () => {
               <button
                 type="button"
                 onClick={addHint}
-                className="flex items-center gap-2 text-xs text-neon-green hover:text-neon-green/70 transition-colors py-1"
+                className="flex items-center gap-2 text-xs text-brand hover:text-brand/70 transition-colors py-1"
               >
                 <Plus className="w-4 h-4" />
                 Add Hint
@@ -605,28 +599,28 @@ const SubmitChallenge: React.FC = () => {
           </FormSection>
 
           {/* ── Attachments ─────────────────────────────────────── */}
-          <FormSection label="Attachments" hint="Optional. Add URLs to challenge files or resources.">
+          <FormSection label="Attachments" hint="Optional — paste URLs to challenge files or resources">
             <div className="space-y-3">
               {form.attachments.map((att, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={false}
                   animate={{ opacity: 1, x: 0 }}
                   className="flex items-center gap-2"
                 >
-                  <LinkIcon className="w-4 h-4 text-zinc-600 shrink-0" />
+                  <LinkIcon className="w-4 h-4 text-text-muted shrink-0" />
                   <input
                     type="url"
                     value={att}
                     onChange={(e) => setAttachment(i, e.target.value)}
                     placeholder="https://example.com/challenge-file.zip"
-                    className="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:border-neon-green outline-none transition-all text-white placeholder-zinc-600"
+                    className="flex-1 bg-background-elevated border border-surface-border rounded-lg px-3 py-2 text-sm focus:border-brand outline-none transition-all text-text-primary placeholder-zinc-600"
                   />
                   {form.attachments.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeAttachment(i)}
-                      className="p-2 text-zinc-600 hover:text-red-400 transition-colors"
+                      className="p-2 text-text-muted hover:text-status-error transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -636,7 +630,7 @@ const SubmitChallenge: React.FC = () => {
               <button
                 type="button"
                 onClick={addAttachment}
-                className="flex items-center gap-2 text-xs text-neon-green hover:text-neon-green/70 transition-colors py-1"
+                className="flex items-center gap-2 text-xs text-brand hover:text-brand/70 transition-colors py-1"
               >
                 <Plus className="w-4 h-4" />
                 Add Attachment
@@ -650,7 +644,7 @@ const SubmitChallenge: React.FC = () => {
             disabled={isSubmitting}
             whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
             whileTap={{ scale: isSubmitting ? 1 : 0.99 }}
-            className="w-full min-h-12 rounded-lg bg-neon-green px-4 py-3 text-sm font-semibold text-black transition-colors hover:bg-neon-green/90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full py-4 bg-brand text-on-brand font-bold rounded-xl hover:bg-brand/90 transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-sm disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
             {isSubmitting ? (
               <>
@@ -660,15 +654,15 @@ const SubmitChallenge: React.FC = () => {
             ) : (
               <>
                 <Send className="w-5 h-5" />
-                {isAdmin ? 'PUBLISH CHALLENGE' : 'SUBMIT FOR REVIEW'}
+                {isAdmin ? 'Publish challenge' : 'Submit for review'}
               </>
             )}
           </motion.button>
 
-          <p className="text-center text-zinc-600 text-xs">
+          <p className="text-center text-text-muted text-xs">
             {isAdmin
-              ? 'Admin submissions are published immediately.'
-              : 'Your challenge will be reviewed by admin before appearing in the public mission list.'}
+              ? 'Check the result after submitting to see whether it is published or waiting for review.'
+              : 'An admin will check your challenge before it appears in the challenge list.'}
           </p>
         </form>
       </div>
@@ -685,11 +679,11 @@ const FormSection: React.FC<{
 }> = ({ label, required, hint, children }) => (
   <div className="space-y-2">
     <div>
-      <label className="text-xs font-bold uppercase tracking-widest text-zinc-400">
+      <label className="text-xs font-bold uppercase tracking-widest text-text-secondary">
         {label}
-        {required && <span className="text-neon-green ml-1">*</span>}
+        {required && <span className="text-brand ml-1">*</span>}
       </label>
-      {hint && <p className="text-[10px] text-zinc-600 mt-0.5">{hint}</p>}
+      {hint && <p className="text-xs text-text-muted mt-0.5">{hint}</p>}
     </div>
     {children}
   </div>
@@ -697,9 +691,9 @@ const FormSection: React.FC<{
 
 const FieldError: React.FC<{ msg: string }> = ({ msg }) => (
   <motion.p
-    initial={{ opacity: 0, y: -4 }}
+    initial={false}
     animate={{ opacity: 1, y: 0 }}
-    className="flex items-center gap-1.5 text-red-400 text-xs mt-1"
+    className="flex items-center gap-1.5 text-status-error text-xs mt-1"
   >
     <AlertTriangle className="w-3.5 h-3.5" />
     {msg}
@@ -707,8 +701,8 @@ const FieldError: React.FC<{ msg: string }> = ({ msg }) => (
 );
 
 const inputClass = (hasError: boolean) =>
-  `w-full bg-zinc-900 border ${
-    hasError ? 'border-red-500/60' : 'border-zinc-800'
-  } rounded-lg px-4 py-2.5 text-sm focus:border-neon-green outline-none transition-all text-white placeholder-zinc-600`;
+  `w-full bg-background-elevated border ${
+    hasError ? 'border-red-500/60' : 'border-surface-border'
+  } rounded-lg px-4 py-2.5 text-sm focus:border-brand outline-none transition-all text-text-primary placeholder-zinc-600`;
 
 export default SubmitChallenge;

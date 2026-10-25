@@ -14,8 +14,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin 
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black font-mono">
-        <Loader2 className="w-12 h-12 text-neon-green animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-background font-sans">
+        <Loader2 className="w-12 h-12 text-brand animate-spin" />
       </div>
     );
   }

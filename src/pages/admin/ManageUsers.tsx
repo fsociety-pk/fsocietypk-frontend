@@ -1,12 +1,14 @@
+import PageHeading from "../../components/common/PageHeading";
+import PageState from '../../components/common/PageState';
 import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminService } from '../../services/adminService';
-import { 
-  Shield, 
-  User as UserIcon, 
-  Ban, 
-  RotateCcw, 
-  Search, 
+import {
+  Shield,
+  User as UserIcon,
+  Ban,
+  RotateCcw,
+  Search,
   Trophy,
   AlertTriangle
 } from 'lucide-react';
@@ -20,7 +22,7 @@ const ManageUsers: React.FC = () => {
   const [page, setPage] = React.useState(1);
   const [search, setSearch] = React.useState('');
 
-  const { data: usersData, isLoading } = useQuery({
+  const { data: usersData, isLoading, isError, refetch } = useQuery({
     queryKey: ['admin-users', page],
     queryFn: () => adminService.getUsers(page, 50),
     select: (res) => res.data,
@@ -38,14 +40,16 @@ const ManageUsers: React.FC = () => {
     }
   });
 
-  const filteredUsers = usersData?.users.filter(u => 
+  const filteredUsers = usersData?.users.filter(u =>
     u.username.toLowerCase().includes(search.toLowerCase())
   ) || [];
+
+  if (isError) return <PageState title="This page could not be loaded" retry={() => refetch()} />;
 
   if (isLoading) {
     return (
        <div className="h-full flex flex-col items-center justify-center space-y-4">
-          <div className="w-10 h-10 border-2 border-neon-green/20 border-t-neon-green rounded-full animate-spin" />
+          <div className="w-10 h-10 border-2 border-brand/20 border-t-neon-green rounded-full animate-spin" />
        </div>
     );
   }
@@ -54,28 +58,27 @@ const ManageUsers: React.FC = () => {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">Users</h1>
-          <p className="text-sm text-zinc-400">Manage accounts and review platform activity.</p>
+          <PageHeading eyebrow="Admin workspace" title="Manage members" description="Find members and manage their account access." />
         </div>
 
         <div className="relative w-full md:w-64">
            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-           <input 
-             type="text" 
-             placeholder="Search UID/Alias..." 
+           <input
+             type="text"
+             placeholder="Search by username…"
              value={search}
              onChange={(e) => setSearch(e.target.value)}
-             className="input pl-10 h-10 text-xs font-mono"
+             className="input pl-10 h-10 text-xs font-sans"
            />
         </div>
       </div>
 
       <div className="card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left font-mono text-xs">
+          <table className="w-full text-left font-sans text-xs">
             <thead className="bg-surface border-b border-surface-border text-text-muted uppercase tracking-widest">
               <tr>
-                <th className="px-6 py-4 font-medium">Operative</th>
+                <th className="px-6 py-4 font-medium">Member</th>
                 <th className="px-6 py-4 font-medium">Rank/Role</th>
                 <th className="px-6 py-4 font-medium">Points</th>
                 <th className="px-6 py-4 font-medium">Status</th>
@@ -89,7 +92,7 @@ const ManageUsers: React.FC = () => {
                   <motion.tr
                     key={user._id}
                     layout
-                    initial={{ opacity: 0 }}
+                    initial={false}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     className={clsx(
@@ -112,14 +115,14 @@ const ManageUsers: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                        <span className={clsx(
-                         "px-2 py-0.5 rounded text-[10px] font-black uppercase",
-                         user.role === 'admin' ? "bg-status-error/10 text-status-error border border-status-error/20" : "bg-blue-500/10 text-blue-500 border border-blue-500/20"
+                         "px-2 py-0.5 rounded text-xs font-semibold uppercase",
+                         user.role === 'admin' ? "bg-status-error/10 text-status-error border border-status-error/20" : "bg-blue-500/10 text-status-info border border-blue-500/20"
                        )}>
                          {user.role}
                        </span>
                     </td>
-                    <td className="px-6 py-4 flex items-center gap-1.5 font-bold text-white">
-                       <Trophy size={12} className="text-neon-green" />
+                    <td className="px-6 py-4 flex items-center gap-1.5 font-bold text-text-primary">
+                       <Trophy size={12} className="text-brand" />
                        {user.score.toLocaleString()}
                     </td>
                     <td className="px-6 py-4">
@@ -136,13 +139,13 @@ const ManageUsers: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 text-right">
                        {user.role !== 'admin' && (
-                         <button 
+                         <button
                            onClick={() => banMutation.mutate(user._id)}
                            disabled={banMutation.isPending}
                            className={clsx(
-                             "btn px-3 py-1.5 rounded-lg text-[10px] font-black tracking-widest transition-all",
-                             user.isBanned 
-                                ? "bg-status-success/10 text-status-success hover:bg-status-success/20 border border-status-success/30" 
+                             "btn px-3 py-1.5 rounded-lg text-xs font-semibold tracking-widest transition-all",
+                             user.isBanned
+                                ? "bg-status-success/10 text-status-success hover:bg-status-success/20 border border-status-success/30"
                                 : "bg-status-error/10 text-status-error hover:bg-status-error/20 border border-status-error/30"
                            )}
                          >
@@ -161,12 +164,12 @@ const ManageUsers: React.FC = () => {
       {/* Pagination Placeholder */}
       <div className="flex justify-center gap-2">
          {usersData?.pagination.totalPages && Array.from({ length: usersData.pagination.totalPages }).map((_, i) => (
-           <button 
-             key={i} 
+           <button
+             key={i}
              onClick={() => setPage(i + 1)}
              className={clsx(
-               "w-8 h-8 rounded font-mono text-xs border border-surface-border",
-               page === i + 1 ? "bg-neon-green text-background border-neon-green" : "text-text-muted hover:border-text-primary"
+               "w-8 h-8 rounded font-sans text-xs border border-surface-border",
+               page === i + 1 ? "bg-brand text-on-brand border-brand" : "text-text-muted hover:border-text-primary"
              )}
            >
               {i + 1}

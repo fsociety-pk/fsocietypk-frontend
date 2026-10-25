@@ -1,302 +1,187 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import {
-  Book,
-  ArrowRight,
-
-  Repeat,
-  Award,
-  Users,
-  Plus,
-  Mail,
-  Github,
-  MessageCircle,
-  Rocket,
-  Shield,
-  Target,
-  Timer,
-  Lock,
-  Crosshair,
-  Zap,
-} from 'lucide-react';
-import { Resources } from './Resources';
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
-
-// Reusable feature card
-const FeatureCard = ({ icon: Icon, title, desc }: any) => (
-  <motion.div
-    variants={itemVariants}
-    whileHover={{ y: -4 }}
-    className="group rounded-lg border border-zinc-800 bg-zinc-950 p-5 transition-colors hover:border-neon-green/40"
-  >
-    <div className="p-2.5 bg-neon-green/10 rounded-lg w-fit mb-4 group-hover:bg-neon-green/20 transition-colors">
-      <Icon className="w-5 h-5 text-neon-green" />
-    </div>
-    <h4 className="font-bold text-sm text-neon-green mb-2 uppercase tracking-wide">{title}</h4>
-    <p className="text-xs text-zinc-400 leading-relaxed font-mono">{desc}</p>
-  </motion.div>
-);
-
-const Dashboard: React.FC = () => {
-  return (
-    <div className="relative min-w-0 bg-background text-white">
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 md:px-8">
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-16">
-
-          {/* ── HERO SECTION ── */}
-          <motion.section
-            variants={itemVariants}
-            className="flex flex-col items-start gap-10 border-b border-surface-border py-8 text-left"
-          >
-            <div className="flex w-full flex-col items-start gap-5">
-              <div className="inline-flex items-center gap-2 border-l-2 border-neon-green pl-3">
-                <span className="text-xs font-semibold tracking-wide text-zinc-300">Hands-on security training</span>
-              </div>
-
-              <h1 className="max-w-4xl text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                Practice real security skills.
-                <span className="block text-neon-green">Learn by solving.</span>
-              </h1>
-
-              <p className="max-w-2xl text-base leading-7 text-zinc-300">
-                Build practical offensive security skills with hands-on challenges, community writeups, and tools you can explore at your own pace.
-              </p>
-
-              <motion.div whileTap={{ scale: 0.98 }}>
-                <Link
-                  to="/challenges"
-                  className="group inline-flex min-h-12 items-center gap-3 rounded-md bg-neon-green px-6 py-3 text-sm font-semibold text-background transition-colors hover:brightness-105"
-                >
-                  Explore missions
-                  <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </motion.div>
-            </div>
-
-            <div className="grid w-full grid-cols-1 border-y border-surface-border sm:grid-cols-3 sm:divide-x sm:divide-surface-border">
-              {[
-                { label: 'Challenge Tracks', val: '7+', icon: Target, sub: 'Web, crypto, forensics, reverse engineering, PWN, OSINT, and more' },
-                { label: 'Skill Level', val: 'ALL', icon: Rocket, sub: 'Beginner-friendly up to insane expert-level challenges' },
-                { label: 'Platform', val: 'FREE', icon: Users, sub: 'An open community to submit challenges, solve, and learn together' },
-              ].map((stat, i) => (
-                <motion.div
-                  key={i}
-                  variants={itemVariants}
-                  className="flex min-w-0 items-start gap-4 border-b border-surface-border px-1 py-5 last:border-b-0 sm:border-b-0 sm:px-5 first:sm:pl-1 last:sm:pr-1"
-                >
-                  <stat.icon aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-neon-green" />
-                  <div className="min-w-0">
-                    <p className="text-xs font-medium text-zinc-400">{stat.label}</p>
-                    <p className="mt-1 text-2xl font-semibold tracking-tight text-white">{stat.val}</p>
-                    <p className="mt-2 text-xs leading-5 text-zinc-500">{stat.sub}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
-
-
-
-          {/* ── ABOUT SECTION ── */}
-          <motion.section variants={itemVariants} className="space-y-8">
-            <div className="flex items-center gap-3">
-              <Book className="text-neon-green w-5 h-5" />
-              <h2 className="text-lg font-black uppercase tracking-[0.2em]">About FsocietyPK</h2>
-              <div className="flex-1 h-px bg-gradient-to-r from-neon-green/20 to-transparent" />
-            </div>
-
-            <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-6 md:p-8">
-              <h3 className="text-sm font-bold text-neon-green uppercase tracking-widest mb-3">
-                The Best Platform to Learn CVE & Practice Offensive Security
-              </h3>
-              <p className="text-sm text-zinc-300 leading-loose mb-4">
-                FsocietyPK is a learning platform for people building practical cybersecurity skills. Work through challenges in vulnerability assessment, penetration testing, and related fields.
-              </p>
-              <p className="text-sm text-zinc-400 leading-loose">
-                Gain hands-on experience with CVEs, security tools, attack methods, and defensive techniques through challenges built around practical skills.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FeatureCard icon={Rocket} title="For Beginners" desc="Start with easy challenges to build confidence. Learn web security, cryptography, and system fundamentals with comprehensive hints." />
-              <FeatureCard icon={Shield} title="For Professionals" desc="Challenge yourself with insane CTF problems, multi-stage killchains, reverse engineering binaries, and real-world CVE reproductions." />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {[
-                { icon: Repeat, title: 'Unlimited Retries', desc: 'Retry challenges as many times as you need.' },
-                { icon: Award, title: 'Gamified Learning', desc: 'Earn points and climb the global leaderboard.' },
-                { icon: Users, title: 'Community Driven', desc: 'Learn from real user-submitted challenges.' },
-              ].map(({ icon: Icon, title, desc }) => (
-                <motion.div key={title} variants={itemVariants} className="flex items-start gap-3 p-4 bg-zinc-950 border border-zinc-800/60 rounded-xl hover:border-neon-green/20 transition-colors">
-                  <Icon className="w-4 h-4 text-neon-green flex-shrink-0 mt-0.5" />
-                  <span className="text-xs text-zinc-300">
-                    <span className="font-bold text-neon-green">{title}:</span> {desc}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
-
-          {/* ── CTA CARDS ── */}
-          <motion.section variants={itemVariants} className="space-y-8">
-            <div className="flex items-center gap-3">
-              <Zap className="text-neon-green w-5 h-5" />
-              <h2 className="text-lg font-black uppercase tracking-[0.2em]">Quick Access</h2>
-              <div className="flex-1 h-px bg-gradient-to-r from-neon-green/20 to-transparent" />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <Link to="/challenges" className="group rounded-lg border border-neon-green/30 bg-neon-green/5 p-7 transition-colors hover:border-neon-green/60">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2.5 bg-neon-green/15 rounded-lg group-hover:bg-neon-green/25 transition-colors">
-                    <Zap className="w-5 h-5 text-neon-green" />
-                  </div>
-                  <h4 className="text-base font-black text-neon-green uppercase tracking-wide">Explore Challenges</h4>
-                </div>
-                <p className="text-xs text-zinc-400 mb-5 leading-relaxed font-mono">Browse our collection across different categories and difficulty levels. Master vulnerability discovery and exploitation.</p>
-                <div className="flex items-center text-neon-green text-xs font-black uppercase tracking-widest group-hover:translate-x-2 transition-transform">
-                  Start Solving <ArrowRight className="w-3.5 h-3.5 ml-2" />
-                </div>
-              </Link>
-
-              <Link to="/submit-challenge" className="group rounded-lg border border-zinc-800 bg-zinc-950 p-7 transition-colors hover:border-neon-green/40">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2.5 bg-zinc-800 rounded-lg group-hover:bg-neon-green/10 transition-colors">
-                    <Plus className="w-5 h-5 text-zinc-400 group-hover:text-neon-green transition-colors" />
-                  </div>
-                  <h4 className="text-base font-black text-zinc-300 group-hover:text-neon-green uppercase tracking-wide transition-colors">Contribute a Challenge</h4>
-                </div>
-                <p className="text-xs text-zinc-500 mb-5 leading-relaxed font-mono">Share your own challenges! Submit for admin review and help the community grow.</p>
-                <div className="flex items-center text-zinc-400 group-hover:text-neon-green text-xs font-black uppercase tracking-widest group-hover:translate-x-2 transition-all">
-                  Create Challenge <ArrowRight className="w-3.5 h-3.5 ml-2" />
-                </div>
-              </Link>
-            </div>
-          </motion.section>
-
-          {/* ── LEARNING FLOW ── */}
-          <motion.section variants={itemVariants} className="space-y-8">
-            <div className="flex items-center gap-3">
-              <Target className="text-neon-green w-5 h-5" />
-              <h2 className="text-lg font-black uppercase tracking-[0.2em]">Recommended Flow</h2>
-              <div className="flex-1 h-px bg-gradient-to-r from-neon-green/20 to-transparent" />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                { icon: Timer, n: '01', title: 'Warm up, 20 min', desc: 'Start with one easy challenge. Refresh core web or crypto fundamentals.' },
-                { icon: Target, n: '02', title: 'Deep work, 45 min', desc: 'Pick a medium or hard task. Document your approach and validate each assumption.' },
-                { icon: Crosshair, n: '03', title: 'Debrief, 10 min', desc: 'Capture what worked, what failed, and what to revisit.' },
-              ].map(({ icon: Icon, n, title, desc }) => (
-                <motion.div key={n} variants={itemVariants} whileHover={{ y: -4 }} className="group bg-zinc-950 border border-zinc-800 rounded-xl p-6 hover:border-neon-green/30 transition-all">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="text-[10px] font-black text-zinc-600 tracking-widest">{n}</span>
-                    <div className="flex-1 h-px bg-zinc-800" />
-                    <Icon className="w-4 h-4 text-neon-green" />
-                  </div>
-                  <h4 className="font-bold text-neon-green text-xs uppercase tracking-wider mb-2">{title}</h4>
-                  <p className="text-xs text-zinc-400 leading-relaxed">{desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
-
-          {/* ── GUIDELINES ── */}
-          <motion.section variants={itemVariants} className="space-y-8">
-            <div className="flex items-center gap-3">
-              <Book className="text-neon-green w-5 h-5" />
-              <h2 className="text-lg font-black uppercase tracking-[0.2em]">Submission Guidelines</h2>
-              <div className="flex-1 h-px bg-gradient-to-r from-neon-green/20 to-transparent" />
-            </div>
-
-            <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                { icon: Lock, title: 'Flag Format', desc: <>Flags must follow: <code className="text-neon-green bg-black/60 px-1.5 py-0.5 rounded text-[10px]">fsociety{'{flag}'}</code></> },
-                { icon: Shield, title: 'Review Process', desc: 'All submissions go through admin review before publishing to ensure quality and security.' },
-                { icon: Book, title: 'Categories', desc: 'Web, Crypto, Forensics, Reverse Engineering, PWN, OSINT, and more.' },
-                { icon: Award, title: 'Difficulty Levels', desc: 'Easy, Medium, Hard, and Insane challenges available for all skill levels.' },
-              ].map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="flex items-start gap-3">
-                  <div className="p-2 bg-neon-green/10 rounded-lg flex-shrink-0 mt-0.5">
-                    <Icon className="w-4 h-4 text-neon-green" />
-                  </div>
-                  <div>
-                    <h5 className="font-bold text-xs text-neon-green uppercase tracking-wider mb-1">{title}</h5>
-                    <p className="text-xs text-zinc-400 leading-relaxed">{desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.section>
-
-          {/* ── LEARNING RESOURCES ── */}
-          <Resources showDashboardSection={true} />
-
-          {/* ── CONNECT ── */}
-          <motion.section variants={itemVariants} className="space-y-8 pb-12">
-            <div className="flex items-center gap-3">
-              <MessageCircle className="text-neon-green w-5 h-5" />
-              <h2 className="text-lg font-black uppercase tracking-[0.2em]">Connect With Us</h2>
-              <div className="flex-1 h-px bg-gradient-to-r from-neon-green/20 to-transparent" />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <a href="mailto:pkfsociety@gmail.com" className="group bg-zinc-950 border border-blue-600/20 rounded-xl p-6 hover:border-blue-600/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(37,99,235,0.1)]">
-                <div className="flex items-start gap-4">
-                  <div className="p-2.5 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
-                    <Mail className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <div>
-                    <h5 className="font-bold text-blue-400 text-xs uppercase tracking-wider mb-1">Email</h5>
-                    <p className="text-xs text-zinc-400 font-mono break-all">pkfsociety@gmail.com</p>
-                    <p className="text-[10px] text-zinc-600 mt-1.5">Reach out any time</p>
-                  </div>
-                </div>
-              </a>
-
-              <a href="https://discord.gg/YYpFYBzH" target="_blank" rel="noopener noreferrer" className="group rounded-lg border border-neon-green/20 bg-zinc-950 p-6 transition-colors hover:border-neon-green/50">
-                <div className="flex items-start gap-4">
-                  <div className="p-2.5 bg-neon-green/10 rounded-lg group-hover:bg-neon-green/20 transition-colors">
-                    <MessageCircle className="w-5 h-5 text-neon-green" />
-                  </div>
-                  <div>
-                    <h5 className="font-bold text-neon-green text-xs uppercase tracking-wider mb-1">Discord</h5>
-                    <p className="text-xs text-zinc-400 font-mono">Join our community</p>
-                    <p className="text-[10px] text-zinc-600 mt-1.5">Chat, share writeups & connect</p>
-                  </div>
-                </div>
-              </a>
-
-              <a href="https://github.com/orgs/fsociety-pk" target="_blank" rel="noopener noreferrer" className="group bg-zinc-950 border border-orange-600/20 rounded-xl p-6 hover:border-orange-600/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(234,88,12,0.1)]">
-                <div className="flex items-start gap-4">
-                  <div className="p-2.5 bg-orange-500/10 rounded-lg group-hover:bg-orange-500/20 transition-colors">
-                    <Github className="w-5 h-5 text-orange-400" />
-                  </div>
-                  <div>
-                    <h5 className="font-bold text-orange-400 text-xs uppercase tracking-wider mb-1">GitHub</h5>
-                    <p className="text-xs text-zinc-400 font-mono">@fsociety-pk</p>
-                    <p className="text-[10px] text-zinc-600 mt-1.5">View source & contribute</p>
-                  </div>
-                </div>
-              </a>
-            </div>
-          </motion.section>
-
-        </motion.div>
+import { ArrowRight, ArrowUpRight, Flag, BookOpen, Send, Trophy, ShieldCheck, Users, Code2, Fingerprint, Globe2, Search, Cpu, FileSearch, Check, LayoutDashboard } from 'lucide-react';
+import { lazy, Suspense } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useAuthStore } from '../store/authStore';
+import { userService } from '../services/userService';
+import PageState from '../components/common/PageState';
+const EarthBackdrop = lazy(() => import('../components/common/EarthBackdrop'));
+const features = [
+  {icon: Flag, title: 'Practice with CTFs', text: 'Solve security challenges at your own pace. Start with easy tasks and work your way up.', to: '/challenges'},
+  {icon: BookOpen, title: 'Learn from writeups', text: 'Read how other members solved a challenge. Share your steps to help someone else.', to: '/writeups'},
+  {icon: LayoutDashboard, title: 'See your progress', text: 'Keep track of your solves, points, and skills in one place.', to: '/profile'},
+  {icon: Send, title: 'Add your own challenge', text: 'Have an idea? Submit a challenge. An admin will check it before it goes live.', to: '/submit-challenge'},
+  {icon: ShieldCheck, title: 'Find useful resources', text: 'Browse guides and tools shared by the community. Save time finding what to learn next.', to: '/resources'},
+  {icon: Users, title: 'Hall of Fame', text: 'View player rankings, points, and completed challenges.', to: '/leaderboard'},
+];
+function Landing() {
+  return <div className="landing">
+    <Suspense fallback={null}><EarthBackdrop /></Suspense>
+    <section className="landing-hero">
+      <div className="hero-copy">
+        <span className="hero-label"><span /> Fsociety PK · CTF platform</span>
+        <h1>Practice cybersecurity.<br />Solve <em>CTF challenges.</em></h1>
+        <p>Solve challenges, read writeups, and submit your own tasks for admin review.</p>
+        <div className="hero-actions"><Link to="/signup" className="btn-primary">Create account <ArrowRight size={17}/></Link><Link to="/challenges" className="btn-outline">View challenges <ArrowUpRight size={17}/></Link></div>
+        <span className="hero-note">Challenges for beginners and experienced players.</span>
       </div>
+
+    </section>
+    <div className="category-strip"><span>Challenge categories</span><div>{[[Globe2,'Web security'],[Fingerprint,'Cryptography'],[FileSearch,'Forensics'],[Cpu,'Binary exploitation'],[Search,'OSINT'],[Code2,'Reverse engineering']].map(([Icon,label])=>{const I=Icon as typeof Globe2;return <span key={String(label)}><I size={19}/>{String(label)}</span>})}</div></div>
+    <section className="landing-section" id="features">
+      <div className="section-head"><span className="eyebrow">Practice. Learn. Share.</span><h2>CTF practice,<br />in one place.</h2><p>Browse challenges, track your results, and share solutions with other members.</p></div>
+      <div className="feature-grid">{features.map(({icon:Icon,title,text,to})=><Link to={to} key={title} className="feature-card"><span className="feature-icon"><Icon size={23} strokeWidth={1.6}/></span><h3>{title}</h3><p>{text}</p><ArrowUpRight className="feature-link" size={18}/></Link>)}</div>
+    </section>
+    <section className="landing-section showcase-section">
+      <div className="showcase-copy"><span className="eyebrow">Challenge library</span><h2>Choose a category.<br />Start solving.</h2><p>Filter by category and difficulty. Read the task, use a hint if you need one, and submit the flag when you find it.</p><ul><li><Check size={17}/> Clear difficulty levels</li><li><Check size={17}/> Points for every solve</li><li><Check size={17}/> Your progress, saved to your profile</li></ul><Link to="/challenges" className="btn-primary">Browse challenges <ArrowRight size={17}/></Link></div>
+      <div className="dashboard-preview" aria-label="Example challenge list"><div className="preview-top"><span><LayoutDashboard size={16}/> Challenge library</span><small>Preview</small></div><div className="preview-intro"><h3>Available challenges</h3><p>Filter by category or difficulty.</p></div><div className="preview-filters"><span>All challenges</span><span>Web</span><span>Crypto</span><span>Forensics</span></div>{[['Web security','HTTP request analysis','Easy'],['Cryptography','Message decryption','Medium'],['Forensics','File analysis','Easy']].map(([category,title,level],i)=><div className="preview-challenge" key={title}><span className="preview-icon">{i===0?<Globe2 size={19}/>:i===1?<Fingerprint size={19}/>:<FileSearch size={19}/>}</span><div><small>{category}</small><strong>{title}</strong></div><span className={level==='Easy'?'badge-easy':'badge-medium'}>{level}</span></div>)}<div className="preview-bottom"><ShieldCheck size={15}/> Challenges are checked before they go live.</div></div>
+    </section>
+    <section className="landing-section"><div className="landing-facts">{[['Solve','Practice your skills'],['Learn','Read guides and writeups'],['Share','Create a challenge'],['Connect','Meet other learners']].map(([title,text])=><div key={title}><strong>{title}</strong><span>{text}</span></div>)}</div></section>
+    <section className="landing-section cta-section"><div className="cta-card"><span className="eyebrow">Join Fsociety PK</span><h2>Start with a challenge.</h2><p>Create an account to save your progress and submit flags.</p><div className="hero-actions"><Link to="/signup" className="btn-primary">Create an account <ArrowRight size={17}/></Link><Link to="/leaderboard" className="btn-outline">Hall of Fame <Trophy size={17}/></Link></div></div></section>
+    <div className="landing-footer"><div><strong>Fsociety PK</strong><p>A place to practice cybersecurity<br/>and learn with others.</p></div><div><h3>Explore</h3><Link to="/challenges">Challenges</Link><Link to="/writeups">Writeups</Link><Link to="/resources">Resources</Link></div><div><h3>Community</h3><Link to="/leaderboard">Hall of Fame</Link><Link to="/projects">Our projects</Link><a href="https://github.com/fsociety-pk" target="_blank" rel="noreferrer">GitHub ↗</a></div><div><h3>Get in touch</h3><a href="https://discord.gg/YYpFYBzH" target="_blank" rel="noreferrer">Discord ↗</a><a href="mailto:pkfsociety@gmail.com">Email us</a><Link to="/submit-challenge">Submit a challenge</Link></div></div>
+  </div>;
+}
+function PersonalDashboard() {
+  const user = useAuthStore((state) => state.user);
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => userService.getProfile(),
+    select: (r) => r.data,
+  });
+  return (
+    <div className="page-wrap">
+      <section className="dashboard-welcome">
+        <div>
+          <span className="eyebrow">Dashboard</span>
+          <h1>
+            Your dashboard
+            <br />
+            {user?.username}
+          </h1>
+          <p>
+            View your results, continue solving, or submit a challenge.
+          </p>
+          <Link className="btn-primary" to="/challenges">
+            View challenges <ArrowUpRight size={16} />
+          </Link>
+        </div>
+        <div className="welcome-note"><span className="small-label">Learning resources</span><h2>Guides and tools</h2><p>Read community guides and find tools for your next challenge.</p><Link to="/resources">Open learning resources <ArrowRight size={16} /></Link></div>
+      </section>
+      {isLoading ? (
+        <PageState loading />
+      ) : isError ? (
+        <div className="mt-6">
+          <PageState
+            title="We couldn't load your progress"
+            description="Try reconnecting to refresh your statistics."
+            retry={() => refetch()}
+          />
+        </div>
+      ) : (
+        <div className="stats-strip">
+          <div>
+            <strong>{data?.solvedChallenges?.length || 0}</strong>
+            <span>Challenges solved</span>
+          </div>
+          <div>
+            <strong>{(data?.score || 0).toLocaleString()}</strong>
+            <span>Total points</span>
+          </div>
+          <div>
+            <strong>{data?.rank ? "#" + data.rank : "—"}</strong>
+            <span>Global rank</span>
+          </div>
+          <div>
+            <strong>{Math.floor((data?.score || 0) / 1000) + 1}</strong>
+            <span>Current level</span>
+          </div>
+        </div>
+      )}
+      <div className="section-title">
+        <h2>Quick links</h2>
+        <Link to="/resources">
+          Browse resources <ArrowUpRight size={15} />
+        </Link>
+      </div>
+      <div className="action-grid">
+        {[
+          {
+            to: "/challenges",
+            icon: Flag,
+            title: "Find a challenge",
+            text: "Browse challenges by category and difficulty.",
+          },
+          {
+            to: "/submit-writeup",
+            icon: BookOpen,
+            title: "Write a solution",
+            text: "Explain the steps you used to solve a challenge.",
+          },
+          {
+            to: "/submissions",
+            icon: Send,
+            title: "My submissions",
+            text: "Follow the review status of your challenges, writeups, and resources.",
+          },
+        ].map(({ to, icon: Icon, title, text }) => (
+          <Link to={to} key={to} className="action-card">
+            <Icon size={23} />
+            <h3>{title}</h3>
+            <p>{text}</p>
+          </Link>
+        ))}
+      </div>
+      <div className="section-title">
+        <h2>Recent activity</h2>
+        <Link to="/profile">
+          View profile <ArrowUpRight size={15} />
+        </Link>
+      </div>
+      {data?.solveHistory?.some((s) => s.pointsAwarded > 0) ? (
+        <div className="soft-panel table-scroll">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Challenge</th>
+                <th>Category</th>
+                <th>Points</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.solveHistory
+                .filter((s) => s.pointsAwarded > 0)
+                .slice(0, 5)
+                .map((solve, i) => (
+                  <tr key={solve._id || i}>
+                    <td>
+                      {solve.challengeId?.title ||
+                        solve.challenge?.title ||
+                        "Completed challenge"}
+                    </td>
+                    <td>
+                      {solve.challengeId?.category ||
+                        solve.challenge?.category ||
+                        "—"}
+                    </td>
+                    <td>+{solve.pointsAwarded}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="notice flex items-center gap-4">
+          <Trophy size={23} />
+          <div>
+            <strong>No solves yet.</strong>
+            <p>Completed challenges and earned points will appear here.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
-
-export default Dashboard;
+}
+export default function Dashboard() {
+  const authenticated = useAuthStore((s) => s.isAuthenticated);
+  return authenticated ? <PersonalDashboard /> : <Landing />;
+}

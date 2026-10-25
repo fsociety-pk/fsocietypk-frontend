@@ -1,3 +1,4 @@
+import PageHeading from "../../components/common/PageHeading";
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Trash2, Link as LinkIcon, Github } from 'lucide-react';
@@ -67,88 +68,87 @@ const ManageProjects: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold uppercase tracking-widest text-white">Manage Projects</h2>
-          <p className="text-xs text-zinc-500 font-mono mt-1">Configure and display tools in the Projects section.</p>
+          <PageHeading eyebrow="Admin workspace" title="Manage projects" description="Add tools and projects for the community." />
         </div>
         <button
           onClick={() => setIsAdding(!isAdding)}
-          className="flex items-center gap-2 rounded bg-neon-green px-4 py-2 font-mono text-xs font-black text-black hover:bg-neon-green/80 transition-all border border-neon-green"
+          className="flex items-center gap-2 rounded bg-brand px-4 py-2 font-sans text-xs font-semibold text-on-brand hover:bg-brand/80 transition-all border border-brand"
         >
-          {isAdding ? 'CANCEL' : <><Plus size={14} /> NEW PROJECT</>}
+          {isAdding ? 'Cancel' : <><Plus size={14} /> New project</>}
         </button>
       </div>
 
       {isAdding && (
         <motion.div
-           initial={{ opacity: 0, y: -10 }}
+           initial={false}
            animate={{ opacity: 1, y: 0 }}
-           className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-6"
+           className="rounded-lg border border-surface-border bg-background-elevated/50 p-6"
         >
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-xs font-mono uppercase text-zinc-400">Title <span className="text-neon-green">*</span></label>
+                <label className="text-xs font-sans uppercase text-text-secondary">Title <span className="text-brand">*</span></label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({...formData, title: e.target.value})}
-                  className="w-full rounded-md border border-zinc-700 bg-black px-3 py-2 text-sm text-white placeholder-zinc-600 focus:border-neon-green focus:outline-none"
+                  className="w-full rounded-md border border-surface-border bg-background px-3 py-2 text-sm text-text-primary placeholder-zinc-600 focus:border-brand focus:outline-none"
                   placeholder="e.g., TargetMapper"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-mono uppercase text-zinc-400">Tech Stack (comma separated)</label>
+                <label className="text-xs font-sans uppercase text-text-secondary">Tech Stack (comma separated)</label>
                 <input
                   type="text"
                   value={formData.techStack}
                   onChange={(e) => setFormData({...formData, techStack: e.target.value})}
-                  className="w-full rounded-md border border-zinc-700 bg-black px-3 py-2 text-sm text-white placeholder-zinc-600 focus:border-neon-green focus:outline-none"
+                  className="w-full rounded-md border border-surface-border bg-background px-3 py-2 text-sm text-text-primary placeholder-zinc-600 focus:border-brand focus:outline-none"
                   placeholder="e.g., React, Node, Python"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-mono uppercase text-zinc-400">Description <span className="text-neon-green">*</span></label>
+              <label className="text-xs font-sans uppercase text-text-secondary">Description <span className="text-brand">*</span></label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
-                className="w-full rounded-md border border-zinc-700 bg-black px-3 py-2 text-sm text-white placeholder-zinc-600 focus:border-neon-green focus:outline-none h-24"
+                className="w-full rounded-md border border-surface-border bg-background px-3 py-2 text-sm text-text-primary placeholder-zinc-600 focus:border-brand focus:outline-none h-24"
                 placeholder="Brief description of the project..."
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
-              <label className="text-xs font-mono uppercase text-zinc-400">Features (comma separated)</label>
+              <label className="text-xs font-sans uppercase text-text-secondary">Features (comma separated)</label>
               <input
                 type="text"
                 value={formData.features}
                 onChange={(e) => setFormData({...formData, features: e.target.value})}
-                className="w-full rounded-md border border-zinc-700 bg-black px-3 py-2 text-sm text-white placeholder-zinc-600 focus:border-neon-green focus:outline-none"
+                className="w-full rounded-md border border-surface-border bg-background px-3 py-2 text-sm text-text-primary placeholder-zinc-600 focus:border-brand focus:outline-none"
                 placeholder="e.g., Auto-scan, Dashboard, API"
               />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-xs font-mono uppercase text-zinc-400">Website URL</label>
+                <label className="text-xs font-sans uppercase text-text-secondary">Website URL</label>
                 <input
                   type="url"
                   value={formData.websiteUrl}
                   onChange={(e) => setFormData({...formData, websiteUrl: e.target.value})}
-                  className="w-full rounded-md border border-zinc-700 bg-black px-3 py-2 text-sm text-white placeholder-zinc-600 focus:border-neon-green focus:outline-none"
+                  className="w-full rounded-md border border-surface-border bg-background px-3 py-2 text-sm text-text-primary placeholder-zinc-600 focus:border-brand focus:outline-none"
                   placeholder="https://..."
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-mono uppercase text-zinc-400">Source Code URL</label>
+                <label className="text-xs font-sans uppercase text-text-secondary">Source Code URL</label>
                 <input
                   type="url"
                   value={formData.sourceCodeUrl}
                   onChange={(e) => setFormData({...formData, sourceCodeUrl: e.target.value})}
-                  className="w-full rounded-md border border-zinc-700 bg-black px-3 py-2 text-sm text-white placeholder-zinc-600 focus:border-neon-green focus:outline-none"
+                  className="w-full rounded-md border border-surface-border bg-background px-3 py-2 text-sm text-text-primary placeholder-zinc-600 focus:border-brand focus:outline-none"
                   placeholder="https://github.com/..."
                 />
               </div>
@@ -157,9 +157,9 @@ const ManageProjects: React.FC = () => {
             <div className="pt-4 flex justify-end">
               <button
                 type="submit"
-                className="rounded bg-neon-green px-6 py-2 font-mono text-xs font-bold text-black hover:opacity-80 transition-all font-bold"
+                className="rounded bg-brand px-6 py-2 font-sans text-xs font-bold text-on-brand hover:opacity-80 transition-all font-bold"
               >
-                SAVE PROJECT
+                Save project
               </button>
             </div>
           </form>
@@ -168,34 +168,34 @@ const ManageProjects: React.FC = () => {
 
       <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
         {projects.map((project) => (
-          <div key={project._id} className="relative rounded-lg border border-zinc-800 bg-zinc-900/50 p-5 group flex flex-col justify-between">
+          <div key={project._id} className="relative rounded-lg border border-surface-border bg-background-elevated/50 p-5 group flex flex-col justify-between">
              <div>
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-white text-lg tracking-wider font-display uppercase">{project.title}</h3>
+                  <h3 className="font-bold text-text-primary text-lg tracking-wider font-sans uppercase">{project.title}</h3>
                   {(project._id === '1' || project._id === '2') ? (
-                    <span className="text-[10px] font-mono text-zinc-500 bg-black border border-zinc-800 px-2 py-0.5 rounded">SYSTEM_DEFAULT</span>
+                    <span className="text-xs font-sans text-text-muted bg-background border border-surface-border px-2 py-0.5 rounded">Featured project</span>
                   ) : (
-                    <button onClick={() => handleDelete(project._id!)} className="text-zinc-500 hover:text-red-500 transition-colors">
+                    <button onClick={() => handleDelete(project._id!)} className="text-text-muted hover:text-status-error transition-colors">
                       <Trash2 size={16} />
                     </button>
                   )}
                 </div>
-                <p className="text-sm text-zinc-400 mb-4 line-clamp-3">{project.description}</p>
+                <p className="text-sm text-text-secondary mb-4 line-clamp-3">{project.description}</p>
                 <div className="flex flex-wrap gap-2 mb-4">
                    {project.techStack?.map((tech: string) => (
-                     <span key={tech} className="text-[10px] font-mono bg-black border border-zinc-800 text-neon-green px-2 py-1 rounded">{tech}</span>
+                     <span key={tech} className="text-xs font-sans bg-background border border-surface-border text-brand px-2 py-1 rounded">{tech}</span>
                    ))}
                 </div>
              </div>
-             
-             <div className="flex items-center gap-4 border-t border-zinc-800 pt-4 mt-auto">
+
+             <div className="flex items-center gap-4 border-t border-surface-border pt-4 mt-auto">
                 {project.websiteUrl && (
-                  <a href={project.websiteUrl} target="_blank" rel="noreferrer" className="text-xs text-white bg-zinc-800 border border-zinc-700 px-3 py-1.5 rounded flex items-center gap-1 hover:bg-zinc-700 transition">
+                  <a href={project.websiteUrl} target="_blank" rel="noreferrer" className="text-xs text-text-primary bg-surface border border-surface-border px-3 py-1.5 rounded flex items-center gap-1 hover:bg-surface-hover transition">
                     <LinkIcon size={12} /> Live Site
                   </a>
                 )}
                 {project.sourceCodeUrl && (
-                  <a href={project.sourceCodeUrl} target="_blank" rel="noreferrer" className="text-xs text-white bg-zinc-800 border border-zinc-700 px-3 py-1.5 rounded flex items-center gap-1 hover:bg-zinc-700 transition">
+                  <a href={project.sourceCodeUrl} target="_blank" rel="noreferrer" className="text-xs text-text-primary bg-surface border border-surface-border px-3 py-1.5 rounded flex items-center gap-1 hover:bg-surface-hover transition">
                     <Github size={12} /> Source
                   </a>
                 )}

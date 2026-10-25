@@ -1,1 +1,5 @@
 node_modules
+
+# Generated build and isolated visual test harness
+dist/
+qa/
