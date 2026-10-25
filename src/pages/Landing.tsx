@@ -101,7 +101,7 @@ const socialChannels = [
   {
     name: 'Discord',
     handle: 'Join Community',
-    href: 'https://discord.gg/YYpFYBzH',
+    href: 'https://discord.gg/T92aGQn5f',
     icon: DiscordIcon,
     accent: '#5865F2',
     bg: 'rgba(88, 101, 242, 0.14)',
@@ -118,8 +118,8 @@ const socialChannels = [
   },
   {
     name: 'LinkedIn',
-    handle: 'fsocietypk',
-    href: 'https://www.linkedin.com/company/fsocietypk',
+    handle: 'fsociety-pk',
+    href: 'https://www.linkedin.com/company/fsociety-pk/',
     icon: LinkedinIcon,
     accent: '#0A66C2',
     bg: 'rgba(10, 102, 194, 0.14)',
@@ -127,8 +127,8 @@ const socialChannels = [
   },
   {
     name: 'Email Support',
-    handle: 'thefsocietypk',
-    href: 'mailto:thefsocietypk@gmail.com',
+    handle: 'contact@fsocietypk.tech',
+    href: 'mailto:contact@fsocietypk.tech',
     icon: GmailIcon,
     accent: '#EA4335',
     bg: 'rgba(234, 67, 53, 0.14)',
