@@ -1,15 +1,14 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <script>
       try {
-        var theme =
-          localStorage.getItem("fsociety-theme") === "dark" ? "dark" : "light";
-        document.documentElement.dataset.theme = theme;
-        document.documentElement.style.colorScheme = theme;
+        document.documentElement.dataset.theme = "dark";
+        document.documentElement.style.colorScheme = "dark";
+        localStorage.removeItem("fsociety-theme");
       } catch (_) {}
     </script>
     <!-- SEO -->
@@ -42,12 +41,14 @@
     <link rel="icon" type="image/png" href="/brand/fsociety-logo.png" />
     <link rel="apple-touch-icon" href="/brand/fsociety-logo.png" />
 
+    <!-- Keep the hero composition stable while fonts load. -->
+    <link rel="preload" href="/fonts/anton-400.ttf" as="font" type="font/ttf" crossorigin />
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <!-- Theme color -->
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#071711" />
   </head>
   <body class="bg-background text-text-primary font-sans antialiased">
     <div id="root"></div>

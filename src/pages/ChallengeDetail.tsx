@@ -21,7 +21,7 @@ const ChallengeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
-  const [challenge, setChallenge] = useState<(IChallenge & { isSolved: boolean }) | null>(null);
+  const [challenge, setChallenge] = useState<(IChallenge & { isSolved: boolean; completedAt?: string | null }) | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [unlockingHintId, setUnlockingHintId] = useState<string | null>(null);
@@ -73,6 +73,8 @@ const ChallengeDetail: React.FC = () => {
 
       setLoading(true);
       setChallenge(null);
+      setCertificateData(null);
+      setShowCertificateModal(false);
       setCompletedFlagSteps([]);
       setCurrentFlagStep(1);
       setFlagValues([]);
@@ -163,13 +165,13 @@ const ChallengeDetail: React.FC = () => {
           const allDone = Array.from({ length: totalFlagSteps }, (_, index) => index + 1);
           setCompletedFlagSteps(allDone);
           saveFlagProgress(id, allDone);
-          setChallenge(prev => prev ? { ...prev, isSolved: true } : null);
+          setChallenge(prev => prev ? { ...prev, isSolved: true, completedAt: result.completedAt } : null);
 
           // Create certificate data
           const certData: CertificateData = {
             userName: user?.username || 'Member',
             challengeName: challenge?.title || 'Unknown Challenge',
-            completionDate: new Date(),
+            completionDate: result.completedAt ? new Date(result.completedAt) : null,
             totalChallenges: user?.solvedChallenges.length || 1,
             platformName: 'FSOCIETY.PK',
             platformURL: window.location.href,
@@ -239,7 +241,7 @@ const ChallengeDetail: React.FC = () => {
         data={certificateData || {
           userName: user?.username || 'Member',
           challengeName: challenge?.title || 'Unknown Challenge',
-          completionDate: new Date(),
+          completionDate: challenge.completedAt ? new Date(challenge.completedAt) : null,
           totalChallenges: 1,
           platformName: 'FSOCIETY.PK',
           platformURL: window.location.href,
@@ -465,7 +467,7 @@ const ChallengeDetail: React.FC = () => {
                 <span className={`font-bold uppercase tracking-wider ${
                    challenge.difficulty === 'easy' ? 'text-brand' :
                    challenge.difficulty === 'medium' ? 'text-status-warning' :
-                   challenge.difficulty === 'hard' ? 'text-status-error' : 'text-purple-500'
+                   challenge.difficulty === 'hard' ? 'text-status-error' : 'text-emerald-400'
                 }`}>
                   {challenge.difficulty}
                 </span>

@@ -2,12 +2,13 @@ import { createPortal } from 'react-dom';
 import { useDialogFocus } from '../../hooks/useDialogFocus';
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, X, Copy, Linkedin, Trophy } from 'lucide-react';
+import { Download, X, Copy, Linkedin, Trophy, Printer } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { clsx } from 'clsx';
 import {
   generateCertificateSVG,
   downloadCertificateAsImage,
+  printCertificate,
   generateLinkedInDescription,
   CertificateData,
 } from "../../utils/certificateGenerator";
@@ -46,9 +47,9 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
     }
   };
 
-  const handleCopyDescription = () => {
-    navigator.clipboard.writeText(linkedInDescription);
-    toast.success('LinkedIn description copied to clipboard!');
+  const handleCopyDescription = async () => {
+    try { await navigator.clipboard.writeText(linkedInDescription); toast.success('Post text copied.'); }
+    catch { toast.error('Clipboard unavailable. Select and copy the text below.'); }
   };
 
   const handleShareLinkedIn = async () => {
@@ -61,7 +62,7 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
       );
 
       // Copy to clipboard
-      navigator.clipboard.writeText(linkedInDescription);
+      await navigator.clipboard.writeText(linkedInDescription);
 
       toast.success(
         'Certificate downloaded! Drop it into the LinkedIn post we just opened for you.',
@@ -69,7 +70,7 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
       );
 
       // Open LinkedIn Feed
-      window.open('https://www.linkedin.com/feed/', '_blank');
+      window.open('https://www.linkedin.com/feed/', '_blank', 'noopener,noreferrer');
 
       if (onShare) onShare(linkedInDescription);
     } catch (error) {
@@ -111,7 +112,7 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
               </button>
 
               {/* Header */}
-              <div className="text-center mb-8">
+              <div className="text-center mb-8 px-8">
                 <div className="flex items-center justify-center gap-3 mb-4 flex-wrap">
                   <Trophy className="w-8 h-8 text-brand shrink-0" />
                   <h2 className="text-2xl md:text-3xl font-semibold  ">
@@ -127,7 +128,7 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
               <div className="bg-background/40 border border-surface-border rounded-xl p-4 md:p-6 mb-8 w-full">
                 <div
                   dangerouslySetInnerHTML={{ __html: certificateSVG }}
-                  className="w-full"
+                  className="w-full [&>svg]:block [&>svg]:w-full [&>svg]:h-auto"
                   style={{ maxWidth: '100%', height: 'auto' }}
                 />
               </div>
@@ -156,7 +157,7 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <button
                     onClick={handleDownload}
                     disabled={isDownloading}
@@ -168,10 +169,12 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
                     )}
                   >
                     <Download size={18} />
-                    {isDownloading ? 'Downloading…' : 'Download certificate'}
+                    {isDownloading ? 'Downloading…' : 'Download PNG'}
                   </button>
 
+                  <button onClick={() => printCertificate(certificateSVG)} className="btn-outline"><Printer size={18}/> Print / Save PDF</button>
                   <button
+                    disabled={isDownloading}
                     onClick={handleShareLinkedIn}
                     className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600/10 border border-blue-600/50 text-status-info rounded-lg hover:bg-blue-600/20 font-semibold text-sm transition-all"
                   >

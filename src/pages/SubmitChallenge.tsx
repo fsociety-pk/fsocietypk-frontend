@@ -65,7 +65,7 @@ const difficultyColors: Record<string, string> = {
   easy: 'text-status-success border-emerald-400/40 bg-emerald-400/10',
   medium: 'text-status-warning border-yellow-400/40 bg-yellow-400/10',
   hard: 'text-status-error border-red-400/40 bg-red-400/10',
-  insane: 'text-purple-400 border-purple-400/40 bg-purple-400/10',
+  insane: 'text-emerald-400 border-emerald-400/40 bg-emerald-400/10',
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────

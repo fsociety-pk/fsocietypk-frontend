@@ -1,10 +1,11 @@
 import apiClient from './apiClient'
+import type { RegistrationResponse } from './auth.service'
 import type { ApiResponse, AuthResponse, LoginPayload, RegisterPayload, IUser } from '../types'
 
 // ── Auth API service ──────────────────────────────────────────────
 export const authService = {
 
-  register: async (payload: RegisterPayload): Promise<ApiResponse<AuthResponse>> => {
+  register: async (payload: RegisterPayload): Promise<RegistrationResponse> => {
     const { data } = await apiClient.post('/auth/register', payload)
     return data
   },

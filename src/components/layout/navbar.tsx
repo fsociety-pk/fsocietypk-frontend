@@ -23,7 +23,6 @@ import {
   notificationService,
   NOTIFICATION_UNREAD_COUNT_UPDATED,
 } from "../../services/notificationService";
-import ThemeToggle from "../common/ThemeToggle";
 import BrandLogo from "../common/BrandLogo";
 import { toast } from "react-hot-toast";
 const workspaceLinks = [
@@ -174,8 +173,8 @@ export default function Navbar() {
       {isAuthenticated && (
         <aside className="app-sidebar">
           <Brand />
+          <div className="sidebar-scroll">
           {navigation}
-          <div className="sidebar-footer">
             <div className="sidebar-community">
               <Flag size={20} />
               <strong>Have a challenge idea?</strong>
@@ -187,6 +186,8 @@ export default function Navbar() {
                 Create a challenge <ArrowUpRight size={14} />
               </Link>
             </div>
+          </div>
+          <div className="sidebar-footer">
             <button
               className="btn-ghost w-full justify-start"
               disabled={loggingOut}
@@ -211,13 +212,11 @@ export default function Navbar() {
         {!isAuthenticated && (
           <nav className="public-nav" aria-label="Main">
             <NavLink to="/challenges">Challenges</NavLink>
-            <NavLink to="/leaderboard">Hall of Fame</NavLink>
             <NavLink to="/resources">Resources</NavLink>
             <NavLink to="/projects">Projects</NavLink>
           </nav>
         )}
         <div className="header-actions">
-          <ThemeToggle />
           {isAuthenticated ? (
             <>
               <Link

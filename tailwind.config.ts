@@ -45,8 +45,8 @@ export default {
       },
       fontFamily: {
         mono: ['"JetBrains Mono"', '"Fira Code"', "monospace"],
-        sans: ['"Manrope"', '"Inter"', "system-ui", "sans-serif"],
-        display: ['"Space Grotesk"', "sans-serif"],
+        sans: ['"Onest"', '"Manrope"', "sans-serif"],
+        display: ['"Anton"', "sans-serif"],
       },
       boxShadow: {
         neon: "0 0 10px rgba(0, 255, 65, 0.5), 0 0 20px rgba(0, 255, 65, 0.2)",

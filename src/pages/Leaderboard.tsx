@@ -34,6 +34,7 @@ export default function Leaderboard() {
   const filtered = data.filter((entry) =>
     entry.username.toLowerCase().includes(search.toLowerCase()),
   );
+  const tableEntries = search.trim() ? filtered : data.slice(3);
   return (
     <div className="page-wrap">
       <div className="page-heading">
@@ -98,7 +99,7 @@ export default function Leaderboard() {
         />
       ) : (
         <>
-          {!search && (
+          {!search.trim() && (
             <div className="podium">
               {data.slice(0, 3).map((entry, i) => (
                 <Link
@@ -128,7 +129,7 @@ export default function Leaderboard() {
               ))}
             </div>
           )}
-          <div className="soft-panel table-scroll">
+          {tableEntries.length > 0 && <div className="soft-panel table-scroll">
             <table className="data-table">
               <thead>
                 <tr>
@@ -139,7 +140,7 @@ export default function Leaderboard() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((entry) => (
+                {tableEntries.map((entry) => (
                   <tr key={entry.userId}>
                     <td>#{entry.rank}</td>
                     <td>
@@ -165,7 +166,7 @@ export default function Leaderboard() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </div>}
         </>
       )}
     </div>

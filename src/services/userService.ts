@@ -45,9 +45,7 @@ export const userService = {
   },
 
   changePassword: async (payload: ChangePasswordPayload): Promise<ApiResponse<null>> => {
-    // Don't send confirmPassword to backend
-    const { confirmPassword, ...rest } = payload;
-    const { data } = await apiClient.post('/users/me/change-password', rest);
+    const { data } = await apiClient.post('/users/me/change-password', payload);
     return data;
   },
 };

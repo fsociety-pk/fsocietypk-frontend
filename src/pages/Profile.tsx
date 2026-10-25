@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   userService,
   ChangePasswordPayload,
@@ -26,11 +26,12 @@ import ProfileOverview, {
 import CertificateModal from "../components/common/CertificateModal";
 import PageState from "../components/common/PageState";
 export default function Profile() {
+  const navigate = useNavigate();
   const [tab, setTab] = useState("overview");
   const [avatar, setAvatar] = useState<string | null>(null);
   const [certificate, setCertificate] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { user, setUser } = useAuthStore();
+  const { user, setUser, logout } = useAuthStore();
   const client = useQueryClient();
   const {
     data: profile,
@@ -62,7 +63,7 @@ export default function Profile() {
         client.setQueryData(["profile"], response);
         if (user) setUser({ ...user, ...response.data });
       }
-      await client.invalidateQueries({ queryKey: ["publicProfile"] });
+      await Promise.all([client.invalidateQueries({ queryKey: ["publicProfile"] }), client.invalidateQueries({ queryKey: ["leaderboard"] })]);
       setAvatar(null);
       toast.success("Your profile has been updated.");
     },
@@ -77,7 +78,10 @@ export default function Profile() {
       userService.changePassword(payload),
     onSuccess: () => {
       passwords.reset();
-      toast.success("Your password has been updated.");
+      logout();
+      client.clear();
+      toast.success("Password updated. Log in with your new password.");
+      navigate("/login", { replace: true });
     },
     onError: (error: any) =>
       toast.error(
@@ -146,6 +150,7 @@ export default function Profile() {
       </div>
     );
   const count = profile.solvedChallenges?.length || 0;
+  const latestCompletion = profile.solveHistory?.find(solve => solve.isCorrect && solve.pointsAwarded > 0);
   return (
     <div className="page-wrap">
       <div className="flex justify-between items-center">
@@ -504,7 +509,7 @@ export default function Profile() {
         data={{
           userName: profile.username,
           challengeName: count + " Cybersecurity Challenges",
-          completionDate: new Date(),
+          completionDate: latestCompletion?.timestamp ? new Date(latestCompletion.timestamp) : null,
           totalChallenges: count,
           platformName: "Fsociety PK",
           platformURL: "https://fsocietypk.tech",

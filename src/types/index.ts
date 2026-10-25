@@ -152,11 +152,12 @@ import { z } from 'zod';
 // ── Auth ──────────────────────────────────────────────────────────
 
 export const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
+  username: z.string().trim().min(1, 'Enter your username or email').max(254),
   password: z.string().min(1, 'Password is required'),
 });
 
 export const registerSchema = z.object({
+  email: z.string().trim().email('Enter a valid email address').max(254),
   username: z
     .string()
     .min(3, 'Username must be at least 3 characters')
@@ -168,7 +169,8 @@ export const registerSchema = z.object({
     .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
     .regex(/[0-9]/, 'Password must contain at least one number')
-    .regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character'),
+    .regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character')
+    .refine(password => new TextEncoder().encode(password).length <= 72, 'Keep your password within 72 bytes'),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;

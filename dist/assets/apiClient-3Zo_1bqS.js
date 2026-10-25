@@ -1,2 +1,0 @@
-import{q as o,e as a,r}from"./index-LEPocBbD.js";const n=o.create({baseURL:r,withCredentials:a,timeout:15e3,headers:{"Content-Type":"application/json"}});n.interceptors.request.use(e=>e,e=>Promise.reject(e));n.interceptors.response.use(e=>e,async e=>{var s,t,i;return((s=e.response)==null?void 0:s.status)===401&&!((i=(t=e.config)==null?void 0:t.url)!=null&&i.includes("/auth/"))&&(window.location.href="/login"),Promise.reject(e)});export{n as a};
-//# sourceMappingURL=apiClient-3Zo_1bqS.js.map

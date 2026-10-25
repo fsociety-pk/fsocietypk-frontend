@@ -6,6 +6,7 @@ export interface SubmitFlagResponse {
   points?: number;
   partial?: boolean;
   completed?: boolean;
+  completedAt?: string | null;
   solvedSequence?: number;
   nextSequence?: number;
 }
@@ -40,8 +41,8 @@ export const challengeService = {
   },
 
   /** Get single challenge details (approved) */
-  getChallengeById: async (id: string): Promise<ApiResponse<IChallenge & { isSolved: boolean }>> => {
-    const response = await api.get<ApiResponse<IChallenge & { isSolved: boolean }>>(`/challenges/${id}`);
+  getChallengeById: async (id: string): Promise<ApiResponse<IChallenge & { isSolved: boolean; completedAt?: string | null }>> => {
+    const response = await api.get<ApiResponse<IChallenge & { isSolved: boolean; completedAt?: string | null }>>(`/challenges/${id}`);
     return response.data;
   },
 
