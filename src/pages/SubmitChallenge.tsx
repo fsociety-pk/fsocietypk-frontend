@@ -1,6 +1,6 @@
 import PageHeading from "../components/common/PageHeading";
 import { CHALLENGE_CATEGORIES, CATEGORY_LABELS } from '../utils/categories';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus,
@@ -9,12 +9,12 @@ import {
   CheckCircle2,
   AlertTriangle,
   Shield,
-  Link as LinkIcon,
   Loader2,
   ChevronDown,
   Flag,
   Info,
   Clock,
+  FileArchive,
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { challengeService } from '../services/challenge.service';
@@ -30,6 +30,9 @@ const POINTS_MAP: Record<string, number> = {
   insane: 250,
 };
 const FLAG_REGEX = /^fsociety\{.+\}$/i;
+const MAX_ATTACHMENTS = 5;
+const MAX_ATTACHMENT_SIZE = 50 * 1024 * 1024;
+const ALLOWED_ATTACHMENT_EXTENSIONS = ['.zip', '.7z', '.tar', '.gz', '.tgz'];
 
 type Category = (typeof CATEGORIES)[number];
 type Difficulty = (typeof DIFFICULTIES)[number];
@@ -43,7 +46,7 @@ interface FormState {
   flags: Array<{ sequence: number; value: string }>;  // New: multiple flags
   isMultiFlag: boolean;  // Toggle between single/multiple flags
   hints: string[];
-  attachments: string[];
+  attachments: File[];
 }
 
 type SubmissionStatus = 'pending' | 'approved' | 'rejected';
@@ -57,7 +60,13 @@ const INITIAL_FORM: FormState = {
   flags: [{ sequence: 1, value: '' }],
   isMultiFlag: false,
   hints: [''],
-  attachments: [''],
+  attachments: [],
+};
+
+const formatFileSize = (size: number): string => {
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
 };
 
 // ── Difficulty badge colors ───────────────────────────────────────────────────
@@ -75,6 +84,8 @@ const SubmitChallenge: React.FC = () => {
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState | 'form', string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
+  const submittingRef = useRef(false);
   const [submitted, setSubmitted] = useState<{ id: string; title: string; points: number; status: SubmissionStatus } | null>(null);
 
   // ── Field helpers ───────────────────────────────────────────────────────────
@@ -95,16 +106,38 @@ const SubmitChallenge: React.FC = () => {
     setForm((prev) => ({ ...prev, hints: prev.hints.filter((_, idx) => idx !== i) }));
   };
 
-  const setAttachment = (i: number, val: string) => {
-    const attachments = [...form.attachments];
-    attachments[i] = val;
-    setForm((prev) => ({ ...prev, attachments }));
-  };
+  const handleAttachmentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(event.target.files ?? []);
+    event.target.value = '';
+    const acceptedFiles: File[] = [];
+    let attachmentError: string | undefined;
 
-  const addAttachment = () => setForm((prev) => ({ ...prev, attachments: [...prev.attachments, ''] }));
+    for (const file of selectedFiles) {
+      const extension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+      if (!ALLOWED_ATTACHMENT_EXTENSIONS.includes(extension)) {
+        attachmentError = 'Choose a ZIP, 7Z, TAR, GZ, or TGZ file.';
+        continue;
+      }
+      if (file.size > MAX_ATTACHMENT_SIZE) {
+        attachmentError = 'Each file must be 50 MB or smaller.';
+        continue;
+      }
+      if (form.attachments.length + acceptedFiles.length >= MAX_ATTACHMENTS) {
+        attachmentError = 'You can attach up to 5 files.';
+        break;
+      }
+      acceptedFiles.push(file);
+    }
+
+    if (acceptedFiles.length > 0) {
+      setForm((previous) => ({ ...previous, attachments: [...previous.attachments, ...acceptedFiles] }));
+    }
+    setErrors((previous) => ({ ...previous, attachments: attachmentError }));
+  };
 
   const removeAttachment = (i: number) => {
     setForm((prev) => ({ ...prev, attachments: prev.attachments.filter((_, idx) => idx !== i) }));
+    setErrors((prev) => ({ ...prev, attachments: undefined }));
   };
 
   // ── Flag helpers ───────────────────────────────────────────────────────────
@@ -187,31 +220,32 @@ const SubmitChallenge: React.FC = () => {
   // ── Submit ──────────────────────────────────────────────────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submittingRef.current) return;
     if (!validate()) {
       toast.error('Fix validation errors before submitting');
       return;
     }
 
+    submittingRef.current = true;
     setIsSubmitting(true);
     try {
-      const payload: any = {
-        title: form.title.trim(),
-        description: form.description.trim(),
-        category: form.category,
-        difficulty: form.difficulty,
-        hints: form.hints.filter((h) => h.trim()),
-        attachments: form.attachments.filter((a) => a.trim()),
-      };
+      const payload = new FormData();
+      payload.append('title', form.title.trim());
+      payload.append('description', form.description.trim());
+      payload.append('category', form.category);
+      payload.append('difficulty', form.difficulty);
+      payload.append('hints', JSON.stringify(form.hints.filter((hint) => hint.trim())));
 
       // Add flag(s) based on mode
       if (form.isMultiFlag) {
-        payload.flags = form.flags.map((f, index) => ({
+        payload.append('flags', JSON.stringify(form.flags.map((f, index) => ({
           sequence: index + 1,
           value: f.value.trim(),
-        }));
+        }))));
       } else {
-        payload.flag = form.flag.trim();
+        payload.append('flag', form.flag.trim());
       }
+      form.attachments.forEach((file) => payload.append('attachments', file, file.name));
 
       const res = await challengeService.createChallenge(payload);
       const status = (res.data.status === 'approved' || res.data.status === 'rejected')
@@ -229,6 +263,7 @@ const SubmitChallenge: React.FC = () => {
       toast.error(msg);
       setErrors({ form: msg });
     } finally {
+      submittingRef.current = false;
       setIsSubmitting(false);
     }
   };
@@ -599,42 +634,49 @@ const SubmitChallenge: React.FC = () => {
           </FormSection>
 
           {/* ── Attachments ─────────────────────────────────────── */}
-          <FormSection label="Attachments" hint="Optional — paste URLs to challenge files or resources">
+          <FormSection label="Attachments" hint="Put all challenge files in one zip. Max 50 MB.">
             <div className="space-y-3">
-              {form.attachments.map((att, i) => (
-                <motion.div
-                  key={i}
-                  initial={false}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="flex items-center gap-2"
-                >
-                  <LinkIcon className="w-4 h-4 text-text-muted shrink-0" />
-                  <input
-                    type="url"
-                    value={att}
-                    onChange={(e) => setAttachment(i, e.target.value)}
-                    placeholder="https://example.com/challenge-file.zip"
-                    className="flex-1 bg-background-elevated border border-surface-border rounded-lg px-3 py-2 text-sm focus:border-brand outline-none transition-all text-text-primary placeholder-zinc-600"
-                  />
-                  {form.attachments.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeAttachment(i)}
-                      className="p-2 text-text-muted hover:text-status-error transition-colors"
+              <input
+                ref={attachmentInputRef}
+                type="file"
+                accept=".zip,.7z,.tar,.gz,.tgz"
+                multiple
+                onChange={handleAttachmentChange}
+                className="sr-only"
+                aria-label="Choose challenge attachment files"
+              />
+              {form.attachments.length > 0 && (
+                <ul className="space-y-2">
+                  {form.attachments.map((file, i) => (
+                    <li
+                      key={`${file.name}-${file.size}-${i}`}
+                      className="flex items-center gap-3 rounded-lg border border-surface-border bg-background-elevated px-3 py-2"
                     >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )}
-                </motion.div>
-              ))}
+                      <FileArchive className="h-4 w-4 shrink-0 text-brand" />
+                      <span className="min-w-0 flex-1 break-all text-sm text-text-primary">{file.name}</span>
+                      <span className="shrink-0 text-xs text-text-muted">{formatFileSize(file.size)}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeAttachment(i)}
+                        aria-label={`Remove ${file.name}`}
+                        className="p-2 text-text-muted transition-colors hover:text-status-error"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
               <button
                 type="button"
-                onClick={addAttachment}
-                className="flex items-center gap-2 text-xs text-brand hover:text-brand/70 transition-colors py-1"
+                onClick={() => attachmentInputRef.current?.click()}
+                disabled={form.attachments.length >= MAX_ATTACHMENTS}
+                className="flex items-center gap-2 rounded-lg border border-dashed border-surface-border px-4 py-3 text-sm text-text-secondary transition-colors hover:border-brand hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="h-4 w-4" />
                 Add Attachment
               </button>
+              {errors.attachments && <p role="alert" className="text-xs text-status-error">{errors.attachments}</p>}
             </div>
           </FormSection>
 

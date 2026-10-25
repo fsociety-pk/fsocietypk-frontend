@@ -403,23 +403,23 @@ export default function Landing() {
             <div className="footer-col footer-social-col">
               <h3 className="footer-col-title">Social &amp; Community</h3>
               <p className="footer-social-desc">Connect with ethical hackers, discuss challenges, and follow platform updates.</p>
-              <div className="footer-social-grid">
+              <div className="footer-social-list">
                 {socialChannels.map(({ name, handle, href, icon: Icon, accent, bg, border }) => (
                   <a
                     key={name}
                     href={href}
                     target="_blank"
                     rel="noreferrer"
-                    className="footer-social-pill"
+                    className="footer-social-card"
                     style={{ '--social-accent': accent, '--social-bg': bg, '--social-border': border } as CSSProperties}
                     aria-label={name}
                   >
-                    <span className="footer-social-icon-wrap">
+                    <span className="footer-social-icon">
                       <Icon />
                     </span>
-                    <div className="footer-social-info">
-                      <span className="footer-social-title">{name}</span>
-                      <span className="footer-social-sub">{handle}</span>
+                    <div className="footer-social-meta">
+                      <span className="footer-social-name">{name}</span>
+                      <span className="footer-social-handle">{handle}</span>
                     </div>
                   </a>
                 ))}

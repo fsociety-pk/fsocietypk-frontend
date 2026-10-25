@@ -15,16 +15,6 @@ export interface UnlockHintResponse {
   content: string;
 }
 
-export interface SubmitChallengePayload {
-  title: string;
-  description: string;
-  category: string;
-  difficulty: string;
-  flag: string;
-  hints?: string[];
-  attachments?: string[];
-}
-
 export interface SubmitChallengeResponse {
   _id: string;
   title: string;
@@ -102,9 +92,12 @@ export const challengeService = {
 
   /** Submit a new challenge for admin review */
   createChallenge: async (
-    payload: SubmitChallengePayload
+    payload: FormData
   ): Promise<ApiResponse<SubmitChallengeResponse>> => {
-    const response = await api.post<ApiResponse<SubmitChallengeResponse>>('/challenges', payload);
+    const response = await api.post<ApiResponse<SubmitChallengeResponse>>('/challenges', payload, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 10 * 60 * 1000,
+    });
     return response.data;
   },
 

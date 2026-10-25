@@ -11,6 +11,7 @@ import { CertificateData } from '../utils/certificateGenerator';
 
 import { IChallenge } from '../types';
 import { toast } from 'react-hot-toast';
+import { API_BASE_URL } from '../services/apiConfig';
 
 type FlagFeedback = {
   type: 'success' | 'error';
@@ -300,18 +301,28 @@ const ChallengeDetail: React.FC = () => {
                         {file.filename}
                       </a>
                     ))}
-                    {challenge.attachments.map((attachment, i) => (
-                      <a
-                        key={`attachment-${i}`}
-                        href={attachment}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-3 py-2 bg-background-elevated border border-surface-border rounded-lg hover:border-brand transition-all text-xs"
-                      >
-                        <FileDown className="w-4 h-4 text-brand" />
-                        <span className="break-all">{attachment}</span>
-                      </a>
-                    ))}
+                    {challenge.attachments.map((attachment, i) => {
+                      const isLegacyUrl = typeof attachment === 'string';
+                      const href = isLegacyUrl
+                        ? attachment
+                        : `${API_BASE_URL}/challenges/${challenge._id}/attachments/${attachment._id}/download`;
+
+                      return (
+                        <a
+                          key={`attachment-${i}`}
+                          href={href}
+                          target={isLegacyUrl ? '_blank' : undefined}
+                          rel={isLegacyUrl ? 'noopener noreferrer' : undefined}
+                          className="flex items-center gap-2 rounded-lg border border-surface-border bg-background-elevated px-3 py-2 text-xs transition-all hover:border-brand"
+                        >
+                          <FileDown className="h-4 w-4 shrink-0 text-brand" />
+                          <span className="break-all">
+                            {isLegacyUrl ? attachment : attachment.originalName}
+                          </span>
+                          {!isLegacyUrl && <span className="shrink-0 text-brand">Download</span>}
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
               )}
