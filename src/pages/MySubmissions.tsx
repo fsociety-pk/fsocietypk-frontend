@@ -43,6 +43,7 @@ export default function MySubmissions() {
           note: c.rejectionReason,
           date: c.createdAt,
           url: c.status === "approved" ? "/challenges/" + c._id : undefined,
+          challengeUrl: c.challengeUrl,
         }))
       : tab === "writeups"
         ? (writeups.data?.writeups || []).map((w) => ({
@@ -52,6 +53,7 @@ export default function MySubmissions() {
             note: w.adminNotes,
             date: w.createdAt,
             url: "/writeups/" + w._id,
+            challengeUrl: undefined,
           }))
         : (resources.data || []).map((r) => ({
             id: r._id,
@@ -60,6 +62,7 @@ export default function MySubmissions() {
             note: undefined,
             date: r.createdAt,
             url: undefined,
+            challengeUrl: undefined,
           }));
   const target =
     tab === "challenges"
@@ -123,6 +126,11 @@ export default function MySubmissions() {
                 </span>
               </div>
               <h2>{row.title}</h2>
+              {row.challengeUrl && /^https?:\/\//i.test(row.challengeUrl) && (
+                <a href={row.challengeUrl} target="_blank" rel="noopener noreferrer" className="block break-all text-sm text-brand underline mt-3">
+                  Challenge URL: {row.challengeUrl}
+                </a>
+              )}
               {row.note && (
                 <div className="notice mt-4">
                   <strong>Review feedback</strong>

@@ -757,6 +757,10 @@
   font-size: 12px;
   margin-bottom: 9px;
 }
+.flag-progress > div:first-child {
+  gap: 8px;
+  flex-wrap: wrap;
+}
 .progress-track {
   height: 6px;
   border-radius: 10px;

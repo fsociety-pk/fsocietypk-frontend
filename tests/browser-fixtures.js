@@ -50,6 +50,6 @@ async (page) => {
   });
   await page.goto(origin + '/signup');
   await page.waitForLoadState('networkidle');
-  await page.getByRole('heading', { name: 'Join the collective.' }).waitFor();
+  await page.locator('.auth-title h1').waitFor();
   return { mode: 'intercepted production build and mock API', files: Object.keys(files).length, url: page.url() };
 }

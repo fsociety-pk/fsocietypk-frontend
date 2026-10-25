@@ -13,6 +13,7 @@ import {
 import { ReactNode } from "react";
 import { UserProfile } from "../../services/userService";
 import { CATEGORY_LABELS } from "../../utils/categories";
+import FlagProgress from "./FlagProgress";
 
 export const safeDate = (value?: string) => {
   if (!value) return "—";
@@ -132,9 +133,7 @@ export function SolveHistory({
   profile: UserProfile;
   limit?: number;
 }) {
-  const solves = (profile.solveHistory || [])
-    .filter((s) => s.pointsAwarded > 0)
-    .slice(0, limit);
+  const solves = (profile.solveHistory || []).slice(0, limit);
   return solves.length ? (
     <div className="table-scroll">
       <table className="data-table">
@@ -200,6 +199,19 @@ export default function ProfileOverview({ profile }: { profile: UserProfile }) {
       <section className="soft-panel">
         <h2>Recent solves</h2>
         <SolveHistory profile={profile} limit={5} />
+        {!!profile.challengeProgress?.length && (
+          <div className="mt-6 border-t border-surface-border pt-6">
+            <h3 className="mb-4 font-semibold">In progress</h3>
+            {profile.challengeProgress.map(p => (
+              <div key={p.challengeId._id}>
+                <Link className="text-sm font-medium hover:underline" to={`/challenges/${p.challengeId._id}`}>
+                  {p.challengeId.title}
+                </Link>
+                <FlagProgress completed={p.completedFlags} total={p.totalFlags} />
+              </div>
+            ))}
+          </div>
+        )}
       </section>
       <section className="soft-panel">
         <h2>Category progress</h2>
@@ -212,7 +224,7 @@ export default function ProfileOverview({ profile }: { profile: UserProfile }) {
                   {stat.solved} / {stat.total}
                 </span>
               </div>
-              <div className="progress-track">
+              <div className="progress-track" role="progressbar" aria-label={`${CATEGORY_LABELS[stat.category] || stat.category} challenges solved`} aria-valuemin={0} aria-valuemax={stat.total} aria-valuenow={stat.solved}>
                 <div
                   style={{
                     width:

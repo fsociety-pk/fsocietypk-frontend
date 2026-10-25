@@ -6,6 +6,11 @@ export interface UserProfile extends IUser {
   grade?: string;
   proficiencyIndex?: { category: string; solved: number; total: number }[];
   solveHistory: any[];
+  challengeProgress?: {
+    challengeId: { _id: string; title: string };
+    completedFlags: number;
+    totalFlags: number;
+  }[];
 }
 
 export interface ChangePasswordPayload {

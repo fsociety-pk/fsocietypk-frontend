@@ -158,6 +158,11 @@ const ManageChallenges: React.FC = () => {
                     <span className="flex items-center gap-1.5"><UserIcon size={12} /> {typeof mission.author === 'string' ? 'System' : (mission.author as any)?.username}</span>
                     <span className="flex items-center gap-1.5"><Calendar size={12} /> {format(new Date(mission.createdAt), 'MMM dd, yyyy')}</span>
                   </div>
+                  {mission.challengeUrl && /^https?:\/\//i.test(mission.challengeUrl) && (
+                    <a href={mission.challengeUrl} target="_blank" rel="noopener noreferrer" className="block break-all text-sm font-semibold text-brand underline">
+                      Challenge URL: {mission.challengeUrl}
+                    </a>
+                  )}
                 </div>
               </div>
 

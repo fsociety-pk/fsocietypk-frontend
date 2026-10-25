@@ -150,7 +150,7 @@ export default function Profile() {
       </div>
     );
   const count = profile.solvedChallenges?.length || 0;
-  const latestCompletion = profile.solveHistory?.find(solve => solve.isCorrect && solve.pointsAwarded > 0);
+  const latestCompletion = profile.solveHistory?.find(solve => solve.isCorrect);
   return (
     <div className="page-wrap">
       <div className="flex justify-between items-center">

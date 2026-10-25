@@ -104,7 +104,7 @@ function PersonalDashboard() {
           View profile <ArrowUpRight size={15} />
         </Link>
       </div>
-      {data?.solveHistory?.some((s) => s.pointsAwarded > 0) ? (
+      {data?.solveHistory?.length ? (
         <div className="soft-panel table-scroll">
           <table className="data-table">
             <thead>
@@ -116,7 +116,6 @@ function PersonalDashboard() {
             </thead>
             <tbody>
               {data.solveHistory
-                .filter((s) => s.pointsAwarded > 0)
                 .slice(0, 5)
                 .map((solve, i) => (
                   <tr key={solve._id || i}>

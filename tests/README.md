@@ -60,3 +60,29 @@ stubbed database methods. `account-flows.cjs` needs accessible local MongoDB at
 does not load `.env`, and stubs email. In the current sandbox it fails with EPERM
 before any integration assertions execute. Real inbox delivery is a separate
 verification task.
+
+## Challenge counts, cards and website links
+
+After building and preparing the browser fixtures, run the generated
+`browser-fixtures.js`, then `tests/browser-challenge-progress.js` and
+`tests/browser-challenge-url.js` with the connected Playwright tool. The suites
+provide their own mock API/auth data. They check five-flag progress, refresh,
+completion, distinct solve history, cards without icons, filtering, responsive
+layouts, URL validation, links on details/submissions/admin review, and multipart
+submissions with a URL, a file, or both. Screenshots are saved in
+`<workspace>/.playwright-mcp/challenge-*`.
+
+From the backend directory, after `npm run build`:
+
+```sh
+node tests/challenge-url.cjs
+node tests/challenge-progress.cjs
+```
+
+The URL checks use real schemas/controllers with a stubbed create operation.
+The progress suite requires accessible local MongoDB and creates/deletes only
+its uniquely named `fsocietypk_flag_progress_test_*` database. It covers actual
+flag submissions, full completion, profiles, writeup eligibility, all leaderboard
+periods, analytics, old steps and duplicate successful submissions. No production
+database, SMTP or file storage is used. The sandbox may block localhost with
+`EPERM`; in that case no database assertions have run.

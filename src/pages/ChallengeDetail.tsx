@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Terminal, FileDown, HelpCircle, Trophy, Send, CheckCircle2, Loader2, Lock, Unlock, Users, Linkedin } from 'lucide-react';
 import { challengeService } from '../services/challenge.service';
 import { useAuthStore } from '../store/authStore';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import FlagProgress from '../components/common/FlagProgress';
 import WriteupSubmissionModal from '../components/common/WriteupSubmissionModal';
 import CertificateModal from '../components/common/CertificateModal';
 import { CertificateData } from '../utils/certificateGenerator';
@@ -22,6 +23,7 @@ const ChallengeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [challenge, setChallenge] = useState<(IChallenge & { isSolved: boolean; completedAt?: string | null }) | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -42,32 +44,6 @@ const ChallengeDetail: React.FC = () => {
     select: (res) => res.data,
   });
 
-  const getProgressStorageKey = (challengeId: string) => {
-    const userScope = user?._id ?? 'anonymous';
-    return `flag-progress:v3:${userScope}:${challengeId}`;
-  };
-
-  const saveFlagProgress = (challengeId: string, steps: number[]) => {
-    const uniqueSorted = [...new Set(steps)].sort((a, b) => a - b);
-    localStorage.setItem(getProgressStorageKey(challengeId), JSON.stringify(uniqueSorted));
-  };
-
-  const readFlagProgress = (challengeId: string, totalSteps: number): number[] => {
-    const raw = localStorage.getItem(getProgressStorageKey(challengeId));
-    if (!raw) return [];
-
-    try {
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return [];
-      return [...new Set(parsed)]
-        .map((n) => Number(n))
-        .filter((n) => Number.isInteger(n) && n >= 1 && n <= totalSteps)
-        .sort((a, b) => a - b);
-    } catch {
-      return [];
-    }
-  };
-
   useEffect(() => {
     const fetchDetail = async () => {
       if (!id) return;
@@ -83,8 +59,10 @@ const ChallengeDetail: React.FC = () => {
       try {
         const response = await challengeService.getChallengeById(id);
         const challengeData = response.data;
-        const totalSteps = challengeData.flags?.length || (challengeData.flag ? 1 : 1);
-        const savedProgress = readFlagProgress(id, totalSteps);
+        const totalSteps = challengeData.totalFlags ?? 1;
+        const savedProgress = challengeData.isSolved
+          ? Array.from({ length: totalSteps }, (_, index) => index + 1)
+          : challengeData.completedSequences ?? [];
 
         setChallenge(challengeData);
         setFlagValues(Array.from({ length: totalSteps }, () => ''));
@@ -92,7 +70,8 @@ const ChallengeDetail: React.FC = () => {
 
         if (totalSteps > 1) {
           setCompletedFlagSteps(savedProgress);
-          setCurrentFlagStep(Math.min(totalSteps, savedProgress.length + 1));
+          setCurrentFlagStep(Array.from({ length: totalSteps }, (_, index) => index + 1)
+            .find(step => !savedProgress.includes(step)) ?? totalSteps);
         } else {
           if (challengeData.isSolved) {
             setCompletedFlagSteps([1]);
@@ -111,7 +90,7 @@ const ChallengeDetail: React.FC = () => {
     };
 
     fetchDetail();
-  }, [id, navigate]);
+  }, [id, navigate, user?._id]);
 
   const handleUnlockHint = async (hintId: string) => {
     setUnlockingHintId(hintId);
@@ -119,17 +98,13 @@ const ChallengeDetail: React.FC = () => {
     setUnlockingHintId(null);
   };
 
-  const totalFlagSteps = challenge
-    ? (challenge.flags?.length || (challenge.flag ? 1 : 1))
-    : 1;
+  const totalFlagSteps = challenge?.totalFlags ?? 1;
 
   const userCompletedSteps = totalFlagSteps > 1
     ? completedFlagSteps.length
     : (challenge?.isSolved ? 1 : 0);
 
-  const isChallengeSolvedUI = totalFlagSteps > 1
-    ? completedFlagSteps.length >= totalFlagSteps
-    : Boolean(challenge?.isSolved || completedFlagSteps.length >= 1);
+  const isChallengeSolvedUI = Boolean(challenge?.isSolved);
 
   const handleSubmitFlag = async (step: number) => {
     if (!id) return;
@@ -150,7 +125,9 @@ const ChallengeDetail: React.FC = () => {
 
         setCompletedFlagSteps(updatedSteps);
         setFlagValues((prev) => prev.map((value, index) => (index === step - 1 ? value.trim() : value)));
-        saveFlagProgress(id, updatedSteps);
+        for (const queryKey of [['challenges'], ['profile'], ['publicProfile'], ['leaderboard'], ['challenge-solvers', id]]) {
+          void queryClient.invalidateQueries({ queryKey });
+        }
 
         const isFinalStep = totalFlagSteps === 1 || result.completed === true || (!result.partial && step >= totalFlagSteps);
 
@@ -165,7 +142,6 @@ const ChallengeDetail: React.FC = () => {
           });
           const allDone = Array.from({ length: totalFlagSteps }, (_, index) => index + 1);
           setCompletedFlagSteps(allDone);
-          saveFlagProgress(id, allDone);
           setChallenge(prev => prev ? { ...prev, isSolved: true, completedAt: result.completedAt } : null);
 
           // Create certificate data
@@ -173,7 +149,7 @@ const ChallengeDetail: React.FC = () => {
             userName: user?.username || 'Member',
             challengeName: challenge?.title || 'Unknown Challenge',
             completionDate: result.completedAt ? new Date(result.completedAt) : null,
-            totalChallenges: user?.solvedChallenges.length || 1,
+            totalChallenges: new Set([...(user?.solvedChallenges || []), id]).size,
             platformName: 'FSOCIETY.PK',
             platformURL: window.location.href,
           };
@@ -284,6 +260,16 @@ const ChallengeDetail: React.FC = () => {
                 {challenge.description}
               </div>
 
+              {challenge.challengeUrl && /^https?:\/\//i.test(challenge.challengeUrl) && (
+                <div className="mb-6 rounded-lg border border-brand/30 bg-brand/5 p-4">
+                  <h2 className="text-sm font-bold mb-2">Challenge website</h2>
+                  <p className="break-all text-sm text-text-secondary mb-4">{challenge.challengeUrl}</p>
+                  <a className="btn-primary" href={challenge.challengeUrl} target="_blank" rel="noopener noreferrer">
+                    Open challenge <span className="sr-only">(opens in a new tab)</span>
+                  </a>
+                </div>
+              )}
+
               {/* Files */}
               {(challenge.files.length > 0 || challenge.attachments.length > 0) && (
                 <div className="space-y-3 pt-6 border-t border-surface-border">
@@ -345,13 +331,15 @@ const ChallengeDetail: React.FC = () => {
                   {`Submit a flag (${Math.min(currentFlagStep, totalFlagSteps)}/${totalFlagSteps})`}
                 </h3>
 
+                {totalFlagSteps > 1 && <FlagProgress completed={userCompletedSteps} total={totalFlagSteps} />}
+
                 {isChallengeSolvedUI ? (
                   <div className="space-y-4">
                     <div className="flex items-start gap-3 text-brand bg-brand/5 p-4 rounded-lg border border-brand/20">
                       <CheckCircle2 className="w-6 h-6 shrink-0 mt-0.5" />
                       <div>
                         <p className="font-bold">Challenge completed</p>
-                        <p className="text-xs text-brand/70">You have already submitted the correct flag.</p>
+                        <p className="text-xs text-brand/70">You have solved all flags in this challenge.</p>
                       </div>
                     </div>
                     <div className="flex gap-2 pt-2">
@@ -400,7 +388,7 @@ const ChallengeDetail: React.FC = () => {
                               {isCompleted ? 'Verified' : isActive ? 'Active' : 'Locked'}
                             </span>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex flex-col gap-2 sm:flex-row">
                             <input
                               type="text"
                               placeholder="fsociety{your_flag_here}"
@@ -410,13 +398,13 @@ const ChallengeDetail: React.FC = () => {
                                 setFlagValues((prev) => prev.map((item, i) => (i === index ? value : item)));
                               }}
                               disabled={submitting || isLocked || isCompleted}
-                              className="flex-grow bg-background border border-surface-border rounded-lg px-4 py-2.5 outline-none focus:border-brand transition-all text-sm disabled:opacity-60"
+                              className="min-w-0 flex-1 bg-background border border-surface-border rounded-lg px-4 py-2.5 outline-none focus:border-brand transition-all text-sm disabled:opacity-60"
                             />
                             <button
                               type="button"
                               onClick={() => handleSubmitFlag(step)}
                               disabled={submitting || isLocked || isCompleted || !(flagValues[index] || '').trim()}
-                              className="bg-brand text-on-brand px-4 rounded-lg font-bold hover:bg-brand/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-xs"
+                              className="min-h-11 shrink-0 bg-brand text-on-brand px-4 rounded-lg font-bold hover:bg-brand/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-xs"
                             >
                               {submitting && isActive ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                               {isCompleted ? 'DONE' : isLocked ? 'LOCKED' : 'SUBMIT'}
@@ -470,7 +458,7 @@ const ChallengeDetail: React.FC = () => {
                 <span className="text-text-muted flex items-center gap-2 shrink-0"><CheckCircle2 className="w-4 h-4" /> Your progress</span>
                 <span className="font-bold tracking-widest flex items-center gap-1.5 text-right flex-wrap justify-end">
                   <span className="text-base">{userCompletedSteps}/{totalFlagSteps}</span>
-                  <span>COMPLETED</span>
+                  <span>{isChallengeSolvedUI ? 'COMPLETED' : 'FLAGS SOLVED'}</span>
                 </span>
               </div>
               <div className="flex justify-between items-center text-sm">

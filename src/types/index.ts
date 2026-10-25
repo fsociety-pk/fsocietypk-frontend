@@ -62,6 +62,7 @@ export interface IChallenge {
   title: string
   slug: string
   description: string
+  challengeUrl?: string
   category: ChallengeCategory
   difficulty: ChallengeDifficulty
   points: number
@@ -75,6 +76,10 @@ export interface IChallenge {
   status: ChallengeStatus
   rejectionReason?: string | null
   isSolved?: boolean
+  totalFlags?: number
+  completedFlags?: number
+  completedSequences?: number[]
+  completedAt?: string | null
   createdBy?: string | IUser
   author?: string | IUser
   liveStatus?: ChallengeLiveStatus

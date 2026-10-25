@@ -40,6 +40,7 @@ type Difficulty = (typeof DIFFICULTIES)[number];
 interface FormState {
   title: string;
   description: string;
+  challengeUrl: string;
   category: Category | '';
   difficulty: Difficulty | '';
   flag: string;  // Legacy: single flag
@@ -54,6 +55,7 @@ type SubmissionStatus = 'pending' | 'approved' | 'rejected';
 const INITIAL_FORM: FormState = {
   title: '',
   description: '',
+  challengeUrl: '',
   category: '',
   difficulty: '',
   flag: '',
@@ -183,6 +185,16 @@ const SubmitChallenge: React.FC = () => {
     if (!form.description.trim()) newErrors.description = 'Description is required';
     if (!form.category) newErrors.category = 'Select a category';
     if (!form.difficulty) newErrors.difficulty = 'Select a difficulty';
+    if (form.challengeUrl.trim()) {
+      try {
+        const url = new URL(form.challengeUrl.trim());
+        if (!['http:', 'https:'].includes(url.protocol) || !url.hostname || url.username || url.password) {
+          newErrors.challengeUrl = 'Enter an http:// or https:// URL without embedded credentials.';
+        }
+      } catch {
+        newErrors.challengeUrl = 'Enter a complete URL starting with http:// or https://.';
+      }
+    }
 
     if (form.isMultiFlag) {
       // Validate multiple flags
@@ -232,6 +244,7 @@ const SubmitChallenge: React.FC = () => {
       const payload = new FormData();
       payload.append('title', form.title.trim());
       payload.append('description', form.description.trim());
+      if (form.challengeUrl.trim()) payload.append('challengeUrl', form.challengeUrl.trim());
       payload.append('category', form.category);
       payload.append('difficulty', form.difficulty);
       payload.append('hints', JSON.stringify(form.hints.filter((hint) => hint.trim())));
@@ -631,6 +644,27 @@ const SubmitChallenge: React.FC = () => {
                 Add Hint
               </button>
             </div>
+          </FormSection>
+
+          <FormSection label="Challenge URL" hint="Optional — link to a live web challenge or hosted target. You can add a link, files, or both.">
+            <input
+              id="challenge-url"
+              aria-label="Challenge URL"
+              aria-describedby="challenge-url-help"
+              aria-invalid={!!errors.challengeUrl}
+              aria-errormessage={errors.challengeUrl ? 'challenge-url-error' : undefined}
+              type="url"
+              inputMode="url"
+              autoCapitalize="none"
+              spellCheck={false}
+              value={form.challengeUrl}
+              onChange={set('challengeUrl')}
+              placeholder="https://challenge.example.com"
+              maxLength={2048}
+              className={inputClass(!!errors.challengeUrl)}
+            />
+            <p id="challenge-url-help" className="text-xs text-text-muted">Players will open this link in a new tab. Include http:// or https://.</p>
+            {errors.challengeUrl && <p id="challenge-url-error" role="alert" className="text-xs text-status-error">{errors.challengeUrl}</p>}
           </FormSection>
 
           {/* ── Attachments ─────────────────────────────────────── */}

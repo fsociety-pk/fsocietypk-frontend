@@ -1,27 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Flag,
-  ArrowUpRight,
-  Search,
-  CheckCircle2,
-  Users,
-  Plus,
-  Globe, Fingerprint, Cpu, Code2, FileSearch, ScanSearch, Puzzle, Image, Network, Smartphone,
-} from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { challengeService } from "../services/challenge.service";
 import PageState from "../components/common/PageState";
-import { useAuthStore } from "../store/authStore";
+import FlagProgress from "../components/common/FlagProgress";
 import { CHALLENGE_CATEGORIES, CATEGORY_LABELS } from "../utils/categories";
-const categoryIcons: Record<string, typeof Flag> = { web: Globe, crypto: Fingerprint, pwn: Cpu, rev: Code2, forensics: FileSearch, osint: ScanSearch, misc: Puzzle, stego: Image, network: Network, mobile: Smartphone };
 export default function Challenges() {
   const [params] = useSearchParams();
   const [category, setCategory] = useState(params.get("category") || "all");
   useEffect(() => setCategory(params.get("category") || "all"), [params]);
   const [difficulty, setDifficulty] = useState("all");
   const [search, setSearch] = useState("");
-  const user = useAuthStore((s) => s.user);
   const {
     data: challenges = [],
     isLoading,
@@ -128,41 +118,34 @@ export default function Challenges() {
           </p>
           <div className="challenge-grid">
             {filtered.map((c) => {
-              const CategoryIcon = categoryIcons[c.category] || Flag;
-              const solved =
-                c.isSolved || user?.solvedChallenges?.includes(c._id);
+              const solved = c.isSolved;
+              const started = (c.completedFlags ?? 0) > 0;
               return (
                 <Link
                   key={c._id}
                   to={"/challenges/" + c._id}
-                  className="challenge-card"
+                  className={`challenge-card${solved ? " challenge-card-solved" : ""}`}
                   data-category={c.category}
                 >
-                  <div className="flex justify-between items-center">
-                    <span className="challenge-category-icon"><CategoryIcon size={23} /></span>
+                  <div className="challenge-card-heading">
+                    <span className="category-label">{CATEGORY_LABELS[c.category] || c.category}</span>
                     <span className={{easy: "badge-easy", medium: "badge-medium", hard: "badge-hard", insane: "badge-insane"}[c.difficulty]}>
                       {c.difficulty}
                     </span>
                   </div>
                   <h2>{c.title}</h2>
-                  <p className="mb-6">{c.description}</p>
+                  <p>{c.description}</p>
+                  {(c.totalFlags ?? 1) > 1 && (
+                    <FlagProgress completed={c.completedFlags ?? 0} total={c.totalFlags!} />
+                  )}
                   <footer>
-                    <span className="category-label inline-flex items-center gap-2">
-                      {CATEGORY_LABELS[c.category] || c.category}
-                    </span>
-                    <span className="inline-flex items-center gap-2">
-                      <Users size={13} />
-                      {c.solveCount || 0}
-                    </span>
+                    <span>{c.solveCount || 0} {(c.solveCount || 0) === 1 ? "solver" : "solvers"}</span>
                     <strong>{c.points} pts</strong>
                   </footer>
-                  <div className="challenge-card-action">{solved ? <span className="solved-label"><CheckCircle2 size={14} />Solved</span> : <span>Take the challenge</span>}<ArrowUpRight size={16}/></div>
-                  {c.flags && c.flags.length > 1 && (
-                    <span className="text-xs text-text-muted mt-3">
-                      {c.flags.length} flag stages ·{" "}
-                      {solved ? "Completed" : "Multi-stage challenge"}
-                    </span>
-                  )}
+                  <div className="challenge-card-action">
+                    <strong>{solved ? "Solved" : started ? "Continue challenge" : "Start challenge"}</strong>
+                    <span>{solved ? "All flags complete" : started ? "In progress" : "Unsolved"}</span>
+                  </div>
                 </Link>
               );
             })}

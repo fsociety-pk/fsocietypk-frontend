@@ -78,15 +78,60 @@ input:autofill { box-shadow: 0 0 0 1000px rgb(var(--surface)) inset; -webkit-tex
 [data-category="rev"], [data-category="osint"] { --category-color: var(--coral); }
 [data-category="misc"] { --category-color: var(--warning); }
 .challenge-grid { gap: 20px; }
-.challenge-card { border-radius: 12px; padding: 24px; transition: border-color var(--motion-fast), transform var(--motion-fast); }
-.challenge-card:hover { border-color: rgb(var(--category-color) / .65); transform: translateY(-3px); }
-.challenge-category-icon { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 12px; background: rgb(var(--category-color) / .1); color: rgb(var(--category-color)); }
-.challenge-card h2 { margin-top: 22px; font-size: 20px; }
-.challenge-card .category-label { color: rgb(var(--category-color)); }
-.challenge-card footer { gap: 10px; flex-wrap: wrap; }
-.challenge-card-action { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 18px; font-size: 12px; color: rgb(var(--muted)); }
-.challenge-card-action > svg { color: rgb(var(--category-color)); }
-.solved-label { display: flex; align-items: center; gap: 6px; color: rgb(var(--success)); }
+.challenge-card {
+  --challenge-padding: 24px;
+  min-width: 0;
+  padding: var(--challenge-padding) var(--challenge-padding) 0;
+  border: 1px solid rgb(var(--category-color) / .4);
+  border-top: 5px solid rgb(var(--category-color));
+  border-radius: 12px;
+  background: color-mix(in srgb, rgb(var(--card)), rgb(var(--category-color)) 5%);
+  box-shadow: 0 4px 12px rgb(var(--ink) / .045);
+  overflow: hidden;
+  transition: border-color var(--motion-fast), transform var(--motion-fast), box-shadow var(--motion-fast);
+}
+.challenge-card:hover {
+  border-color: rgb(var(--category-color));
+  box-shadow: 0 8px 20px rgb(var(--ink) / .08);
+  transform: translateY(-3px);
+}
+.challenge-card-heading { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.challenge-card .category-label {
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgb(var(--category-color) / .12);
+  color: rgb(var(--category-color));
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 750;
+}
+.challenge-card-heading .badge { font-size: 11px; font-weight: 650; }
+.challenge-card h2 {
+  margin: 24px 0 12px;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  color: rgb(var(--category-color));
+}
+.challenge-card p { margin-bottom: 24px; }
+.challenge-card .flag-progress { margin: 0 0 24px; }
+.challenge-card .flag-progress .progress-track > div { background: rgb(var(--category-color)); }
+.challenge-card footer { justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 16px 0; }
+.challenge-card footer strong { color: rgb(var(--ink)); font-size: 15px; font-weight: 800; }
+.challenge-card-action {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+  margin: 0 calc(-1 * var(--challenge-padding));
+  padding: 16px var(--challenge-padding);
+  background: rgb(var(--category-color) / .1);
+  border-top: 1px solid rgb(var(--category-color) / .22);
+  color: rgb(var(--category-color));
+  font-size: 12px;
+}
+.challenge-card-action strong { font-size: 13px; font-weight: 800; }
+.challenge-card-solved { border-color: rgb(var(--success) / .65); border-top-color: rgb(var(--success)); }
+.challenge-card-solved .challenge-card-action { background: rgb(var(--success)); border-color: transparent; color: rgb(var(--on-brand)); }
+.challenge-card-solved .challenge-card-action strong { text-transform: uppercase; letter-spacing: .08em; }
 .progress-item:nth-child(3n) .progress-track > div { background: rgb(var(--violet)); }
 .progress-item:nth-child(3n + 1) .progress-track > div { background: rgb(var(--success)); }
 /* Landing shares the workspace palette rather than creating its own green theme. */
@@ -180,7 +225,7 @@ input:autofill { box-shadow: 0 0 0 1000px rgb(var(--surface)) inset; -webkit-tex
   .access-companions { height: 100px; margin-bottom: 12px; }.companion-stage { transform: translateX(-50%) scale(.30); }.companion-greet { display: none; }
   .access-form { max-width: 410px; }.signup-mode .auth-identity-fields { display: block; }
   .auth-switch { margin-bottom: 18px; }.auth-title { margin-bottom: 20px; }.auth-title h1 { font-size: 28px; }.auth-title p { margin-top: 8px; }.access-form .input { font-size: 16px; }.auth-bottom-note { margin-top: 14px; }
-  .dashboard-welcome { grid-template-columns: 1fr; padding: 24px; }.dashboard-welcome .welcome-note { padding: 20px; }.stats-strip { padding: 20px; }.stats-strip > div { padding-inline: 12px; }.stats-strip > div:nth-child(odd) { padding-left: 0; }.challenge-card { padding: 22px; }
+  .dashboard-welcome { grid-template-columns: 1fr; padding: 24px; }.dashboard-welcome .welcome-note { padding: 20px; }.stats-strip { padding: 20px; }.stats-strip > div { padding-inline: 12px; }.stats-strip > div:nth-child(odd) { padding-left: 0; }.challenge-card { --challenge-padding: 20px; }
 }
 @media (max-width: 760px) and (max-height: 740px) {
   .auth-page.access-page { padding-bottom: 12px; }.access-companions { height: 44px; margin-bottom: 4px; }.companion-stage { transform: translateX(-50%) scale(.22); }
