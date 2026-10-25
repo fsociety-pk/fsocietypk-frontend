@@ -5,6 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import App from "./App";
 import "./index.css";
+import "./styles/design-refresh.css";
+import { applyTheme } from './hooks/useTheme';
+
+applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
 
 const queryClient = new QueryClient({
   defaultOptions: {

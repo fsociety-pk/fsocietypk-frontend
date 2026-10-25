@@ -161,14 +161,14 @@ import { z } from 'zod';
 // ── Auth ──────────────────────────────────────────────────────────
 
 export const loginSchema = z.object({
-  username: z.string().trim().min(1, 'Enter your username or email').max(254),
-  password: z.string().min(1, 'Password is required'),
+  username: z.string().trim().toLowerCase().min(1, 'Enter your username or email').max(254).refine(value => value.includes('@') ? z.string().email().safeParse(value).success : /^[a-zA-Z0-9_-]{3,30}$/.test(value), 'Enter a valid username or email address'),
+  password: z.string().min(1, 'Password is required').max(256, 'Password cannot exceed 256 characters'),
 });
 
 export const registerSchema = z.object({
-  email: z.string().trim().email('Enter a valid email address').max(254),
+  email: z.string().trim().toLowerCase().email('Enter a valid email address').max(254, 'Email cannot exceed 254 characters'),
   username: z
-    .string()
+    .string().trim().toLowerCase()
     .min(3, 'Username must be at least 3 characters')
     .max(30, 'Username cannot exceed 30 characters')
     .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, underscores, and hyphens'),

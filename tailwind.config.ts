@@ -40,7 +40,7 @@ export default {
           easy: "rgb(var(--success) / <alpha-value>)",
           medium: "rgb(var(--warning) / <alpha-value>)",
           hard: "rgb(var(--error) / <alpha-value>)",
-          insane: "rgb(var(--brand) / <alpha-value>)",
+          insane: "rgb(var(--violet) / <alpha-value>)",
         },
       },
       fontFamily: {
@@ -49,10 +49,10 @@ export default {
         display: ['"Anton"', "sans-serif"],
       },
       boxShadow: {
-        neon: "0 0 10px rgba(0, 255, 65, 0.5), 0 0 20px rgba(0, 255, 65, 0.2)",
-        "neon-sm": "0 0 5px rgba(0, 255, 65, 0.4)",
+        neon: "none",
+        "neon-sm": "none",
         "neon-lg":
-          "0 0 20px rgba(0, 255, 65, 0.6), 0 0 40px rgba(0, 255, 65, 0.3)",
+          "none",
         card: "0 4px 24px rgba(0, 0, 0, 0.4)",
         "card-hover": "0 8px 32px rgba(0, 0, 0, 0.6)",
       },
@@ -95,7 +95,7 @@ export default {
           "100%": { transform: "translate(0)" },
         },
         "pulse-neon": {
-          "0%, 100%": { boxShadow: "0 0 5px rgba(0, 255, 65, 0.4)" },
+          "0%, 100%": { boxShadow: "none" },
           "50%": {
             boxShadow:
               "0 0 20px rgba(0, 255, 65, 0.8), 0 0 40px rgba(0, 255, 65, 0.4)",

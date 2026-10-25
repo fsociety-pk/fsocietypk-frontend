@@ -160,8 +160,8 @@ const ChallengeDetail: React.FC = () => {
             message: `Flag ${step} verified. Challenge completed.`,
           });
           toast.success(`Challenge completed: +${result.points ?? 0} PTS`, {
-            style: { border: '1px solid #EAAA00', padding: '16px', color: '#EAAA00', background: 'var(--page-color)' },
-            iconTheme: { primary: '#EAAA00', secondary: 'var(--page-color)' },
+            style: { border: '1px solid rgb(var(--success))', padding: '16px', color: 'rgb(var(--success))', background: 'var(--page-color)' },
+            iconTheme: { primary: 'rgb(var(--success))', secondary: 'var(--page-color)' },
           });
           const allDone = Array.from({ length: totalFlagSteps }, (_, index) => index + 1);
           setCompletedFlagSteps(allDone);
@@ -191,8 +191,8 @@ const ChallengeDetail: React.FC = () => {
           });
           setCurrentFlagStep(nextStep);
           toast.success(`Correct flag. +${result.points ?? 0} points. Flag ${nextStep} is now open.`, {
-            style: { border: '1px solid #EAAA00', padding: '16px', color: '#EAAA00', background: 'var(--page-color)' },
-            iconTheme: { primary: '#EAAA00', secondary: 'var(--page-color)' },
+            style: { border: '1px solid rgb(var(--success))', padding: '16px', color: 'rgb(var(--success))', background: 'var(--page-color)' },
+            iconTheme: { primary: 'rgb(var(--success))', secondary: 'var(--page-color)' },
           });
         }
       } else {
@@ -205,8 +205,8 @@ const ChallengeDetail: React.FC = () => {
           message: `Flag ${nextExpected} is incorrect. Try again.`,
         });
         toast.error(`Incorrect flag. Try again.`, {
-          style: { border: '1px solid #ef4444', padding: '16px', color: '#ef4444', background: 'var(--page-color)' },
-          iconTheme: { primary: '#ef4444', secondary: 'var(--page-color)' },
+          style: { border: '1px solid rgb(var(--error))', padding: '16px', color: 'rgb(var(--error))', background: 'var(--page-color)' },
+          iconTheme: { primary: 'rgb(var(--error))', secondary: 'var(--page-color)' },
         });
       }
     } catch (error: any) {

@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const COLORS = ['#35b88b', '#70a9d8', '#8cbcab', '#d4b16b', '#6e8daa', '#408c88'];
+const COLORS = ['rgb(var(--info))', 'rgb(var(--violet))', 'rgb(var(--success))', 'rgb(var(--coral))', 'rgb(var(--warning))', 'rgb(var(--error))'];
 
 const Analytics: React.FC = () => {
   const { data: analytics, isLoading, isError, refetch } = useQuery({
@@ -98,7 +98,7 @@ const Analytics: React.FC = () => {
               <YAxis stroke="rgb(var(--muted))" fontSize={10} axisLine={false} tickLine={false} />
               <Tooltip
                 contentStyle={{ backgroundColor: 'rgb(var(--card))', color: 'rgb(var(--ink))', border: '1px solid rgb(var(--line))', borderRadius: '10px', fontSize: '12px' }}
-                itemStyle={{ color: '#fff' }}
+                itemStyle={{ color: 'rgb(var(--ink))' }}
               />
               <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ fontSize: '10px', textTransform: 'uppercase', fontFamily: 'monospace' }} />
               <Line type="monotone" dataKey="solves" name="Solves" stroke="rgb(var(--brand))" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />

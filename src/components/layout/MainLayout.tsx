@@ -3,6 +3,9 @@ import { Link, useOutlet, useLocation } from "react-router-dom";
 import { motion, MotionConfig, useReducedMotion } from "framer-motion";
 import Navbar from "./navbar";
 import { useAuthStore } from "../../store/authStore";
+import { Brand } from "./navbar";
+import ThemeToggle from "../common/ThemeToggle";
+import { ArrowLeft } from "lucide-react";
 export default function MainLayout() {
   const authenticated = useAuthStore((state) => state.isAuthenticated);
   const { pathname } = useLocation();
@@ -13,6 +16,15 @@ export default function MainLayout() {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [pathname]);
   const landing = !authenticated && ["/", "/dashboard"].includes(pathname);
+  if (authPage && !authenticated) return (
+    <MotionConfig reducedMotion="user">
+      <div className="access-shell">
+        <a href="#main-content" className="skip-link">Skip to content</a>
+        <header className="access-header"><Brand /><div><Link to="/" className="access-home" aria-label="Back to the community"><ArrowLeft size={15} /><span>Back to the community</span></Link><ThemeToggle /></div></header>
+        <main id="main-content" tabIndex={-1}>{outlet}</main>
+      </div>
+    </MotionConfig>
+  );
   return (
     <MotionConfig reducedMotion="user">
       <div className={"app-shell " + (authenticated ? "is-authenticated" : landing ? "is-landing" : "")}>
@@ -22,7 +34,7 @@ export default function MainLayout() {
               exiting outlet can redirect again or stall behind a lazy route. */}
           <motion.div key={authPage ? pathname : 'workspace'} initial={authPage && !reduced ? { opacity: 0, x: pathname === '/signup' ? 18 : -18 } : false} animate={{ opacity: 1, x: 0 }} transition={{ duration: reduced ? 0 : .2, ease: 'easeOut' }}>{outlet}</motion.div>
         </main>
-        <footer className="site-footer">
+        {!landing && <footer className="site-footer">
           <span>
             © {new Date().getFullYear()} Fsociety PK. Learn. Practice. Share.
           </span>
@@ -38,7 +50,7 @@ export default function MainLayout() {
               GitHub ↗
             </a>
           </span>
-        </footer>
+        </footer>}
       </div>
     </MotionConfig>
   );

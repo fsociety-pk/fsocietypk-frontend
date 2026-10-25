@@ -8,11 +8,13 @@ import {
   CheckCircle2,
   Users,
   Plus,
+  Globe, Fingerprint, Cpu, Code2, FileSearch, ScanSearch, Puzzle, Image, Network, Smartphone,
 } from "lucide-react";
 import { challengeService } from "../services/challenge.service";
 import PageState from "../components/common/PageState";
 import { useAuthStore } from "../store/authStore";
 import { CHALLENGE_CATEGORIES, CATEGORY_LABELS } from "../utils/categories";
+const categoryIcons: Record<string, typeof Flag> = { web: Globe, crypto: Fingerprint, pwn: Cpu, rev: Code2, forensics: FileSearch, osint: ScanSearch, misc: Puzzle, stego: Image, network: Network, mobile: Smartphone };
 export default function Challenges() {
   const [params] = useSearchParams();
   const [category, setCategory] = useState(params.get("category") || "all");
@@ -40,7 +42,6 @@ export default function Challenges() {
     <div className="page-wrap">
       <div className="page-heading">
         <div>
-          <span className="eyebrow">Practice your skills</span>
           <h1>Challenges</h1>
           <p>
             Choose a category and difficulty, then start solving.
@@ -127,6 +128,7 @@ export default function Challenges() {
           </p>
           <div className="challenge-grid">
             {filtered.map((c) => {
+              const CategoryIcon = categoryIcons[c.category] || Flag;
               const solved =
                 c.isSolved || user?.solvedChallenges?.includes(c._id);
               return (
@@ -134,22 +136,18 @@ export default function Challenges() {
                   key={c._id}
                   to={"/challenges/" + c._id}
                   className="challenge-card"
+                  data-category={c.category}
                 >
                   <div className="flex justify-between items-center">
+                    <span className="challenge-category-icon"><CategoryIcon size={23} /></span>
                     <span className={{easy: "badge-easy", medium: "badge-medium", hard: "badge-hard", insane: "badge-insane"}[c.difficulty]}>
                       {c.difficulty}
                     </span>
-                    {solved ? (
-                      <CheckCircle2 size={19} className="text-status-success" />
-                    ) : (
-                      <ArrowUpRight size={18} className="text-text-muted" />
-                    )}
                   </div>
                   <h2>{c.title}</h2>
                   <p className="mb-6">{c.description}</p>
                   <footer>
-                    <span className="inline-flex items-center gap-2">
-                      <Flag size={13} />
+                    <span className="category-label inline-flex items-center gap-2">
                       {CATEGORY_LABELS[c.category] || c.category}
                     </span>
                     <span className="inline-flex items-center gap-2">
@@ -158,6 +156,7 @@ export default function Challenges() {
                     </span>
                     <strong>{c.points} pts</strong>
                   </footer>
+                  <div className="challenge-card-action">{solved ? <span className="solved-label"><CheckCircle2 size={14} />Solved</span> : <span>Take the challenge</span>}<ArrowUpRight size={16}/></div>
                   {c.flags && c.flags.length > 1 && (
                     <span className="text-xs text-text-muted mt-3">
                       {c.flags.length} flag stages ·{" "}

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, Flag, BookOpen, Send, Trophy } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Flag, BookOpen, Send, Trophy, Zap, Target, Sparkles } from 'lucide-react';
 import Landing from './Landing';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../store/authStore';
@@ -16,11 +16,10 @@ function PersonalDashboard() {
     <div className="page-wrap">
       <section className="dashboard-welcome">
         <div>
-          <span className="eyebrow">Dashboard</span>
           <h1>
-            Your dashboard
+            Good to see you,
             <br />
-            {user?.username}
+            <span>{user?.username}.</span>
           </h1>
           <p>
             View your results, continue solving, or submit a challenge.
@@ -29,10 +28,10 @@ function PersonalDashboard() {
             View challenges <ArrowUpRight size={16} />
           </Link>
         </div>
-        <div className="welcome-note"><span className="small-label">Learning resources</span><h2>Guides and tools</h2><p>Read community guides and find tools for your next challenge.</p><Link to="/resources">Open learning resources <ArrowRight size={16} /></Link></div>
+        <div className="welcome-note"><BookOpen size={25}/><h2>A little help for<br />your next breakthrough.</h2><p>Community guides and useful tools, all in one place.</p><Link to="/resources">Explore resources <ArrowRight size={16} /></Link></div>
       </section>
       {isLoading ? (
-        <PageState loading />
+        <div className="dashboard-loading" role="status"><span className="loading-indicator"/>Loading your progress…</div>
       ) : isError ? (
         <div className="mt-6">
           <PageState
@@ -44,18 +43,22 @@ function PersonalDashboard() {
       ) : (
         <div className="stats-strip">
           <div>
+            <Target className="stat-icon" size={20}/>
             <strong>{data?.solvedChallenges?.length || 0}</strong>
             <span>Challenges solved</span>
           </div>
           <div>
+            <Zap className="stat-icon" size={20}/>
             <strong>{(data?.score || 0).toLocaleString()}</strong>
             <span>Total points</span>
           </div>
           <div>
+            <Trophy className="stat-icon" size={20}/>
             <strong>{data?.rank ? "#" + data.rank : "—"}</strong>
             <span>Global rank</span>
           </div>
           <div>
+            <Sparkles className="stat-icon" size={20}/>
             <strong>{Math.floor((data?.score || 0) / 1000) + 1}</strong>
             <span>Current level</span>
           </div>

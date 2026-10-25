@@ -22,7 +22,7 @@ const features = [
     title: 'Practice with CTFs',
     text: 'Solve security challenges at your own pace. Start with beginner tasks and advance to real-world exploits.',
     to: '/challenges',
-    accent: '#00FF88',
+    accent: 'rgb(var(--success))',
     tag: 'Hands-on Labs',
   },
   {
@@ -30,7 +30,7 @@ const features = [
     title: 'Learn from writeups',
     text: 'Read detailed walk-throughs from fellow researchers. Share your methodologies to help others grow.',
     to: '/writeups',
-    accent: '#38BDF8',
+    accent: 'rgb(var(--info))',
     tag: 'Knowledge Base',
   },
   {
@@ -38,7 +38,7 @@ const features = [
     title: 'Track your skills',
     text: 'Monitor your solve history, analyze discipline strengths, and build your offensive security profile.',
     to: '/profile',
-    accent: '#FBBF24',
+    accent: 'rgb(var(--warning))',
     tag: 'Player Profile',
   },
   {
@@ -46,18 +46,18 @@ const features = [
     title: 'Contribute challenges',
     text: 'Have an interesting vulnerability or binary? Submit a challenge for peer and admin review.',
     to: '/submit-challenge',
-    accent: '#FB7185',
+    accent: 'rgb(var(--error))',
     tag: 'Community Submissions',
   },
 ];
 
 const categories = [
-  { icon: Globe2, label: 'Web security', value: 'web', color: '#38BDF8' },
-  { icon: Fingerprint, label: 'Cryptography', value: 'crypto', color: '#FBBF24' },
-  { icon: FileSearch, label: 'Forensics', value: 'forensics', color: '#34D399' },
-  { icon: Cpu, label: 'Binary exploitation', value: 'pwn', color: '#FB7185' },
-  { icon: Search, label: 'OSINT', value: 'osint', color: '#A78BFA' },
-  { icon: Code2, label: 'Reverse engineering', value: 'rev', color: '#2DD4BF' },
+  { icon: Globe2, label: 'Web security', value: 'web', color: 'rgb(var(--info))' },
+  { icon: Fingerprint, label: 'Cryptography', value: 'crypto', color: 'rgb(var(--warning))' },
+  { icon: FileSearch, label: 'Forensics', value: 'forensics', color: 'rgb(var(--success))' },
+  { icon: Cpu, label: 'Binary exploitation', value: 'pwn', color: 'rgb(var(--error))' },
+  { icon: Search, label: 'OSINT', value: 'osint', color: 'rgb(var(--violet))' },
+  { icon: Code2, label: 'Reverse engineering', value: 'rev', color: 'rgb(var(--coral))' },
 ];
 
 function DiscordIcon() {
@@ -70,7 +70,7 @@ function DiscordIcon() {
 
 function GithubIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 98 96" fill="#F0F6FC" aria-hidden="true">
+    <svg width="22" height="22" viewBox="0 0 98 96" fill="currentColor" aria-hidden="true">
       <path fillRule="evenodd" clipRule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" />
     </svg>
   );
@@ -112,7 +112,7 @@ const socialChannels = [
     handle: 'fsociety-pk',
     href: 'https://github.com/fsociety-pk',
     icon: GithubIcon,
-    accent: '#F0F6FC',
+    accent: 'rgb(var(--ink))',
     bg: 'rgba(255, 255, 255, 0.08)',
     border: 'rgba(255, 255, 255, 0.25)',
   },
@@ -206,7 +206,7 @@ export default function Landing() {
 
         <motion.div className="hero-portrait" style={{ x: '-50%', ...(reduced ? {} : { y: portraitY, scale: portraitScale }) }}>
           <figure className="hero-glitch">
-            <img className="portrait-original" src="/brand/masked-portrait.png" alt="Fsociety masked figure in a black top hat and suit" width="941" height="1672" fetchPriority="high" />
+            <img className="portrait-original" src="/brand/masked-portrait.png" alt="Fsociety masked figure in a black top hat and suit" width="941" height="1672" loading="eager" decoding="async" />
             <span className="portrait-glitch-slice glitch-slice-top" aria-hidden="true"><img src="/brand/masked-portrait.png" alt="" width="941" height="1672" /></span>
             <span className="portrait-glitch-slice glitch-slice-middle" aria-hidden="true"><img src="/brand/masked-portrait.png" alt="" width="941" height="1672" /></span>
             <span className="portrait-glitch-slice glitch-slice-bottom" aria-hidden="true"><img src="/brand/masked-portrait.png" alt="" width="941" height="1672" /></span>
@@ -275,7 +275,7 @@ export default function Landing() {
             >
               <span className="feature-number" style={{ color: accent }}>{number}</span>
               <div>
-                <span className="feature-tag" style={{ color: accent, borderColor: `${accent}40` }}>{tag}</span>
+                <span className="feature-tag" style={{ color: accent, borderColor: `color-mix(in srgb, ${accent}, transparent 70%)` }}>{tag}</span>
                 <h3 className="feature-title">{title}</h3>
                 <p>{text}</p>
               </div>
@@ -322,9 +322,9 @@ export default function Landing() {
             <span className="specimen-badge">LIVE PREVIEW ↗</span>
           </div>
           {[
-            ['Web security', 'HTTP Header Poisoning & SSRF', 'Easy', '#38BDF8'],
-            ['Cryptography', 'AES-CBC Padding Oracle Attack', 'Medium', '#FBBF24'],
-            ['Forensics', 'Memory Dump Volatility Analysis', 'Easy', '#34D399'],
+            ['Web security', 'HTTP Header Poisoning & SSRF', 'Easy', 'rgb(var(--info))'],
+            ['Cryptography', 'AES-CBC Padding Oracle Attack', 'Medium', 'rgb(var(--warning))'],
+            ['Forensics', 'Memory Dump Volatility Analysis', 'Easy', 'rgb(var(--success))'],
           ].map(([category, title, difficulty, color], i) => (
             <div className="specimen-row" key={title}>
               <span className="specimen-index" style={{ color }}>0{i + 1}</span>

@@ -1,11 +1,13 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Eye, EyeOff, Fingerprint, Loader2, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, CheckCircle2, Eye, EyeOff, Loader2, LockKeyhole, Mail } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { loginSchema, registerSchema, type IUser } from '../../types';
 import { authService } from '../../services/auth.service';
 import { useAuthStore } from '../../store/authStore';
+import AccessMascot from './AccessMascot';
+import { detectAuthPayload, authPayloadMessage } from '../../utils/authInputFeedback';
 
 const pendingKey = 'fsociety-pending-email';
 type Pending = { registrationId: string; email: string; expiresAt: number; resendAt: number };
@@ -19,15 +21,16 @@ const passwordRules = [
   { label: 'A number', test: (value: string) => /\d/.test(value) },
   { label: 'A symbol', test: (value: string) => /[^a-zA-Z0-9]/.test(value) },
 ];
-const playfulPayload = (value: string) => /['"]\s*(?:or|and)\s+(?:['"]?\w+['"]?\s*=|true\b)|\bunion\s+(?:all\s+)?select\b|['"];?\s*;\s*(?:drop|delete|update|insert|alter)\s+/i.test(value);
 export default function AuthForm({ signup = false }: { signup?: boolean }) {
   const [values, setValues] = useState({ username: '', email: '', password: '' });
+  const [touched, setTouched] = useState<Partial<Record<'username' | 'email' | 'password', boolean>>>({});
   const [errors, setErrors] = useState<Partial<Record<keyof typeof values, string>>>({});
   const [pending, setPending] = useState<Pending | null>(() => signup ? readPending() : null);
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [resending, setResending] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [focused, setFocused] = useState<keyof typeof values | null>(null);
   const [failure, setFailure] = useState('');
   const [playful, setPlayful] = useState(false);
   const [now, setNow] = useState(Date.now());
@@ -36,6 +39,23 @@ export default function AuthForm({ signup = false }: { signup?: boolean }) {
   const client = useQueryClient();
   const setUser = useAuthStore(state => state.setUser);
   const passed = passwordRules.filter(rule => rule.test(values.password)).length;
+  const validateField = (name: keyof typeof values, value: string): string | undefined => {
+    if (name !== 'password') {
+      const kind = detectAuthPayload(value);
+      if (kind) return authPayloadMessage(kind);
+    }
+    const schema = signup ? registerSchema.shape[name] : name === 'username' ? loginSchema.shape.username : loginSchema.shape.password;
+    const result = schema.safeParse(value);
+    return result.success ? undefined : result.error.issues[0]?.message;
+  };
+  const fieldErrors = Object.fromEntries((['username', 'email', 'password'] as const).map(name => {
+    const show = touched[name] || (name !== 'password' && !!values[name]) || (name === 'password' && new TextEncoder().encode(values.password).length > 72 && signup);
+    return [name, errors[name] || (show ? validateField(name, values[name]) : undefined)];
+  })) as typeof errors;
+  const valid = (name: keyof typeof values) => !!values[name] && !validateField(name, values[name]);
+  const payload = detectAuthPayload(values.username) || (signup ? detectAuthPayload(values.email) : null);
+  const mascotMessage = payload ? `${payload === 'sql' ? 'SQL' : payload === 'xss' ? 'XSS' : 'Query'} payload spotted. Save it for the challenges!` : focused === 'username' && values.username ? valid('username') ? signup ? 'Username format looks good. Nice choice!' : 'Welcome back! Ready for new challenges?' : signup ? 'A little tweak to your username. You’ve got this.' : 'Check your username or email. You’ve got this.' : focused === 'email' && values.email ? valid('email') ? 'Email looks good. We’ll verify it next.' : 'That email needs a little tune-up.' : undefined;
+  const passwordMessage = new TextEncoder().encode(values.password).length > 72 ? 'A little shorter: keep it within 72 bytes.' : !values.password ? 'Your password starts at level zero. Let’s build it.' : passed === 5 && valid('password') ? 'All five checks passed. We respect that!' : passed === 4 ? 'One more upgrade. You’ve got this!' : `Password progress: ${passed}/5. Getting there!`;
   const cooldown = pending ? Math.max(0, Math.ceil((pending.resendAt - now) / 1000)) : 0;
   useEffect(() => {
     if (!pending) return;
@@ -57,9 +77,12 @@ export default function AuthForm({ signup = false }: { signup?: boolean }) {
   };
   const field = (name: keyof typeof values) => ({
     value: values[name],
+    onFocus: () => setFocused(name),
+    onBlur: () => { setFocused(null); setTouched(current => ({ ...current, [name]: true })); },
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => {
       setValues(current => ({ ...current, [name]: event.target.value }));
       setErrors(current => ({ ...current, [name]: undefined }));
+      if (playful) { setFailure(''); setPlayful(false); }
     },
   });
   const submit = async (event: FormEvent) => {
@@ -74,8 +97,8 @@ export default function AuthForm({ signup = false }: { signup?: boolean }) {
       finally { setBusy(false); }
       return;
     }
-    if (playfulPayload(values.username) || (signup && playfulPayload(values.email))) {
-      setPlayful(true); setFailure('Nice try, little Bobby Tables. 😏 The login isn’t a CTF — save that payload for the challenges.'); return;
+    if (payload) {
+      setPlayful(true); setFailure(authPayloadMessage(payload)); return;
     }
     const parsed = (signup ? registerSchema : loginSchema).safeParse(values);
     if (!parsed.success) {
@@ -92,7 +115,7 @@ export default function AuthForm({ signup = false }: { signup?: boolean }) {
         toast.success('Check your inbox. Your verification code is on its way.');
       } else finish((await authService.login(parsed.data)).data.user);
     } catch (error: any) {
-      setPlayful(!!error.response?.data?.data?.isSQLInjection);
+      setPlayful(!!(error.response?.data?.data?.payloadType || error.response?.data?.data?.isSQLInjection || error.response?.data?.data?.isXSS));
       setFailure(error.response?.data?.message || 'We couldn’t connect. Please try again.');
     } finally { setBusy(false); }
   };
@@ -107,24 +130,19 @@ export default function AuthForm({ signup = false }: { signup?: boolean }) {
     finally { setResending(false); }
   };
   return <div className={`auth-page access-page ${signup ? 'signup-mode' : 'login-mode'}`}>
-    <aside className="access-art">
-      <span className="eyebrow">FSOCIETY PK / COLLECTIVE ACCESS</span>
-      <h2>Curiosity<br />is your<br /><span>credential.</span></h2>
-      <div className={`identity-mark ${visible ? 'eyes-open' : ''}`} aria-hidden="true"><Fingerprint size={100} strokeWidth={1}/><span className="identity-scan"/><span>{pending ? 'CHECK YOUR INBOX' : signup ? passed === 5 ? 'PASSWORD: READY ✓' : 'BUILD YOUR IDENTITY' : visible ? 'NO PEEKING. (EXCEPT YOU.)' : 'WELCOME BACK, OPERATOR'}</span></div>
-      <p>Practice CTFs, learn from others,<br />and share your skills.</p>
-      <div className="access-art-footer"><ShieldCheck size={17}/><span>Learn. Practice. Share.</span><ArrowUpRight size={18}/></div>
-    </aside>
     <section className="auth-form access-form">
-      <Link to="/" className="auth-back"><ArrowLeft size={14}/> Back to Fsociety PK</Link>
+      <AccessMascot focused={focused} characterCount={focused ? values[focused].length : 0} covered={visible} verified={signup && passed === 5} pending={!!pending} welcomeMessage={signup ? undefined : 'Welcome back! Ready for new challenges?'} message={mascotMessage} passwordScore={signup && values.password ? valid('password') ? 5 : Math.min(passed, 4) : undefined} />
       <nav className="auth-switch" aria-label="Account access"><Link to="/login" state={location.state} className={!signup ? 'selected' : ''} aria-current={!signup ? 'page' : undefined}>Log in</Link><Link to="/signup" state={location.state} className={signup ? 'selected' : ''} aria-current={signup ? 'page' : undefined}>Sign up</Link><span className={signup ? 'switch-right' : ''} aria-hidden="true"/></nav>
-      <div className="auth-title"><span className="eyebrow">{pending ? '02 / Verify your email' : signup ? '01 / Create your identity' : '01 / Enter the workspace'}</span><h1>{pending ? 'One last checkpoint.' : signup ? 'Join the collective.' : 'Welcome back.'}</h1><p>{pending ? <>We sent a six-digit code to <strong>{pending.email}</strong>. It expires in 10 minutes.</> : signup ? 'Start solving challenges and track your progress.' : 'Your next challenge is waiting for you.'}</p></div>
+      <div className="auth-title"><h1>{pending ? 'Check your inbox.' : signup ? 'Your journey starts here.' : 'Welcome back.'}</h1><p>{pending ? <>We sent a six-digit code to <strong>{pending.email}</strong>. It expires in 10 minutes.</> : signup ? 'A new challenge. A new skill. Your own community.' : 'Ready for new challenges?'}</p></div>
       <form onSubmit={submit} noValidate aria-busy={busy}>
         {failure && <div className={`auth-feedback ${playful ? 'playful-feedback' : ''}`} role="alert">{playful && <span className="feedback-label">PAYLOAD SPOTTED</span>}{failure}{playful && <Link to="/challenges">Take it to the challenge library <ArrowUpRight size={14}/></Link>}</div>}
         {pending ? <div className="otp-step" key="otp"><div className="otp-mail"><Mail size={25}/><Check size={14}/></div><div className="form-field"><label htmlFor="auth-code">Email verification code</label><input id="auth-code" className="input otp-input" autoFocus autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} placeholder="000000" value={code} onChange={event => setCode(event.target.value.replace(/\D/g, '').slice(0, 6))} aria-describedby="otp-help"/><small id="otp-help">Paste the full code. Check spam if the email hasn’t arrived.</small></div><button className="btn-primary w-full" disabled={busy || resending}>{busy ? <Loader2 className="animate-spin" size={17}/> : <>Verify email & join <ArrowRight size={17}/></>}</button><div className="otp-actions"><button type="button" onClick={resend} disabled={!!cooldown || resending || busy}>{resending ? 'Sending…' : cooldown ? `Resend in ${cooldown}s` : 'Resend code'}</button><button type="button" disabled={busy || resending} onClick={() => { savePending(null); setCode(''); setFailure(''); }}>Change details</button></div></div> : <>
-          {signup && <div className="form-field"><label htmlFor="auth-email">Email address</label><input id="auth-email" className="input" type="email" autoComplete="email" placeholder="you@example.com" {...field('email')} aria-invalid={!!errors.email} aria-describedby={errors.email ? 'email-error' : undefined}/>{errors.email && <span id="email-error" className="field-error">{errors.email}</span>}</div>}
-          <div className="form-field"><label htmlFor="auth-username">{signup ? 'Username' : 'Username or email'}</label><input id="auth-username" className="input" autoComplete="username" autoCapitalize="none" spellCheck={false} placeholder={signup ? 'Choose your handle' : 'Your handle or email address'} {...field('username')} aria-invalid={!!errors.username} aria-describedby={errors.username ? 'username-error' : undefined}/>{errors.username && <span id="username-error" className="field-error">{errors.username}</span>}</div>
-          <div className="form-field"><label htmlFor="auth-password">Password</label><div className="password-input"><input id="auth-password" className="input" type={visible ? 'text' : 'password'} autoComplete={signup ? 'new-password' : 'current-password'} placeholder={signup ? 'Make it a strong one' : 'Enter your password'} {...field('password')} aria-invalid={!!errors.password} aria-describedby={signup ? 'password-requirements password-error' : errors.password ? 'password-error' : undefined}/><button type="button" onClick={() => setVisible(!visible)} aria-label={visible ? 'Hide password' : 'Show password'} aria-pressed={visible}>{visible ? <EyeOff size={18}/> : <Eye size={18}/>}</button></div><span id="password-error" className="field-error">{errors.password}</span></div>
-          {signup && <div className="password-checker" id="password-requirements"><div className="password-progress" aria-hidden="true">{passwordRules.map((rule, index) => <span key={rule.label} className={index < passed ? 'complete' : ''}/>)}</div><div className="password-status" aria-live="polite"><LockKeyhole size={13}/>{passed === 5 ? 'All checks passed. Looking good.' : values.password ? `${passed} of 5 requirements met. Keep going.` : 'Build a password that holds its ground.'}</div><ul>{passwordRules.map(rule => <li key={rule.label} className={rule.test(values.password) ? 'met' : ''}><span>{rule.test(values.password) ? <Check size={11}/> : '·'}</span>{rule.label}</li>)}</ul></div>}
+          <div className="auth-identity-fields">
+            {signup && <div className="form-field"><div className="field-label-row"><label htmlFor="auth-email">Email address</label>{valid('email') && <span className="field-valid"><CheckCircle2 size={12}/>Valid format</span>}</div><input id="auth-email" className="input" type="email" autoComplete="email" placeholder="you@example.com" {...field('email')} aria-invalid={!!fieldErrors.email} aria-describedby={fieldErrors.email ? 'email-error' : undefined}/>{fieldErrors.email && <span id="email-error" className="field-error" aria-live="polite">{fieldErrors.email}</span>}</div>}
+            <div className="form-field"><div className="field-label-row"><label htmlFor="auth-username">{signup ? 'Username' : 'Username or email'}</label>{valid('username') && <span className="field-valid"><CheckCircle2 size={12}/>Valid format</span>}</div><input id="auth-username" className="input" autoComplete="username" autoCapitalize="none" spellCheck={false} placeholder={signup ? 'Enter your username' : 'Enter your username or email'} {...field('username')} aria-invalid={!!fieldErrors.username} aria-describedby={fieldErrors.username ? 'username-error' : undefined}/>{fieldErrors.username && <span id="username-error" className="field-error" aria-live="polite">{fieldErrors.username}</span>}</div>
+          </div>
+          <div className="form-field"><label htmlFor="auth-password">Password</label><div className="password-input"><input id="auth-password" className="input" type={visible ? 'text' : 'password'} autoComplete={signup ? 'new-password' : 'current-password'} placeholder={signup ? 'Create your password' : 'Enter your password'} {...field('password')} aria-invalid={!!fieldErrors.password} aria-describedby={signup ? `password-requirements${fieldErrors.password ? ' password-error' : ''}` : fieldErrors.password ? 'password-error' : undefined}/><button type="button" onClick={() => setVisible(!visible)} aria-label={visible ? 'Hide password' : 'Show password'} aria-pressed={visible}>{visible ? <EyeOff size={18}/> : <Eye size={18}/>}</button></div>{fieldErrors.password && <span id="password-error" className="field-error" aria-live="polite">{fieldErrors.password}</span>}</div>
+          {signup && <div className="password-checker" id="password-requirements"><div className="password-progress" aria-hidden="true">{passwordRules.map((rule, index) => <span key={rule.label} className={index < passed ? 'complete' : ''}/>)}</div><div className="password-status" aria-live="polite"><LockKeyhole size={13}/>{passwordMessage}</div><ul>{passwordRules.map(rule => <li key={rule.label} className={rule.test(values.password) ? 'met' : ''}><span>{rule.test(values.password) ? <Check size={11}/> : '·'}</span>{rule.label}</li>)}</ul></div>}
           <button className="btn-primary w-full auth-submit" disabled={busy}>{busy ? <><Loader2 className="animate-spin" size={17}/>{signup ? 'Sending your code…' : 'Checking credentials…'}</> : <>{signup ? 'Create account' : 'Log in'}<ArrowRight size={17}/></>}</button>
           {signup && <p className="auth-email-note"><Mail size={13}/> We’ll email a code to verify it’s you.</p>}
         </>}

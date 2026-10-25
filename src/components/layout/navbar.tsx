@@ -24,6 +24,7 @@ import {
   NOTIFICATION_UNREAD_COUNT_UPDATED,
 } from "../../services/notificationService";
 import BrandLogo from "../common/BrandLogo";
+import ThemeToggle from "../common/ThemeToggle";
 import { toast } from "react-hot-toast";
 const workspaceLinks = [
   { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -138,7 +139,7 @@ export default function Navbar() {
       <div className="sidebar-caption">Workspace</div>
       <nav className="sidebar-nav" aria-label="Workspace">
         {workspaceLinks.map(({ to, label, icon: Icon }) => (
-          <NavLink to={to} key={to}>
+          <NavLink to={to} key={to} data-nav={to.slice(1)}>
             <Icon size={17} />
             {label}
           </NavLink>
@@ -217,6 +218,7 @@ export default function Navbar() {
           </nav>
         )}
         <div className="header-actions">
+          <ThemeToggle />
           {isAuthenticated ? (
             <>
               <Link
