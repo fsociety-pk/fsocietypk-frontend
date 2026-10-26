@@ -1,13 +1,17 @@
+import { isStaff } from '../../utils/roles';
 import { useEffect } from "react";
-import { Link, useOutlet, useLocation } from "react-router-dom";
+import { Link, Navigate, useOutlet, useLocation } from "react-router-dom";
 import { motion, MotionConfig, useReducedMotion } from "framer-motion";
 import Navbar from "./navbar";
 import { useAuthStore } from "../../store/authStore";
 import { Brand } from "./navbar";
 import ThemeToggle from "../common/ThemeToggle";
 import { ArrowLeft } from "lucide-react";
+import PageState from '../common/PageState';
 export default function MainLayout() {
   const authenticated = useAuthStore((state) => state.isAuthenticated);
+  const role = useAuthStore((state) => state.user?.role);
+  const isLoading = useAuthStore((state) => state.isLoading);
   const { pathname } = useLocation();
   const outlet = useOutlet();
   const reduced = useReducedMotion();
@@ -16,6 +20,8 @@ export default function MainLayout() {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [pathname]);
   const landing = !authenticated && ["/", "/dashboard"].includes(pathname);
+  if (authenticated && isLoading) return <PageState loading fullPage />;
+  if (authenticated && isStaff(role)) return <Navigate to="/admin" replace />;
   if (authPage && !authenticated) return (
     <MotionConfig reducedMotion="user">
       <div className="access-shell">

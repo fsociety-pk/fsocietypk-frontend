@@ -1,28 +1,25 @@
+import { isStaff } from '../../utils/roles';
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { Loader2 } from 'lucide-react';
+import CyberLoader from './CyberLoader';
 
 interface PublicRouteProps {
   children: React.ReactNode;
 }
 
 const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { isAuthenticated, isLoading, user } = useAuthStore();
   const location = useLocation();
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background font-sans">
-        <Loader2 className="w-12 h-12 text-brand animate-spin" />
-      </div>
-    );
+    return <CyberLoader fullPage title="Checking your session" description="Finding your place in the community." />;
   }
 
   if (isAuthenticated) {
     // Redirect authenticated users to /dashboard or where they came from
     const from = location.state?.from?.pathname || '/dashboard';
-    return <Navigate to={from} replace />;
+    return <Navigate to={isStaff(user?.role) ? '/admin' : from.startsWith('/admin') ? '/dashboard' : from} replace />;
   }
 
   return <>{children}</>;

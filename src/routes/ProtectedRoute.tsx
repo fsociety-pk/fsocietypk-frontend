@@ -1,8 +1,9 @@
+import CyberLoader from '../components/common/CyberLoader'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 
 interface ProtectedRouteProps {
-  allowedRoles?: Array<'user' | 'admin'>
+  allowedRoles?: Array<import('../utils/roles').Role>
   redirectTo?: string
 }
 
@@ -21,14 +22,7 @@ export const ProtectedRoute = ({
 
   // Wait for session check before deciding
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-neon-green border-t-transparent rounded-full animate-spin" />
-          <p className="text-text-muted text-sm font-mono">Verifying session...</p>
-        </div>
-      </div>
-    )
+    return <CyberLoader fullPage title="Checking your session" />
   }
 
   if (!isAuthenticated) {

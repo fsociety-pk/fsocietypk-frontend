@@ -6,7 +6,7 @@ async (page) => {
   await page.unrouteAll({ behavior: 'wait' });
   const state = { authenticated: false, requests: [], errors: [] };
   const challenge = { _id: '507f1f77bcf86cd799439022', title: 'The Forgotten Archive', category: 'web', difficulty: 'easy', points: 50, description: 'A local browser fixture.', hints: [], files: [], attachments: [], solveCount: 5, isSolved: true, completedAt: '2025-01-02T12:00:00.000Z', createdAt: '2025-01-01T00:00:00Z' };
-  const profile = { _id: '507f1f77bcf86cd799439011', username: 'obsidian', role: 'admin', avatar: '', bio: 'Local browser fixture', country: 'Pakistan', socialLinks: {}, isProfilePublic: true, score: 325, rank: 4, createdAt: '2025-01-01T00:00:00Z', solvedChallenges: Array.from({ length: 5 }, (_, i) => ({ ...challenge, _id: challenge._id.slice(0, -1) + i })), proficiencyIndex: [], solveHistory: [{ _id: 'solve-fixture', challengeId: challenge, isCorrect: true, pointsAwarded: 50, timestamp: challenge.completedAt }] };
+  const profile = { _id: '507f1f77bcf86cd799439011', username: 'obsidian', role: 'user', avatar: '', bio: 'Local browser fixture', country: 'Pakistan', socialLinks: {}, isProfilePublic: true, score: 325, rank: 4, createdAt: '2025-01-01T00:00:00Z', solvedChallenges: Array.from({ length: 5 }, (_, i) => ({ ...challenge, _id: challenge._id.slice(0, -1) + i })), proficiencyIndex: [], solveHistory: [{ _id: 'solve-fixture', challengeId: challenge, isCorrect: true, pointsAwarded: 50, timestamp: challenge.completedAt }] };
   const ranks = ['azerian', 'kachy_ka_daku', 'abdullah', 'obsidian', 'cipher'].map((username, i) => ({ userId: `fixture-${i}`, username, avatar: '', score: 550 - i * 75, solveCount: 5, rank: i + 1 }));
   page.on('pageerror', error => state.errors.push(error.message));
   await page.route('**/*', async route => {
@@ -23,6 +23,7 @@ async (page) => {
     if (pathname.startsWith('/api/')) {
       const body = request.postData() ? request.postDataJSON() : null;
       state.requests.push({ path: pathname, search: url.search, method: request.method(), body });
+      if (pathname.endsWith('/auth/username-availability')) { const username = url.searchParams.get('username'); return json({ username, available: !['obsidian', 'taken_name', 'admin'].includes(username) }); }
       if (pathname.endsWith('/auth/me')) return state.authenticated ? json(profile) : json(null, 401, 'Not authenticated');
       if (pathname.endsWith('/auth/register')) return json({ registrationId: 'a'.repeat(64), expiresIn: 600, retryAfter: 60 }, 202);
       if (pathname.endsWith('/auth/verify-email')) {
@@ -45,7 +46,7 @@ async (page) => {
     const file = files[pathname] || (!pathname.split('/').at(-1).includes('.') ? files['/index.html'] : null);
     if (!file) return route.fulfill({ status: 404, body: 'Unknown fixture asset' });
     const ext = file.split('.').at(-1);
-    const mime = { html: 'text/html', js: 'text/javascript', css: 'text/css', png: 'image/png', jpg: 'image/jpeg', svg: 'image/svg+xml', woff2: 'font/woff2', woff: 'font/woff', ico: 'image/x-icon' }[ext] || 'application/octet-stream';
+    const mime = { html: 'text/html', js: 'text/javascript', css: 'text/css', png: 'image/png', webp: 'image/webp', jpg: 'image/jpeg', svg: 'image/svg+xml', woff2: 'font/woff2', woff: 'font/woff', ico: 'image/x-icon' }[ext] || 'application/octet-stream';
     await route.fulfill({ status: 200, contentType: mime, path: file });
   });
   await page.goto(origin + '/signup');

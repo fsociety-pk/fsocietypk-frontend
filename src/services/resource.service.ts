@@ -25,6 +25,7 @@ export interface SubmitResourcePayload {
 }
 
 export const resourceService = {
+  getAdminResources: async (status = 'pending'): Promise<ApiResponse<IResource[]>> => (await api.get('/admin/resources', { params: { status } })).data,
   /** Get all approved resources */
   getApprovedResources: async (): Promise<ApiResponse<IResource[]>> => {
     const response = await api.get<ApiResponse<IResource[]>>('/resources');

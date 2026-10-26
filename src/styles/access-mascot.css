@@ -1,0 +1,60 @@
+/* The compact original crew: friends cover each other’s eyes for privacy. */
+.access-companions.cartoon-crew { height: auto; min-height: 104px; margin-bottom: 12px; display: flex; flex-direction: column; align-items: center; }
+.access-companions.cartoon-crew::after { content: ''; display: block; flex-shrink: 0; height: 68px; margin-top: 8px; }
+.access-companions.cartoon-crew .companion-stage { left: 50%; transform: translateX(-50%) scale(.3); }
+.access-companions.cartoon-crew .companion-bubble { position: relative; top: auto; left: auto; right: auto; transform: none; width: max-content; max-width: calc(100% - 32px); padding: 5px 10px; line-height: 16px; }
+.access-companions.cartoon-crew .companion-bubble::after { top: auto; bottom: -5px; left: calc(50% - 4px); transform: rotate(45deg); }
+.access-companions.cartoon-crew .companion { position: absolute; bottom: 0; width: 108px; height: 144px; transform-origin: 50% 100%; }
+.access-companions.cartoon-crew .companion-green { --clay-light: #c8efdb; --clay: #8bcbaa; --clay-shade: #529c79; left: 105px; width: 136px; height: 196px; z-index: 2; }
+.access-companions.cartoon-crew .companion-coral { --clay-light: #ffddd0; --clay: #ffb59f; --clay-shade: #dc8e7a; left: 4px; height: 126px; z-index: 3; transform: rotate(-8deg); }
+.access-companions.cartoon-crew .companion-lilac { --clay-light: #e3d8f3; --clay: #c3ace3; --clay-shade: #9b80c1; right: 0; height: 156px; transform: rotate(8deg); }
+.access-companions.cartoon-crew .companion-head { position: absolute; inset: 0; border-radius: 28px 44px 16px 16px; background: var(--clay); box-shadow: inset 2px 2px 3px rgb(255 255 255 / .12); transform: rotate(var(--head-turn)); transform-origin: 50% 85%; transition: transform 260ms var(--ease-out); }
+.access-companions.cartoon-crew .companion-green .companion-head { height: 120px; border-radius: 36px 36px 28px 28px; }
+.access-companions.cartoon-crew .companion-coral .companion-head { border-radius: 58px 58px 15px 15px; }
+.access-companions.cartoon-crew .companion-body { position: absolute; bottom: 0; left: 15px; right: 15px; height: 90px; border-radius: 20px 20px 13px 13px; background: var(--clay); }
+.access-companions.cartoon-crew .companion-side { position: absolute; top: 65%; width: 23px; height: 16px; border-radius: 50%; background: var(--clay-light); }
+.access-companions.cartoon-crew .companion-side.left { left: -10px; }.access-companions.cartoon-crew .companion-side.right { right: -10px; }
+.access-companions.cartoon-crew .companion-antenna { position: absolute; bottom: 100%; left: calc(50% - 3px); height: 16px; width: 6px; background: #8ec5ab; }
+.access-companions.cartoon-crew .companion-antenna::before { content: ''; position: absolute; top: -8px; left: -4px; width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #ffe0d2, #f5a28d 80%); }
+.access-companions.cartoon-crew .companion-face { position: absolute; top: 39px; left: 50%; width: 72px; height: 60px; transform: translateX(-50%); }
+.access-companions.cartoon-crew .companion-coral .companion-face { top: 35px; }
+.access-companions.cartoon-crew .companion-lilac .companion-face { top: 37px; }
+.access-companions.cartoon-crew .companion-eye { position: absolute; top: 0; width: 23px; height: 28px; border-radius: 50%; background: #f9fffc; box-shadow: inset 0 1px 3px rgb(37 82 66 / .2); transition: background 140ms, box-shadow 140ms; }
+.access-companions.cartoon-crew .companion-eye.left { left: 0; }.access-companions.cartoon-crew .companion-eye.right { right: 0; }
+.access-companions.cartoon-crew .companion-eye::before { content: ''; position: absolute; top: -10px; left: 2px; width: 19px; height: 4px; border-radius: 50%; background: #4a645d; transform: rotate(-7deg); }
+.access-companions.cartoon-crew .companion-eye.right::before { transform: rotate(7deg); }
+.access-companions.cartoon-crew .companion-eye i { position: absolute; top: 50%; left: 50%; width: 13px; height: 20px; border-radius: 50%; background: radial-gradient(ellipse at 50% 55%, #183b3c 38%, #6c9997 70%); transform: translate(calc(-50% + var(--look-x)), calc(-50% + var(--look-y))); transition: transform 180ms var(--ease-out), opacity 120ms; }
+.access-companions.cartoon-crew .companion-eye i::after { content: ''; position: absolute; top: 3px; left: 3px; width: 4px; height: 5px; border-radius: 50%; background: #fff; }
+.access-companions.cartoon-crew .companion-nose { position: absolute; left: 31px; top: 25px; width: 10px; height: 10px; border-radius: 50%; background: var(--clay); box-shadow: inset 1px 1px 2px rgb(255 255 255 / .5), 0 2px 2px rgb(39 83 63 / .15); }
+.access-companions.cartoon-crew .companion-cheek { position: absolute; top: 29px; width: 17px; height: 9px; border-radius: 50%; background: #d78e7c; opacity: .4; }
+.access-companions.cartoon-crew .companion-cheek.left { left: -7px; }.access-companions.cartoon-crew .companion-cheek.right { right: -7px; }
+.access-companions.cartoon-crew .companion-mouth { position: absolute; top: 35px; left: 29px; width: 15px; height: 12px; border: 2px solid #31534c; border-top: 0; border-radius: 0 0 10px 10px; }
+.access-companions.cartoon-crew.is-covered .companion-head { transform: rotate(0); }
+.access-companions.cartoon-crew .companion-greet { position: absolute; right: 8px; bottom: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid rgb(var(--line)); border-radius: 50%; color: rgb(var(--muted)); background: rgb(var(--card)); }
+.access-companions.cartoon-crew .companion-greet:hover { color: rgb(var(--brand)); background: rgb(var(--surface)); }
+.access-companions.cartoon-crew .companion-greet:focus-visible { outline: 2px solid rgb(var(--brand)); outline-offset: 3px; }
+.access-companions.cartoon-crew.is-greeting:not(.is-covered):not(.is-private) .companion-head { animation: crew-hello 600ms ease-in-out 2; }
+.access-companions.cartoon-crew.is-greeting .companion-coral .companion-head { animation-delay: 100ms; }
+.access-companions.cartoon-crew.is-greeting .companion-lilac .companion-head { animation-delay: 200ms; }
+@keyframes crew-hello { 0%, 100% { transform: rotate(0); } 35% { transform: rotate(-7deg) translateY(-4px); } 70% { transform: rotate(6deg); } }
+@media (max-width: 760px) { .access-companions.cartoon-crew .companion-greet { width: 32px; height: 32px; right: 0; bottom: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .access-companions.cartoon-crew *, .access-companions.cartoon-crew *::before, .access-companions.cartoon-crew *::after { transition: none !important; animation: none !important; }
+}
+
+.access-companions.cartoon-crew .crew-privacy-arms { position: absolute; inset: 0; width: 330px; height: 222px; z-index: 5; opacity: 0; overflow: visible; pointer-events: none; }
+.access-companions.cartoon-crew .crew-arm { fill: none; stroke-linecap: round; }
+.access-companions.cartoon-crew .crew-arm-outline { stroke: #557e6c; stroke-width: 17px; }
+.access-companions.cartoon-crew .crew-arm-color { stroke-width: 14px; }
+.access-companions.cartoon-crew .crew-hand { stroke: #557e6c; stroke-width: 1.2px; stroke-linejoin: round; }
+.access-companions.cartoon-crew .crew-fingers { fill: none; stroke: #557e6c; stroke-width: 1.2px; stroke-linecap: round; }
+/* Expressions respond to password progress, without receiving the password. */
+.access-companions.cartoon-crew .companion-mouth { transition: transform 180ms var(--ease-out), width 180ms var(--ease-out), background-color 180ms var(--ease-out); }
+.access-companions.cartoon-crew.is-sad .companion-mouth { transform: translateY(4px) rotate(180deg); }
+.access-companions.cartoon-crew.is-sad .companion-eye.left::before { transform: rotate(-22deg); }
+.access-companions.cartoon-crew.is-sad .companion-eye.right::before { transform: rotate(22deg); }
+.access-companions.cartoon-crew.is-sad .companion-cheek { opacity: .2; }
+.access-companions.cartoon-crew.is-happy .companion-mouth { width: 21px; left: 26px; height: 14px; background: #31534c; border-radius: 3px 3px 14px 14px; }
+.access-companions.cartoon-crew.is-happy .companion-mouth::after { content: ''; position: absolute; top: 0; left: 3px; right: 3px; height: 4px; background: #fff8ef; border-radius: 0 0 3px 3px; }
+.access-companions.cartoon-crew.is-happy .companion-cheek { opacity: .65; }
+.access-companions.cartoon-crew.is-hopeful .companion-mouth { transform: rotate(-7deg); }

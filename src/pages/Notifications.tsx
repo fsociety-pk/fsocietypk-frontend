@@ -1,3 +1,5 @@
+import { useAuthStore } from '../store/authStore';
+import { isStaff } from '../utils/roles';
 import PageHeading from "../components/common/PageHeading";
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,6 +18,7 @@ import { toast } from 'react-hot-toast';
 import { notificationService, INotification } from '../services/notificationService';
 
 const Notifications: React.FC = () => {
+  const staff = isStaff(useAuthStore(state => state.user?.role));
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all');
@@ -124,7 +127,7 @@ const Notifications: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6 sm:mb-8"
         >
-          <PageHeading eyebrow="Your updates" title="Notifications" description="Updates about your challenges and submissions." />
+          <PageHeading eyebrow="Your updates" title="Notifications" description={staff ? "Platform submissions, announcements, and staff alerts." : "Updates about your challenges and submissions."} />
 
           {/* Filters */}
           <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-4 sm:mb-6">

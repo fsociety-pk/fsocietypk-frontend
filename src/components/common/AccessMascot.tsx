@@ -1,16 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { Hand } from 'lucide-react';
+import CompanionPrivacyArms from './CompanionPrivacyArms';
+import '../../styles/access-mascot.css';
 
 interface Props { focused: string | null; characterCount: number; covered: boolean; verified: boolean; pending: boolean; message?: string; passwordScore?: number; welcomeMessage?: string; }
 
-function Arms() {
-  return <>{(['left', 'right'] as const).map(side => <span key={side} className={`companion-arm ${side}`}><span className="companion-forearm"><svg className="companion-hand" viewBox="0 0 38 54" focusable="false"><path d="M11 0H25V8C25 11 28 12 31 15L35 19C38 23 34 28 31 25L28 23V43C28 48 22 48 22 43V32H21V48C21 53 15 53 15 48V32H14V47C14 52 8 52 8 47V31H7V41C7 46 1 46 1 41V23C1 17 11 12 11 8Z"/></svg></span></span>)}</>;
+function Face() {
+  return <div className="companion-face">
+    <span className="companion-eye left"><i /></span><span className="companion-eye right"><i /></span>
+    <span className="companion-nose" /><span className="companion-cheek left" /><span className="companion-cheek right" /><span className="companion-mouth" />
+  </div>;
 }
 
 /** Only focus and character count reach the illustration, never password contents. */
 export default function AccessMascot({ focused, characterCount, covered, verified, pending, message, passwordScore, welcomeMessage }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const [greeting, setGreeting] = useState(false);
+  const emotion = passwordScore === undefined ? 'neutral' : passwordScore <= 2 ? 'sad' : passwordScore === 5 ? 'happy' : 'hopeful';
   const privateEntry = focused === 'password' && !covered;
   useEffect(() => {
     if (!greeting) return;
@@ -33,12 +39,12 @@ export default function AccessMascot({ focused, characterCount, covered, verifie
         if (!face) return;
         const x = Math.tanh((point.x - face.left - face.width / 2) / 100);
         const y = Math.tanh((point.y - face.top - face.height / 2) / 140);
-        setGaze(character, x * 4.5, y * 5, x * 3);
+        setGaze(character, x * 5, y * 3, x * 4);
       });
     };
     const lookAtForm = () => {
       if (covered || privateEntry) {
-        characters.forEach(character => { const side = character.classList.contains('companion-mint') ? 1 : -1; setGaze(character, privateEntry ? side * 4 : 0, privateEntry ? -5 : 0, privateEntry ? side * 7 : 0); });
+        characters.forEach(character => setGaze(character, privateEntry ? -4 : 0, privateEntry ? -2 : 0, privateEntry ? -5 : 0));
         return;
       }
       const input = focused ? document.getElementById(`auth-${focused}`) : null;
@@ -55,7 +61,7 @@ export default function AccessMascot({ focused, characterCount, covered, verifie
     let frame = 0;
     let pointer = { x: 0, y: 0 };
     const follow = (event: PointerEvent) => {
-      // Active fields own attention; masked password entry looks away and revealed entry covers up.
+      // Active fields own attention; revealed passwords let the friends cover each other's eyes.
       if (focused || covered || motion.matches || (event.pointerType !== 'mouse' && event.pointerType !== 'pen')) return;
       pointer = { x: event.clientX, y: event.clientY };
       if (frame) return;
@@ -79,15 +85,17 @@ export default function AccessMascot({ focused, characterCount, covered, verifie
       motion.removeEventListener('change', reset);
     };
   }, [focused, characterCount, covered, privateEntry]);
-  const caption = message || (covered ? 'Your password, your business. Hands up!' : privateEntry ? passwordScore === 5 ? 'All five checks passed. Eyes up—we respect that!' : 'Eyes up! We respect your privacy.' : greeting ? 'Hey, future flag finder!' : pending ? 'Check your inbox. You’ve got this.' : verified ? 'All checks passed. We respect that!' : focused ? 'Looking good. Keep going!' : welcomeMessage || 'Hi! Ready for a challenge?');
-  return <div ref={root} className={`access-companions ${covered ? 'is-covered' : ''} ${privateEntry ? 'is-private' : ''} ${greeting ? 'is-greeting' : ''} ${verified ? 'is-ready' : ''}`}>
+  const caption = message || (covered ? 'No peeking! Friends cover for friends.' : privateEntry ? passwordScore === 5 ? 'All five checks passed. Eyes up—we respect that!' : emotion === 'sad' ? 'Eyes up. Give that password a little more muscle!' : 'Eyes up! We respect your privacy.' : greeting ? 'Hey, friend! The whole crew says hello.' : pending ? 'Check your inbox. You’ve got this.' : verified ? 'All checks passed. We respect that!' : focused ? 'Looking good. Keep going!' : welcomeMessage || 'Hi! Ready for a challenge?');
+  return <div ref={root} data-emotion={emotion} className={`access-companions cartoon-crew ${covered ? 'is-covered' : ''} ${privateEntry ? 'is-private' : ''} ${greeting ? 'is-greeting' : ''} ${verified ? 'is-ready' : ''} is-${emotion}`}>
     <p className="companion-bubble" aria-live="polite">{caption}</p>
     <div className="companion-stage" aria-hidden="true">
-      <div className="companion companion-coral"><div className="companion-face"><span className="companion-eye"><i /></span><span className="companion-eye"><i /></span><span className="companion-mouth" /></div><Arms /></div>
-      <div className="companion companion-green"><span className="companion-antenna" /><div className="companion-head"><div className="companion-face"><span className="companion-eye"><i /></span><span className="companion-eye"><i /></span><span className="companion-mouth" /></div></div><div className="companion-body"><span /><span /><span /></div><Arms /></div>
-      <div className="companion companion-mint"><div className="companion-face"><span className="companion-eye"><i /></span><span className="companion-eye"><i /></span><span className="companion-mouth" /></div><Arms /></div>
-      <span className="companion-ground" />
+      {(['coral', 'green', 'lilac'] as const).map(color => <div key={color} className={`companion companion-${color}`}>
+        <span className="companion-side left" /><span className="companion-side right" />
+        <div className="companion-body" />
+        <div className="companion-head">{color === 'green' && <span className="companion-antenna" />}<Face /></div>
+      </div>)}
+      <CompanionPrivacyArms covered={covered} />
     </div>
-    <button type="button" className="companion-greet" title="Say hello to the crew" onClick={() => setGreeting(true)}><Hand size={15} />Say hello to the crew</button>
+    <button type="button" className="companion-greet" title="Say hello to the crew" aria-label="Say hello to the crew" onClick={() => setGreeting(true)}><Hand size={16} /></button>
   </div>;
 }

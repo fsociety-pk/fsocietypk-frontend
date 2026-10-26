@@ -1,4 +1,5 @@
 import PageHeading from "../../components/common/PageHeading";
+import PageState from '../../components/common/PageState';
 import React, { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminProfileService } from '../../services/adminProfileService';
@@ -19,7 +20,7 @@ import { clsx } from 'clsx';
 
 const AdminAboutAdmin: React.FC = () => {
   const queryClient = useQueryClient();
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading, isError, refetch } = useQuery({
     queryKey: ['admin-profile'],
     queryFn: () => adminProfileService.getProfile(),
     select: (res) => res.data,
@@ -89,6 +90,7 @@ const AdminAboutAdmin: React.FC = () => {
     setFormData({ ...formData, socialLinks: newSocialLinks });
   };
 
+  if (isError) return <PageState title="Admin profile could not be loaded" retry={() => refetch()} />;
   if (isLoading) {
     return (
       <div className="h-64 flex items-center justify-center">

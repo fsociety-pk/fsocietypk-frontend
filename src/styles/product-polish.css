@@ -1,0 +1,50 @@
+/* Material separation: tinted surfaces distinguish cards from the page. */
+:root { --panel-base: 29 45 37; --panel-edge: 70 96 80; --panel-shadow: 0 3px 12px rgb(0 0 0 / .12); }
+:root[data-theme="light"] { --panel-base: 232 241 235; --panel-edge: 187 207 194; --panel-shadow: 0 3px 12px rgb(26 58 39 / .07); }
+:is(.soft-panel, .card, .dashboard-welcome, .stats-strip, .podium-card) { background: rgb(var(--panel-base)); border-color: rgb(var(--panel-edge)); }
+:is(.action-card, .project-card, .resource-card, .challenge-card) { --card-tone: var(--info); background: color-mix(in srgb, rgb(var(--panel-base)), rgb(var(--card-tone)) 10%); border: 1px solid color-mix(in srgb, rgb(var(--panel-edge)), rgb(var(--card-tone)) 25%); border-radius: 14px; box-shadow: var(--panel-shadow); transition: transform 220ms var(--ease-out), border-color 220ms var(--ease-out), background-color 220ms var(--ease-out); }
+.action-card { --card-tone: var(--action-color); }
+.project-card { --card-tone: var(--success); }
+.resource-card { --card-tone: var(--violet); }
+.challenge-card { --card-tone: var(--category-color); border-top-width: 1px; }
+.challenge-card-action { background: rgb(var(--card-tone) / .1); }
+.action-card > svg { transition: transform 220ms var(--ease-out); }
+.action-card:nth-child(2), .resource-card:nth-child(3n + 2) { background: color-mix(in srgb, rgb(var(--panel-base)), rgb(var(--violet)) 13%); }
+.action-card:nth-child(3), .resource-card:nth-child(3n) { background: color-mix(in srgb, rgb(var(--panel-base)), rgb(var(--coral)) 12%); }
+.admin-shell .admin-content :is(.card, .soft-panel, .admin-panel) { background: rgb(var(--panel-base)); border-color: rgb(var(--panel-edge)); }
+.admin-stat-row { background: rgb(var(--panel-base)); border-color: rgb(var(--panel-edge)); }
+.cinematic-landing .discipline-card { background: color-mix(in srgb, rgb(var(--panel-base)), rgb(var(--brand)) 10%); border-color: rgb(var(--panel-edge)); transition: transform 220ms var(--ease-out), background-color 220ms var(--ease-out); }
+.cinematic-landing .discipline-card:nth-child(2n) { background: color-mix(in srgb, rgb(var(--panel-base)), rgb(var(--violet)) 13%); }
+:is(.action-card, .project-card, .resource-card, .challenge-card):focus-within { border-color: rgb(var(--brand)); }
+@media (hover: hover) and (pointer: fine) {
+  :is(.action-card, .project-card, .resource-card, .challenge-card):hover { transform: translateY(-4px); border-color: rgb(var(--card-tone)); box-shadow: var(--panel-shadow); }
+  .action-card:hover > svg { transform: translate(2px, -2px); }
+  .cinematic-landing .discipline-card:hover { transform: translateY(-4px); }
+}
+/* Preserve the detailed black lettering on dark surfaces without changing the logo. */
+:root[data-theme="dark"] :is(.brand-lockup .brand-artwork, .footer-logo, .lost-terminal-body > img) { background: #eaf3ed; border-radius: 8px; padding: 4px; }
+/* Suggestions are interactive ideas, never a promise of username availability. */
+.username-ideas { padding: 10px; margin-top: 2px; border: 1px solid rgb(var(--line)); border-radius: 8px; background: rgb(var(--elevated)); }
+.username-ideas > span { display: block; font-size: 11px; font-weight: 600; color: rgb(var(--ink)); }
+.username-ideas > div { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.username-ideas button { max-width: 100%; overflow-wrap: anywhere; padding: 5px 8px; min-height: 30px; border-radius: 5px; background: rgb(var(--brand) / .1); color: rgb(var(--brand)); font-size: 11px; text-align: left; }
+.username-ideas button:hover { background: rgb(var(--brand) / .18); }
+.username-ideas button:focus-visible { outline: 2px solid rgb(var(--brand)); outline-offset: 2px; }
+.username-ideas small { display: block; margin-top: 7px; font-size: 10px; color: rgb(var(--muted)); line-height: 1.45; }
+/* The splash is intentionally just white type on black, in two scenes. */
+.cinematic-intro { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background: #000; color: #fff; padding: 32px; }
+.cinematic-intro-text { max-width: 1120px; font-family: var(--font-body); font-size: clamp(36px, 7vw, 112px); font-weight: 850; letter-spacing: -.035em; line-height: 1.05; text-align: center; text-wrap: balance; animation: intro-scene 1450ms cubic-bezier(.22,1,.36,1) both; }
+.cinematic-intro-skip { position: absolute; right: 28px; bottom: 24px; padding: 12px 16px; color: #d0d0d0; font-size: 12px; border-radius: 6px; min-height: 44px; }
+.cinematic-intro-skip:hover { color: #fff; background: #181818; }
+.cinematic-intro-skip:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@keyframes intro-scene { 0% { opacity: 0; transform: translateY(10px) scale(.98); } 20%, 80% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-4px); } }
+.cinematic-intro-text.intro-scene-1 { animation-duration: 1850ms; }
+@media (prefers-reduced-motion: reduce) {
+  :is(.action-card, .project-card, .resource-card, .challenge-card, .discipline-card), .action-card > svg { transition: none !important; transform: none !important; }
+  .cinematic-intro-text { animation: none; }
+}
+
+.username-availability { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; line-height: 1.4; color: rgb(var(--muted)); white-space: nowrap; }
+.username-availability.is-available { color: rgb(var(--success)); }
+.username-availability.is-taken { color: rgb(var(--error)); }
+@media (prefers-reduced-motion: reduce) { .username-availability .animate-spin { animation: none; } }

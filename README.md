@@ -1,8 +1,8 @@
-# FsocietyPK — Signal / Redesign
+# Fsociety PK
 
-A dark, Mr. Robot inspired redesign of the existing FsocietyPK frontend.
+A CTF practice platform with community resources, a member workspace, and a dedicated staff portal. The interface uses a green light theme by default, an optional dark theme, and responsive layouts.
 
-## Run locally
+## Local development
 
 Use Node.js 20 or newer.
 
@@ -12,7 +12,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Keep your existing API values in `.env.local`. The original API service methods, routes, cookie authentication, flag submission, and admin features are retained. The backend is a separate service and is not included in this archive.
+Keep your API configuration in `.env.local`. The backend is maintained in the separate `fsocietypk-backend` repository.
 
 ## Production
 
@@ -21,23 +21,31 @@ npm run build
 npm run preview
 ```
 
-The `dist` folder is the production build. Serve it through a web server with SPA fallback to `index.html`. The included Vercel configuration preserves the original deployment routing.
+Serve the generated `dist` directory with SPA fallback to `index.html`. The Vercel configuration preserves frontend routing. Deploy the matching backend for live username availability, staff permissions, publication emails, and backend diagnostics; the frontend cannot provide those server endpoints on its own.
 
-## Design changes
+## Interface
 
-- New charcoal, cream, and red design system across shared app styles.
-- Rebuilt responsive navigation with account menu and mobile drawer.
-- New homepage with an animated signal map, terminal illustration, scrolling discipline strip, and scroll reveals.
-- Rebuilt login and signup screens with proper labels, validation, and password visibility controls.
-- New challenge cards, filters, loading states, and flag-sequence progress.
-- New podium, standings table, period filters, and operator search.
-- Route-level code splitting, self-hosted fonts, and reduced-motion support.
-- Original organization logo and community links retained.
+- Tinted cards, restrained hover motion, clear focus states, and reduced-motion support.
+- Compact interactive auth companions with field/pointer gaze, password emotions, and cross-character privacy hands.
+- Signup-only username ideas and debounced live availability feedback.
+- A local SQL-input prank after submission, with no authentication or admin access.
+- A sandboxed fluid background on normal login/signup forms only, with GPU and reduced-motion fallbacks.
+- A skippable two-scene public-landing intro, once per tab session.
+- Professional loading states and a dedicated 404 with recovery links.
+- A staff-only administration workspace with role-specific navigation and server-enforced permissions.
 
-The signal map is a decorative training illustration. Challenge and leaderboard data continue to come from the existing backend. No sample operators or challenges are shipped in the app.
+The original organization logo and community links are preserved.
+
+## Documentation
+
+- [Design system and current visual direction](docs/DESIGN.md)
+- [Auth API, loading, and fluid integration](docs/AUTH_UI.md)
+- [Admin permissions, emails, EC2 diagnostics, and deployment](docs/ADMIN_PORTAL.md)
+- [Product notes](docs/PRODUCT.md)
+- [Browser verification](tests/README.md)
+
+The fluid adaptation retains its [upstream MIT license](public/auth-fluid/LICENSE). Regenerate it with `python3 scripts/prepare-auth-fluid.py /path/to/WebGL-Fluid-Simulation` when the supplied upstream repo is available.
 
 ## Verification
 
-The TypeScript check and production build pass. Browser checks cover desktop/mobile layouts, navigation, form validation, challenge filtering, and ranking search using temporary mocked API responses. Live account creation, authentication, flag submission, and backend admin actions were not exercised.
-
-Local environment files, Git history, and `node_modules` are not included. Install dependencies with `npm ci`.
+The production build includes TypeScript checks. Browser suites use intercepted API fixtures; they do not create production accounts or send real emails. Tests cover auth/OTP, availability races and failures, real WebGL pixels and cleanup, responsive layouts, accessibility, staff workflows, challenge progress, and prank timing.

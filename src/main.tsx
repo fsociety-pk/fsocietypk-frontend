@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import App from "./App";
 import "./index.css";
 import "./styles/design-refresh.css";
+import './styles/product-polish.css';
 import { applyTheme } from './hooks/useTheme';
 
 applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');

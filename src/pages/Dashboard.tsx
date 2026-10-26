@@ -4,6 +4,7 @@ import Landing from './Landing';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../store/authStore';
 import { userService } from '../services/userService';
+import CyberLoader from '../components/common/CyberLoader';
 import PageState from '../components/common/PageState';
 function PersonalDashboard() {
   const user = useAuthStore((state) => state.user);
@@ -31,7 +32,7 @@ function PersonalDashboard() {
         <div className="welcome-note"><BookOpen size={25}/><h2>A little help for<br />your next breakthrough.</h2><p>Community guides and useful tools, all in one place.</p><Link to="/resources">Explore resources <ArrowRight size={16} /></Link></div>
       </section>
       {isLoading ? (
-        <div className="dashboard-loading" role="status"><span className="loading-indicator"/>Loading your progress…</div>
+        <CyberLoader title="Loading your progress" description="Gathering your solves, points, and next steps." />
       ) : isError ? (
         <div className="mt-6">
           <PageState

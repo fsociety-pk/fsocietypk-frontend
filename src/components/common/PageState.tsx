@@ -1,31 +1,29 @@
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import CyberLoader from './CyberLoader';
 
 export default function PageState({
   loading,
   title,
   description,
   retry,
+  fullPage,
 }: {
   loading?: boolean;
   title?: string;
   description?: string;
   retry?: () => void;
+  fullPage?: boolean;
 }) {
+  if (loading) return <CyberLoader title={title} description={description} fullPage={fullPage} />;
   return (
-    <div className="page-state" role={loading ? "status" : undefined}>
-      {loading ? (
-        <Loader2 className="animate-spin" size={28} />
-      ) : (
-        <AlertCircle size={28} />
-      )}
+    <div className="page-state">
+      <AlertCircle size={28} />
       <h2>
-        {title || (loading ? "Getting things ready" : "Nothing here yet")}
+        {title || 'Nothing here yet'}
       </h2>
       <p>
         {description ||
-          (loading
-            ? "Your workspace will be ready in a moment."
-            : retry
+          (retry
               ? "Please check your connection and try again."
               : "Your activity will appear here.")}
       </p>

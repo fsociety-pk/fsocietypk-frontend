@@ -5,6 +5,16 @@ They do not verify MongoDB persistence, SMTP delivery or real authentication.
 Every HTTP request is intercepted; external font requests are suppressed and the
 local fallback fonts are used. Do not point these fixtures at production.
 
+## SQL prank checks
+
+After building and preparing fixtures, run the generated `browser-fixtures.js`,
+then `tests/browser-sql-prank.js` with the connected Playwright tool. This suite
+uses a controlled browser clock to check the four-second reveal, rotating jokes,
+early exit and focus restoration, light/dark mobile layouts, unchanged XSS/NoSQL
+feedback, and the absence of auth/admin requests. It also checks that a SQL-like
+password still goes unchanged through normal login. The updated `browser-auth.js`
+covers the prank followed by ordinary signup, email verification, and login.
+
 ## Pure certificate check
 
 ```sh
@@ -86,3 +96,34 @@ flag submissions, full completion, profiles, writeup eligibility, all leaderboar
 periods, analytics, old steps and duplicate successful submissions. No production
 database, SMTP or file storage is used. The sandbox may block localhost with
 `EPERM`; in that case no database assertions have run.
+
+## Dedicated administration, roles, email queue and backend status
+
+Build and prepare the browser files, then run these in order with connected
+Playwright:
+
+1. `<workspace>/.playwright-mcp/browser-fixtures.js`
+2. `tests/browser-admin-fixtures.js`
+3. `tests/browser-admin.js`
+
+The admin suite covers 43 checks and captures desktop/light/dark/mobile screenshots
+under `/tmp/admin-*`. All API responses, role changes, broadcasts, password changes,
+and EC2 metrics are fixtures; no actual accounts, mail, or infrastructure are changed.
+For member regression suites, reset the generated fixtures first. Their default
+account is now a member; staff no longer use player pages. The challenge URL suite
+explicitly switches roles between publishing and player views.
+
+Backend checks (from the workspace):
+
+```sh
+npm --prefix fsocietypk-backend run build
+node fsocietypk-backend/tests/admin-access.cjs
+node fsocietypk-backend/tests/admin-system.cjs
+node fsocietypk-backend/tests/platform-emails.cjs
+node fsocietypk-backend/tests/submission-emails.cjs
+node fsocietypk-backend/tests/challenge-url.cjs
+```
+
+These use actual middleware/controllers and stub database/provider methods; SMTP
+transport in email checks is fake. The system check reads local host metrics and
+stubs MongoDB availability. Operational setup is documented in `ADMIN_PORTAL.md`.

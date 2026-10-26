@@ -1,3 +1,4 @@
+import { isStaff } from '../utils/roles';
 import PageHeading from "../components/common/PageHeading";
 import { CHALLENGE_CATEGORIES, CATEGORY_LABELS } from '../utils/categories';
 import React, { useRef, useState } from 'react';
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { challengeService } from '../services/challenge.service';
+import { adminService } from '../services/adminService';
 import { useAuthStore } from '../store/authStore';
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -82,7 +84,7 @@ const difficultyColors: Record<string, string> = {
 // ── Component ─────────────────────────────────────────────────────────────────
 const SubmitChallenge: React.FC = () => {
   const user = useAuthStore((state) => state.user);
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = isStaff(user?.role);
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState | 'form', string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -260,14 +262,15 @@ const SubmitChallenge: React.FC = () => {
       }
       form.attachments.forEach((file) => payload.append('attachments', file, file.name));
 
-      const res = await challengeService.createChallenge(payload);
+      const res = await (isAdmin ? adminService.createChallenge(payload) : challengeService.createChallenge(payload));
       const status = (res.data.status === 'approved' || res.data.status === 'rejected')
         ? res.data.status
         : 'pending';
       setSubmitted({ id: res.data._id, title: res.data.title, points: res.data.points, status });
       setForm(INITIAL_FORM);
       if (status === 'approved') {
-        toast.success('Challenge submitted and published successfully!');
+        if (res.data.emailsQueued === false) toast.error('Challenge published, but member emails could not be queued. Publish again from the challenge list to retry.');
+        else toast.success('Challenge published. Member emails are queued.');
       } else {
         toast.success('Challenge submitted for review!');
       }
@@ -347,7 +350,7 @@ const SubmitChallenge: React.FC = () => {
               Submit Another
             </button>
             <a
-              href="/challenges"
+              href={isAdmin ? "/admin/challenges" : "/challenges"}
               className="w-full py-3 px-6 border border-surface-border text-text-secondary font-bold rounded-lg hover:border-brand/50 hover:text-text-primary transition-all uppercase tracking-widest text-sm text-center"
             >
               View challenges
@@ -371,7 +374,7 @@ const SubmitChallenge: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-10"
         >
-          <PageHeading eyebrow="Share with the community" title="Create a challenge" description="Write the task, add a flag, and send it for review." />
+          <PageHeading eyebrow="Share with the community" title="Create a challenge" description={isAdmin ? "Build and publish a challenge for your community." : "Write the task, add a flag, and send it for review."} />
 
           {/* Info Banner */}
           <div className="flex gap-3 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl mt-6">
@@ -380,7 +383,7 @@ const SubmitChallenge: React.FC = () => {
               <p className="font-bold mb-1 uppercase tracking-widest">Review Process</p>
               <p>
                 {isAdmin
-                  ? 'After you submit, you can check the challenge status in My submissions.'
+                  ? 'Your challenge publishes immediately. Manage it from the admin challenge library.'
                   : 'An admin will check your challenge. Once approved, it will be available for everyone to solve.'}
               </p>
             </div>

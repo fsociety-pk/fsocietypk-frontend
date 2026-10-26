@@ -1,0 +1,27 @@
+import { useEffect, useRef, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ShieldCheck, UserPlus } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { adminService } from '../../services/adminService';
+import { ROLES, ROLE_LABELS, ROLE_DESCRIPTIONS, type Role } from '../../utils/roles';
+import { useAuthStore } from '../../store/authStore';
+import PageState from '../../components/common/PageState';
+export default function AdminRoles() {
+  const user = useAuthStore(state => state.user);
+  const [scope, setScope] = useState('staff');
+  const [search, setSearch] = useState('');
+  const [debounced, setDebounced] = useState('');
+  const [page, setPage] = useState(1);
+  const [chosen, setChosen] = useState<Record<string, Role>>({});
+  const input = useRef<HTMLInputElement>(null);
+  const client = useQueryClient();
+  useEffect(() => { const timer = setTimeout(() => { setDebounced(search); setPage(1); }, 250); return () => clearTimeout(timer); }, [search]);
+  const accounts = useQuery({ queryKey: ['admin-roles', scope, debounced, page], queryFn: () => adminService.getUsers(page, 25, debounced, 'all', scope), select: r => r.data });
+  const change = useMutation({ mutationFn: ({ id, role }: { id: string; role: Role }) => adminService.updateRole(id, role), onSuccess: () => { void client.invalidateQueries({ queryKey: ['admin-roles'] }); void client.invalidateQueries({ queryKey: ['admin-users'] }); void client.invalidateQueries({ queryKey: ['admin-stats'] }); setChosen({}); toast.success('Role updated. The account must sign in again.'); }, onError: (err: any) => toast.error(err.response?.data?.message || 'Could not change this role.') });
+  return <div><div className="admin-page-heading"><div><h1>Staff & roles</h1><p>Give the right people the right tools, with clear responsibilities.</p></div><button className="btn-primary" onClick={() => { setScope('all'); setPage(1); input.current?.focus(); }}><UserPlus size={16} />Assign a staff role</button></div><div className="admin-notice"><ShieldCheck size={18} /><p>Only administrators can assign roles. Changes sign out the affected account. Your own role and the primary administrator are protected.</p></div>
+    <div className="admin-toolbar"><input ref={input} className="input" type="search" aria-label="Search accounts for role assignment" placeholder="Search username or email" maxLength={80} value={search} onChange={e => setSearch(e.target.value)} /><label htmlFor="role-scope">Show</label><select className="input" id="role-scope" value={scope} onChange={e => { setScope(e.target.value); setPage(1); }}><option value="staff">Staff accounts</option><option value="all">All accounts</option><option value="user">Community members</option></select></div>
+    {accounts.isLoading ? <PageState loading /> : accounts.isError ? <PageState title="Accounts could not be loaded" retry={() => accounts.refetch()} /> : !accounts.data?.users.length ? <div className="admin-panel admin-empty"><strong>No matching accounts.</strong>Choose all accounts or change your search to find a member.</div> : <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Account</th><th>Current role</th><th>Assigned role</th><th>Action</th></tr></thead><tbody>{accounts.data.users.map(account => { const protectedAccount = account._id === user?._id || account._id === accounts.data.protectedAdminId; return <tr key={account._id}><td><strong>{account.username}</strong><small>{account.email}</small></td><td>{ROLE_LABELS[account.role]}{account._id === accounts.data.protectedAdminId && <small>Primary administrator</small>}{account._id === user?._id && <small>Your account</small>}</td><td>{protectedAccount ? <span className="text-text-muted">Protected</span> : <select className="input" aria-label={`Role for ${account.username}`} value={chosen[account._id] || account.role} disabled={change.isPending} onChange={e => setChosen({ ...chosen, [account._id]: e.target.value as Role })}>{ROLES.map(role => <option key={role} value={role}>{ROLE_LABELS[role]}</option>)}</select>}</td><td>{!protectedAccount && <button className="btn-outline" disabled={change.isPending || !chosen[account._id] || chosen[account._id] === account.role} onClick={() => { const role = chosen[account._id]; if (window.confirm(`Assign ${ROLE_LABELS[role]} to ${account.username}? This changes their permissions and signs out their existing sessions.`)) change.mutate({ id: account._id, role }); }}>Save role</button>}</td></tr>; })}</tbody></table></div>}
+    <div className="admin-pagination"><span>{accounts.data?.pagination.total ?? 0} accounts</span><div><button className="btn-outline" disabled={page === 1 || accounts.isFetching} onClick={() => setPage(page - 1)}>Previous</button><button className="btn-outline" disabled={!accounts.data || page >= accounts.data.pagination.totalPages || accounts.isFetching} onClick={() => setPage(page + 1)}>Next</button></div></div>
+    <section className="admin-panel mt-6"><div className="admin-panel-heading"><div><h2>What each role can do</h2><p>Permissions are enforced by the backend on every protected action.</p></div></div><div className="admin-tools">{ROLES.filter(role => role !== 'user').map(role => <div className="admin-tool" key={role}><ShieldCheck size={18} /><div><strong>{ROLE_LABELS[role]}</strong><small>{ROLE_DESCRIPTIONS[role]}</small></div></div>)}</div></section>
+  </div>;
+}

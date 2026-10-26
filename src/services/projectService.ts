@@ -31,6 +31,8 @@ const DEFAULT_PROJECTS: Project[] = [
 ];
 
 export const projectService = {
+  getAdminProjects: async (): Promise<Project[]> => (await apiClient.get('/projects')).data.data,
+  updateProject: async (id: string, payload: Omit<Project, '_id'>): Promise<Project> => (await apiClient.put(`/projects/${id}`, payload)).data.data,
   getProjects: async (): Promise<Project[]> => {
     try {
       const response = await apiClient.get('/projects');

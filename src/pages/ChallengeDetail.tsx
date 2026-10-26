@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Terminal, FileDown, HelpCircle, Trophy, Send, CheckCircle2, Loader2, Lock, Unlock, Users, Linkedin } from 'lucide-react';
@@ -19,6 +19,15 @@ type FlagFeedback = {
   message: string;
 };
 
+const incorrectFlagMessages = [
+  "Lol! That flag’s an impostor. Try again.",
+  "The flag is in another castle. Back to the clues!",
+  "Plot twist: that wasn’t the flag. Give it another shot!",
+  "Nice try, detective. This clue needs another look!",
+  "The flag says ‘new phone, who dis?’ Try again!",
+  "No flag, just character development. You’ve got this!",
+];
+
 const ChallengeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const user = useAuthStore((state) => state.user);
@@ -33,6 +42,7 @@ const ChallengeDetail: React.FC = () => {
   const [completedFlagSteps, setCompletedFlagSteps] = useState<number[]>([]);
   const [flagValues, setFlagValues] = useState<string[]>([]);
   const [flagFeedback, setFlagFeedback] = useState<FlagFeedback | null>(null);
+  const incorrectAttempts = useRef(0);
   const [showWriteupModal, setShowWriteupModal] = useState(false);
   const [showCertificateModal, setShowCertificateModal] = useState(false);
   const [certificateData, setCertificateData] = useState<CertificateData | null>(null);
@@ -55,6 +65,7 @@ const ChallengeDetail: React.FC = () => {
       setCompletedFlagSteps([]);
       setCurrentFlagStep(1);
       setFlagValues([]);
+      incorrectAttempts.current = 0;
 
       try {
         const response = await challengeService.getChallengeById(id);
@@ -173,14 +184,17 @@ const ChallengeDetail: React.FC = () => {
         }
       } else {
         const nextExpected = result.nextSequence ?? step;
+        const message = incorrectFlagMessages[incorrectAttempts.current % incorrectFlagMessages.length];
+        incorrectAttempts.current += 1;
         if (nextExpected !== currentFlagStep) {
           setCurrentFlagStep(nextExpected);
         }
         setFlagFeedback({
           type: 'error',
-          message: `Flag ${nextExpected} is incorrect. Try again.`,
+          message: `Flag ${nextExpected} is incorrect. ${message}`,
         });
-        toast.error(`Incorrect flag. Try again.`, {
+        toast.error(message, {
+          id: 'incorrect-flag',
           style: { border: '1px solid rgb(var(--error))', padding: '16px', color: 'rgb(var(--error))', background: 'var(--page-color)' },
           iconTheme: { primary: 'rgb(var(--error))', secondary: 'var(--page-color)' },
         });
@@ -417,12 +431,15 @@ const ChallengeDetail: React.FC = () => {
                     {flagFeedback && (
                       <motion.div
                         key={`${flagFeedback.type}-${flagFeedback.message}`}
+                        role="status"
+                        aria-live="polite"
+                        aria-atomic="true"
                         initial={false}
                         animate={{ opacity: 1, y: 0 }}
-                        className={`mt-2 rounded-lg border px-4 py-3 text-xs tracking-wider uppercase font-sans ${
+                        className={`mt-2 rounded-lg border px-4 py-3 text-sm font-sans ${
                           flagFeedback.type === 'success'
                             ? 'border-brand/40 bg-brand/10 text-brand'
-                            : 'border-red-500/40 bg-red-500/10 text-status-error'
+                            : 'border-status-error/40 bg-status-error/10 text-status-error'
                         }`}
                       >
                         <div className="flex items-center justify-between gap-3">
@@ -430,7 +447,7 @@ const ChallengeDetail: React.FC = () => {
                             {flagFeedback.type === 'success' ? 'Correct flag' : 'Try again'}
                           </span>
                           <span className={flagFeedback.type === 'success' ? 'text-brand/70' : 'text-status-error/80'}>
-                            {flagFeedback.type === 'success' ? 'OK' : 'DENIED'}
+                            {flagFeedback.type === 'success' ? 'OK' : 'Keep going'}
                           </span>
                         </div>
                         <p className="mt-1 break-words">{flagFeedback.message}</p>

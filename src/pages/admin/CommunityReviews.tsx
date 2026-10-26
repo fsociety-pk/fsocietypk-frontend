@@ -1,25 +1,28 @@
 import { useState } from "react";
+import { useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, ExternalLink, X } from "lucide-react";
+import { Check, ExternalLink, Trash2, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { writeupService } from "../../services/writeup.service";
 import { resourceService } from "../../services/resource.service";
 import PageState from "../../components/common/PageState";
 
 export default function CommunityReviews() {
-  const [tab, setTab] = useState<"writeups" | "resources">("writeups");
+  const [params, setParams] = useSearchParams();
+  const tab = params.get('tab') === 'resources' ? 'resources' : 'writeups';
+  const [scope, setScope] = useState('pending');
   const [page, setPage] = useState(1);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const client = useQueryClient();
   const writeups = useQuery({
-    queryKey: ["pending-writeups", page],
-    queryFn: () => writeupService.getPendingWriteups(page, 10),
+    queryKey: ["pending-writeups", page, scope],
+    queryFn: () => writeupService.getAdminWriteups(page, 10, scope),
     enabled: tab === "writeups",
     select: (r) => r.data,
   });
   const resources = useQuery({
-    queryKey: ["pending-resources"],
-    queryFn: resourceService.getPendingResources,
+    queryKey: ["pending-resources", scope],
+    queryFn: () => resourceService.getAdminResources(scope === 'rejected' ? 'pending' : scope),
     enabled: tab === "resources",
     select: (r) => r.data,
   });
@@ -29,8 +32,10 @@ export default function CommunityReviews() {
       action,
     }: {
       id: string;
-      action: "approve-writeup" | "reject-writeup" | "approve-resource";
+      action: "approve-writeup" | "reject-writeup" | "approve-resource" | "delete-writeup" | "delete-resource";
     }) => {
+      if (action === 'delete-writeup') return writeupService.deleteWriteup(id);
+      if (action === 'delete-resource') return resourceService.deleteResource(id);
       if (action === "approve-resource")
         return resourceService.approveResource(id);
       if (action === "reject-writeup")
@@ -41,6 +46,7 @@ export default function CommunityReviews() {
       toast.success("Review saved");
       client.invalidateQueries({ queryKey: ["pending-writeups"] });
       client.invalidateQueries({ queryKey: ["pending-resources"] });
+      client.invalidateQueries({ queryKey: ['admin-stats'] });
     },
     onError: () =>
       toast.error("The review could not be saved. Please try again."),
@@ -68,12 +74,13 @@ export default function CommunityReviews() {
             role="tab"
             aria-selected={tab === t}
             className="capitalize"
-            onClick={() => setTab(t)}
+            onClick={() => { setParams({ tab: t }); setPage(1); setScope('pending'); }}
           >
             {t}
           </button>
         ))}
       </div>
+      <div className="admin-toolbar mt-5"><label htmlFor="review-status">Show</label><select className="input" id="review-status" value={scope} onChange={event => { setScope(event.target.value); setPage(1); }}><option value="pending">Pending review</option><option value="approved">Published</option>{tab === 'writeups' && <option value="rejected">Rejected</option>}<option value="all">All contributions</option></select></div>
       {query.isLoading ? (
         <PageState loading />
       ) : query.isError ? (
@@ -89,13 +96,13 @@ export default function CommunityReviews() {
       ) : tab === "writeups" ? (
         writeups.data?.writeups.map((w) => (
           <article className="review-card" key={w._id}>
-            <span className="status-pill pending">Pending review</span>
+            <span className="status-pill pending">{w.status}</span>
             <h2>{w.title}</h2>
             <p>
               By {w.userId?.username || "Community member"} ·{" "}
               {w.challengeId?.title || "Challenge"}
             </p>
-            <div className="review-content">{w.content}</div>
+            <div className="review-content whitespace-pre-wrap">{w.content}</div>
             <label className="form-label" htmlFor={"notes-" + w._id}>
               Feedback for the author
             </label>
@@ -110,7 +117,7 @@ export default function CommunityReviews() {
             <div className="form-actions">
               <button
                 className="btn-primary"
-                disabled={review.isPending}
+                disabled={review.isPending || w.status === 'approved'}
                 onClick={() =>
                   review.mutate({ id: w._id, action: "approve-writeup" })
                 }
@@ -128,13 +135,14 @@ export default function CommunityReviews() {
                 <X size={16} />
                 Reject with feedback
               </button>
+              <button className="btn-outline text-status-error" disabled={review.isPending} onClick={() => { if (window.confirm(`Permanently delete “${w.title}”?`)) review.mutate({ id: w._id, action: 'delete-writeup' }); }}><Trash2 size={15} />Delete writeup</button>
             </div>
           </article>
         ))
       ) : (
         resources.data?.map((r) => (
           <article className="review-card" key={r._id}>
-            <span className="status-pill pending">Pending review</span>
+            <span className="status-pill pending">{r.isApproved ? 'Published' : 'Pending review'}</span>
             <h2>{r.title}</h2>
             <p>
               By {r.createdBy?.username || "Community member"} · {r.category}
@@ -153,7 +161,7 @@ export default function CommunityReviews() {
               )}
               <button
                 className="btn-primary"
-                disabled={review.isPending}
+                disabled={review.isPending || r.isApproved}
                 onClick={() =>
                   review.mutate({ id: r._id, action: "approve-resource" })
                 }
@@ -161,6 +169,7 @@ export default function CommunityReviews() {
                 <Check size={16} />
                 Approve resource
               </button>
+              <button className="btn-outline text-status-error" disabled={review.isPending} onClick={() => { if (window.confirm(`Permanently remove “${r.title}”?`)) review.mutate({ id: r._id, action: 'delete-resource' }); }}><Trash2 size={15} />Remove resource</button>
             </div>
           </article>
         ))

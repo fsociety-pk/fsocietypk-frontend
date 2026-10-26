@@ -1,210 +1,23 @@
-import PageHeading from "../../components/common/PageHeading";
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Trash2, Link as LinkIcon, Github } from 'lucide-react';
-import { toast } from 'react-hot-toast';
-import { projectService, Project } from '../../services/projectService';
-
-const ManageProjects: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [isAdding, setIsAdding] = useState(false);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    techStack: '',
-    features: '',
-    websiteUrl: '',
-    sourceCodeUrl: ''
-  });
-
-  useEffect(() => {
-    loadProjects();
-  }, []);
-
-  const loadProjects = async () => {
-    const data = await projectService.getProjects();
-    setProjects(data);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.title || !formData.description) {
-      toast.error('Title and description are required');
-      return;
-    }
-
-    const techStack = formData.techStack.split(',').map(s => s.trim()).filter(Boolean);
-    const features = formData.features.split(',').map(s => s.trim()).filter(Boolean);
-
-    try {
-      await projectService.addProject({
-        title: formData.title,
-        description: formData.description,
-        techStack,
-        features,
-        websiteUrl: formData.websiteUrl,
-        sourceCodeUrl: formData.sourceCodeUrl
-      });
-      toast.success('Project added successfully');
-      setFormData({ title: '', description: '', techStack: '', features: '', websiteUrl: '', sourceCodeUrl: '' });
-      setIsAdding(false);
-      loadProjects();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to add project');
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      await projectService.deleteProject(id);
-      toast.success('Project deleted');
-      loadProjects();
-    } catch (error: any) {
-       toast.error(error.response?.data?.message || error.message || 'Failed to delete');
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <PageHeading eyebrow="Admin workspace" title="Manage projects" description="Add tools and projects for the community." />
-        </div>
-        <button
-          onClick={() => setIsAdding(!isAdding)}
-          className="flex items-center gap-2 rounded bg-brand px-4 py-2 font-sans text-xs font-semibold text-on-brand hover:bg-brand/80 transition-all border border-brand"
-        >
-          {isAdding ? 'Cancel' : <><Plus size={14} /> New project</>}
-        </button>
-      </div>
-
-      {isAdding && (
-        <motion.div
-           initial={false}
-           animate={{ opacity: 1, y: 0 }}
-           className="rounded-lg border border-surface-border bg-background-elevated/50 p-6"
-        >
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-xs font-sans uppercase text-text-secondary">Title <span className="text-brand">*</span></label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData({...formData, title: e.target.value})}
-                  className="w-full rounded-md border border-surface-border bg-background px-3 py-2 text-sm text-text-primary placeholder-zinc-600 focus:border-brand focus:outline-none"
-                  placeholder="e.g., TargetMapper"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-sans uppercase text-text-secondary">Tech Stack (comma separated)</label>
-                <input
-                  type="text"
-                  value={formData.techStack}
-                  onChange={(e) => setFormData({...formData, techStack: e.target.value})}
-                  className="w-full rounded-md border border-surface-border bg-background px-3 py-2 text-sm text-text-primary placeholder-zinc-600 focus:border-brand focus:outline-none"
-                  placeholder="e.g., React, Node, Python"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-xs font-sans uppercase text-text-secondary">Description <span className="text-brand">*</span></label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
-                className="w-full rounded-md border border-surface-border bg-background px-3 py-2 text-sm text-text-primary placeholder-zinc-600 focus:border-brand focus:outline-none h-24"
-                placeholder="Brief description of the project..."
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-xs font-sans uppercase text-text-secondary">Features (comma separated)</label>
-              <input
-                type="text"
-                value={formData.features}
-                onChange={(e) => setFormData({...formData, features: e.target.value})}
-                className="w-full rounded-md border border-surface-border bg-background px-3 py-2 text-sm text-text-primary placeholder-zinc-600 focus:border-brand focus:outline-none"
-                placeholder="e.g., Auto-scan, Dashboard, API"
-              />
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-xs font-sans uppercase text-text-secondary">Website URL</label>
-                <input
-                  type="url"
-                  value={formData.websiteUrl}
-                  onChange={(e) => setFormData({...formData, websiteUrl: e.target.value})}
-                  className="w-full rounded-md border border-surface-border bg-background px-3 py-2 text-sm text-text-primary placeholder-zinc-600 focus:border-brand focus:outline-none"
-                  placeholder="https://..."
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-sans uppercase text-text-secondary">Source Code URL</label>
-                <input
-                  type="url"
-                  value={formData.sourceCodeUrl}
-                  onChange={(e) => setFormData({...formData, sourceCodeUrl: e.target.value})}
-                  className="w-full rounded-md border border-surface-border bg-background px-3 py-2 text-sm text-text-primary placeholder-zinc-600 focus:border-brand focus:outline-none"
-                  placeholder="https://github.com/..."
-                />
-              </div>
-            </div>
-
-            <div className="pt-4 flex justify-end">
-              <button
-                type="submit"
-                className="rounded bg-brand px-6 py-2 font-sans text-xs font-bold text-on-brand hover:opacity-80 transition-all font-bold"
-              >
-                Save project
-              </button>
-            </div>
-          </form>
-        </motion.div>
-      )}
-
-      <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
-        {projects.map((project) => (
-          <div key={project._id} className="relative rounded-lg border border-surface-border bg-background-elevated/50 p-5 group flex flex-col justify-between">
-             <div>
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-text-primary text-lg tracking-wider font-sans uppercase">{project.title}</h3>
-                  {(project._id === '1' || project._id === '2') ? (
-                    <span className="text-xs font-sans text-text-muted bg-background border border-surface-border px-2 py-0.5 rounded">Featured project</span>
-                  ) : (
-                    <button onClick={() => handleDelete(project._id!)} className="text-text-muted hover:text-status-error transition-colors">
-                      <Trash2 size={16} />
-                    </button>
-                  )}
-                </div>
-                <p className="text-sm text-text-secondary mb-4 line-clamp-3">{project.description}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                   {project.techStack?.map((tech: string) => (
-                     <span key={tech} className="text-xs font-sans bg-background border border-surface-border text-brand px-2 py-1 rounded">{tech}</span>
-                   ))}
-                </div>
-             </div>
-
-             <div className="flex items-center gap-4 border-t border-surface-border pt-4 mt-auto">
-                {project.websiteUrl && (
-                  <a href={project.websiteUrl} target="_blank" rel="noreferrer" className="text-xs text-text-primary bg-surface border border-surface-border px-3 py-1.5 rounded flex items-center gap-1 hover:bg-surface-hover transition">
-                    <LinkIcon size={12} /> Live Site
-                  </a>
-                )}
-                {project.sourceCodeUrl && (
-                  <a href={project.sourceCodeUrl} target="_blank" rel="noreferrer" className="text-xs text-text-primary bg-surface border border-surface-border px-3 py-1.5 rounded flex items-center gap-1 hover:bg-surface-hover transition">
-                    <Github size={12} /> Source
-                  </a>
-                )}
-             </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default ManageProjects;
+import { useState, type FormEvent } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ExternalLink, Pencil, Plus, Save, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { projectService, type Project } from '../../services/projectService';
+import PageState from '../../components/common/PageState';
+const empty = { title: '', description: '', techStack: '', features: '', websiteUrl: '', sourceCodeUrl: '' };
+export default function ManageProjects() {
+  const [editing, setEditing] = useState<string | null>(null);
+  const [form, setForm] = useState(empty);
+  const [error, setError] = useState('');
+  const client = useQueryClient();
+  const query = useQuery({ queryKey: ['admin-projects'], queryFn: projectService.getAdminProjects });
+  const refresh = () => { void client.invalidateQueries({ queryKey: ['admin-projects'] }); void client.invalidateQueries({ queryKey: ['admin-stats'] }); };
+  const save = useMutation({ mutationFn: (payload: Omit<Project, '_id'>) => editing && editing !== 'new' ? projectService.updateProject(editing, payload) : projectService.addProject(payload), onSuccess: () => { refresh(); setEditing(null); setForm(empty); toast.success('Project saved.'); }, onError: (err: any) => setError(err.response?.data?.message || 'Could not save this project.') });
+  const remove = useMutation({ mutationFn: projectService.deleteProject, onSuccess: () => { refresh(); toast.success('Project deleted.'); }, onError: (err: any) => toast.error(err.response?.data?.message || 'Could not delete this project.') });
+  const edit = (project: Project) => { setForm({ title: project.title, description: project.description, techStack: project.techStack.join(', '), features: project.features?.join(', ') || '', websiteUrl: project.websiteUrl || '', sourceCodeUrl: project.sourceCodeUrl || '' }); setEditing(project._id!); setError(''); window.scrollTo({ top: 0, behavior: 'instant' }); };
+  const submit = (event: FormEvent) => { event.preventDefault(); setError(''); save.mutate({ ...form, techStack: form.techStack.split(',').map(v => v.trim()).filter(Boolean), features: form.features.split(',').map(v => v.trim()).filter(Boolean) }); };
+  return <div><div className="admin-page-heading"><div><h1>Projects</h1><p>Curate the tools and projects your community can explore.</p></div><button className="btn-primary" onClick={() => { setEditing(editing ? null : 'new'); setForm(empty); setError(''); }}><Plus size={16} />{editing ? 'Close editor' : 'New project'}</button></div>
+    {editing && <form className="admin-form-panel mb-6" onSubmit={submit}><h2>{editing === 'new' ? 'Create a project' : 'Edit project'}</h2>{error && <p className="admin-inline-error" role="alert">{error}</p>}{Object.entries({ title: 'Title', description: 'Description', techStack: 'Tech stack, comma separated', features: 'Features, comma separated', websiteUrl: 'Website URL', sourceCodeUrl: 'Source code URL' }).map(([name, label]) => <div className="admin-field" key={name}><label htmlFor={`project-${name}`}>{label}</label>{name === 'description' ? <textarea className="input" id={`project-${name}`} value={form.description} required maxLength={10000} onChange={event => setForm({ ...form, description: event.target.value })} /> : <input className="input" id={`project-${name}`} value={form[name as keyof typeof form]} required={name === 'title'} maxLength={name === 'title' ? 150 : 2048} type={name.endsWith('Url') ? 'url' : 'text'} onChange={event => setForm({ ...form, [name]: event.target.value })} />}</div>)}<div className="flex gap-3"><button className="btn-primary" disabled={save.isPending}><Save size={16} />{save.isPending ? 'Saving…' : 'Save project'}</button><button type="button" className="btn-outline" onClick={() => setEditing(null)}>Cancel</button></div></form>}
+    {query.isLoading ? <PageState loading /> : query.isError ? <PageState title="Projects could not be loaded" retry={() => query.refetch()} /> : !query.data?.length ? <div className="admin-panel admin-empty"><strong>Your project library is ready.</strong>Add a project to make it available to the community.</div> : <div className="space-y-4">{query.data.map(project => <article className="admin-form-panel" key={project._id}><h2>{project.title}</h2><p>{project.description}</p><div className="flex flex-wrap gap-2 mb-5">{project.techStack.map(tech => <span className="badge" key={tech}>{tech}</span>)}</div><div className="flex flex-wrap gap-3"><button className="btn-outline" onClick={() => edit(project)}><Pencil size={14} />Edit project</button>{project.websiteUrl && /^https?:\/\//i.test(project.websiteUrl) && <a className="btn-outline" href={project.websiteUrl} target="_blank" rel="noreferrer"><ExternalLink size={14} />Visit project</a>}<button className="btn-outline text-status-error" disabled={remove.isPending} onClick={() => { if (window.confirm(`Permanently delete “${project.title}”?`)) remove.mutate(project._id!); }}><Trash2 size={14} />Delete</button></div></article>)}</div>}
+  </div>;
+}

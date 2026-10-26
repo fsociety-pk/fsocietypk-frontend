@@ -7,7 +7,16 @@ async (page) => {
   assert(await page.getByLabel('Email address').getAttribute('aria-invalid') === 'true', 'Email is required');
   await page.getByLabel('Username', { exact: true }).fill("' OR '1'='1");
   await page.getByRole('button', { name: 'Create account', exact: true }).click();
-  assert((await page.getByRole('alert').innerText()).includes('Bobby Tables'), 'Playful payload response precedes validation');
+  await page.getByRole('heading', { name: 'Logging in as admin…', exact: true }).waitFor();
+  await page.getByRole('heading', { name: 'Welcome back, admin.', exact: true }).waitFor();
+  await page.getByRole('heading', { name: 'Lol! Did you think that worked?', exact: true }).waitFor();
+  assert((await page.locator('.sql-prank-description').innerText()).includes('Bobby Tables'), 'SQL attempt reveals the admin prank');
+  const prankRequests = await page.evaluate(async () => (await (await fetch('/__fixture')).json()).data.requests);
+  assert(!prankRequests.some(request => /\/auth\/(login|register)$/.test(request.path)), 'SQL prank sends no login or registration request');
+  assert(await page.getByText('Just a prank. You’re still signed out.', { exact: true }).isVisible(), 'Reveal explains the unchanged signed-out state');
+  await page.getByRole('button', { name: 'Back to signup', exact: true }).click();
+  assert(await page.getByLabel('Username', { exact: true }).inputValue() === "' OR '1'='1", 'Returning preserves the entered username');
+  assert(await page.getByLabel('Username', { exact: true }).evaluate(el => el === document.activeElement), 'Returning restores focus to the username');
   await page.getByLabel('Email address').fill('fixture@example.invalid');
   await page.getByLabel('Username', { exact: true }).fill('fixture_user');
   await page.getByLabel('Password', { exact: true }).fill('weak');
@@ -18,7 +27,7 @@ async (page) => {
   await page.getByRole('button', { name: 'Show password', exact: true }).click();
   assert(await page.getByLabel('Password', { exact: true }).getAttribute('type') === 'text', 'Password visibility toggle works');
   await page.getByRole('button', { name: 'Create account', exact: true }).click();
-  await page.getByRole('heading', { name: 'One last checkpoint.' }).waitFor();
+  await page.getByRole('heading', { name: 'Check your inbox.' }).waitFor();
   assert(await page.getByRole('button', { name: /Resend in/ }).isDisabled(), 'OTP resend cooldown disables button');
   const pending = await page.evaluate(() => JSON.parse(sessionStorage.getItem('fsociety-pending-email')));
   assert(!('password' in pending) && pending.registrationId, 'Pending storage excludes password');
@@ -38,7 +47,7 @@ async (page) => {
   await page.waitForURL('**/login');
   await page.getByRole('heading', { name: 'Welcome back.' }).waitFor();
   await page.getByRole('navigation', { name: 'Account access' }).getByRole('link', { name: 'Sign up' }).click();
-  await page.getByRole('heading', { name: 'Join the collective.' }).waitFor();
+  await page.getByRole('heading', { name: 'Your journey starts here.' }).waitFor();
   await page.getByRole('navigation', { name: 'Account access' }).getByRole('link', { name: 'Log in' }).click();
   await page.getByRole('heading', { name: 'Welcome back.' }).waitFor();
   checks.push('Login/signup navigation transitions complete');

@@ -231,16 +231,24 @@ export default function Navbar() {
                 <Bell size={17} />
                 {unread > 0 && <i className="notification-dot" />}
               </Link>
-              <Link to="/profile" className="user-chip">
-                <span className="avatar-small">
+              <NavLink
+                to="/profile"
+                className="user-chip"
+                aria-label={`View profile for ${user?.username || "your account"}`}
+              >
+                <span className="avatar-small user-chip-avatar" aria-hidden="true">
                   {user?.avatar ? (
                     <img src={user.avatar} alt="" />
                   ) : (
-                    user?.username?.[0]?.toUpperCase()
+                    user?.username?.[0]?.toUpperCase() || <User size={18} />
                   )}
                 </span>
-                <span>{user?.username}</span>
-              </Link>
+                <span className="user-chip-copy">
+                  <strong>{user?.username || "Your account"}</strong>
+                  <span>My profile</span>
+                </span>
+                <ArrowUpRight className="user-chip-arrow" size={15} aria-hidden="true" />
+              </NavLink>
             </>
           ) : (
             <>

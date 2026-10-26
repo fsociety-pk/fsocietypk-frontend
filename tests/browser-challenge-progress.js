@@ -14,7 +14,7 @@ async (page) => {
   const single = { ...base, _id: '507f1f77bcf86cd799439024', title: 'YOU_CAN_DO_IT', category: 'crypto', totalFlags: 1, completedFlags: 1, completedSequences: [], isSolved: true, solveCount: 5, completedAt: '2026-10-01T12:00:00Z' };
   const all = [five, two, single];
   const profile = () => ({
-    _id: '507f1f77bcf86cd799439011', username: 'obsidian', role: 'admin', avatar: '',
+    _id: '507f1f77bcf86cd799439011', username: 'obsidian', role: 'user', avatar: '',
     country: 'Pakistan', socialLinks: {}, isProfilePublic: true, rank: 4, createdAt: base.createdAt,
     score: all.filter(c => c.isSolved).length * 50,
     solvedChallenges: all.filter(c => c.isSolved),
@@ -93,8 +93,11 @@ async (page) => {
   check(await page.getByRole('progressbar', { name: 'Flags solved' }).getAttribute('aria-valuenow') === '2', 'Progress survives refresh');
   await inputs.nth(2).fill('wrong');
   await inputs.nth(2).locator('..').getByRole('button').click();
-  await page.getByText('Flag 3 is incorrect. Try again.', { exact: true }).waitFor();
+  await page.getByRole('status').filter({ hasText: 'Flag 3 is incorrect. Lol!' }).waitFor();
   check(await page.getByRole('progressbar', { name: 'Flags solved' }).getAttribute('aria-valuenow') === '2', 'Wrong flag leaves progress unchanged');
+  await inputs.nth(2).locator('..').getByRole('button').click();
+  await page.getByRole('status').filter({ hasText: 'Flag 3 is incorrect. The flag is in another castle.' }).waitFor();
+  check(await inputs.nth(2).inputValue() === 'wrong', 'Playful retries rotate messages and preserve the entered flag');
   for (let step = 3; step <= 5; step++) {
     await inputs.nth(step - 1).fill(`fsociety{step_${step}}`);
     await inputs.nth(step - 1).locator('..').getByRole('button').click();

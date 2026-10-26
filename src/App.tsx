@@ -27,6 +27,10 @@ const WriteupDetail = lazy(() => import("./pages/WriteupDetail"));
 const MySubmissions = lazy(() => import("./pages/MySubmissions"));
 const CommunityReviews = lazy(() => import("./pages/admin/CommunityReviews"));
 const SubmitWriteup = lazy(() => import("./pages/SubmitWriteup"));
+const AdminRoles = lazy(() => import("./pages/admin/Roles"));
+const BackendSystem = lazy(() => import("./pages/admin/System"));
+const AdminSecurity = lazy(() => import("./pages/admin/Security"));
+const AdminChallengeEditor = lazy(() => import("./pages/admin/ChallengeEditor"));
 const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
 const ManageChallenges = lazy(() => import("./pages/admin/ManageChallenges"));
 const ManageUsers = lazy(() => import("./pages/admin/ManageUsers"));
@@ -38,6 +42,7 @@ const ManageProjects = lazy(() => import("./pages/admin/ManageProjects"));
 const AboutAdmin = lazy(() => import("./pages/AboutAdmin"));
 const AdminAboutAdmin = lazy(() => import("./pages/admin/AdminAboutAdmin"));
 const Resources = lazy(() => import("./pages/Resources"));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 import { API_URL } from "./services/apiConfig";
 
@@ -155,8 +160,32 @@ function App() {
 
   return (
     <>
-      <Suspense fallback={<PageState loading />}>
+      <Suspense fallback={<PageState loading fullPage />}>
         <Routes>
+            {/* Admin pages */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <AdminLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<AdminDashboard />} />
+              <Route path="profile" element={<AdminAboutAdmin />} />
+              <Route path="reviews" element={<CommunityReviews />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="challenges" element={<ManageChallenges />} />
+              <Route path="challenges/new" element={<SubmitChallenge />} />
+              <Route path="challenges/:id" element={<AdminChallengeEditor />} />
+              <Route path="security" element={<AdminSecurity />} />
+              <Route path="roles" element={<AdminRoles />} />
+              <Route path="system" element={<BackendSystem />} />
+              <Route path="notifications" element={<Notifications />} />
+              <Route path="users" element={<ManageUsers />} />
+              <Route path="projects" element={<ManageProjects />} />
+              <Route path="settings" element={<AdminSettings />} />
+            </Route>
           <Route element={<MainLayout />}>
             {/* Public Entrance */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -270,28 +299,10 @@ function App() {
             />
 
             <Route path="/about-admin" element={<ProtectedRoute><AboutAdmin /></ProtectedRoute>} />
-            {/* Admin pages */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute requireAdmin>
-                  <AdminLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<AdminDashboard />} />
-              <Route path="profile" element={<AdminAboutAdmin />} />
-              <Route path="reviews" element={<CommunityReviews />} />
-              <Route path="analytics" element={<Analytics />} />
-              <Route path="challenges" element={<ManageChallenges />} />
-              <Route path="users" element={<ManageUsers />} />
-              <Route path="projects" element={<ManageProjects />} />
-              <Route path="settings" element={<AdminSettings />} />
-            </Route>
 
-            {/* 404 Rescue */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
     </>

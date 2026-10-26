@@ -1,0 +1,7 @@
+.auth-fluid { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: radial-gradient(ellipse at 5% 25%, rgb(var(--brand) / .09), transparent 55%), radial-gradient(ellipse at 95% 80%, rgb(var(--violet) / .09), transparent 55%); }
+.auth-fluid iframe { display: block; width: 100%; height: 100%; border: 0; pointer-events: none; opacity: 0; transition: opacity 600ms ease-out; mask-image: radial-gradient(ellipse at 50% 45%, rgb(0 0 0 / .08) 20%, #000 80%); }
+.auth-fluid[data-ready="active"] iframe { opacity: .55; }
+:root[data-theme="light"] .auth-fluid iframe { filter: saturate(2.2); mix-blend-mode: multiply; mask-image: radial-gradient(ellipse at 50% 45%, rgb(0 0 0 / .45) 12%, #000 65%); }
+:root[data-theme="light"] .auth-fluid[data-ready="active"] iframe { opacity: 1; }
+.access-shell { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) { .auth-fluid iframe { transition: none; } }

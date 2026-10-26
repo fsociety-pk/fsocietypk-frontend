@@ -15,6 +15,7 @@ import {
   Shield,
 } from 'lucide-react';
 import BrandLogo from '../components/common/BrandLogo';
+import CinematicIntro from '../components/common/CinematicIntro';
 
 const features = [
   {
@@ -182,6 +183,7 @@ export default function Landing() {
 
   return (
     <div className="landing cinematic-landing" ref={root}>
+      <CinematicIntro />
       {/* Cinematic Hero */}
       <section ref={hero} className="cinematic-hero" aria-label="Welcome to Fsociety PK">
         <motion.div className="cinematic-topline" style={reduced ? undefined : { opacity: heroCopyOpacity }}>

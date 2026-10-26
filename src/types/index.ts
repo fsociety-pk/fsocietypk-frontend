@@ -1,6 +1,7 @@
 // ── Shared Frontend Types ─────────────────────────────────────────
 
-export type UserRole = 'user' | 'admin'
+import type { Role } from '../utils/roles'
+export type UserRole = Role
 
 export type ChallengeDifficulty = 'easy' | 'medium' | 'hard' | 'insane'
 
@@ -58,6 +59,7 @@ export interface IChallengeAttachment {
 }
 
 export interface IChallenge {
+  emailsQueued?: boolean;
   _id: string
   title: string
   slug: string

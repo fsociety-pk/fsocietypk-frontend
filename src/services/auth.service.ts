@@ -23,6 +23,12 @@ export interface RegistrationResponse {
   data: { registrationId: string; retryAfter: number; expiresIn: number };
 }
 export const authService = {
+  usernameAvailability: async (username: string, signal?: AbortSignal): Promise<{ username: string; available: boolean }> => {
+    const response = await api.get<{ data: { username: string; available: boolean } }>('/auth/username-availability', { params: { username }, signal });
+    const data = response.data.data;
+    if (data?.username !== username || typeof data?.available !== 'boolean') throw new Error('Invalid username availability response');
+    return data;
+  },
   login: async (data: LoginInput): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>('/auth/login', data);
     return response.data;

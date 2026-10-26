@@ -13,8 +13,7 @@ import {
   CheckCircle2,
   BarChart4,
   PieChart as PieIcon,
-  TrendingUp,
-  Zap
+  TrendingUp
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -40,7 +39,7 @@ const Analytics: React.FC = () => {
 
   const overviewCards = [
     { title: 'Community members', value: analytics?.overview.totalUsers, icon: Users, color: 'text-status-info' },
-    { title: 'Active challenges', value: analytics?.overview.totalChallenges, icon: Flag, color: 'text-brand' },
+    { title: 'Published challenges', value: analytics?.overview.totalChallenges, icon: Flag, color: 'text-brand' },
     { title: 'Confirmed Solves', value: analytics?.overview.totalSolves, icon: CheckCircle2, color: 'text-status-error' },
   ];
 
@@ -97,12 +96,14 @@ const Analytics: React.FC = () => {
               />
               <YAxis stroke="rgb(var(--muted))" fontSize={10} axisLine={false} tickLine={false} />
               <Tooltip
+                position={{ x: 8, y: 0 }}
+                wrapperStyle={{ maxWidth: 'calc(100% - 16px)', whiteSpace: 'normal' }}
                 contentStyle={{ backgroundColor: 'rgb(var(--card))', color: 'rgb(var(--ink))', border: '1px solid rgb(var(--line))', borderRadius: '10px', fontSize: '12px' }}
                 itemStyle={{ color: 'rgb(var(--ink))' }}
               />
-              <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ fontSize: '10px', textTransform: 'uppercase', fontFamily: 'monospace' }} />
-              <Line type="monotone" dataKey="solves" name="Solves" stroke="rgb(var(--brand))" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
-              <Line type="monotone" dataKey="users" name="New members" stroke="rgb(var(--info))" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
+              <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ fontSize: '10px', textTransform: 'uppercase', fontFamily: 'var(--font-body)' }} />
+              <Line isAnimationActive={false} type="monotone" dataKey="solves" name="Solves" stroke="rgb(var(--brand))" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
+              <Line isAnimationActive={false} type="monotone" dataKey="users" name="New members" stroke="rgb(var(--info))" strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -119,10 +120,12 @@ const Analytics: React.FC = () => {
               <XAxis type="number" stroke="rgb(var(--muted))" fontSize={10} axisLine={false} tickLine={false} />
               <YAxis dataKey="title" type="category" stroke="rgb(var(--muted))" fontSize={10} width={100} />
               <Tooltip
+                position={{ x: 8, y: 0 }}
+                wrapperStyle={{ maxWidth: 'calc(100% - 16px)', whiteSpace: 'normal' }}
                 cursor={{ fill: '#ffffff10' }}
                 contentStyle={{ backgroundColor: 'rgb(var(--card))', color: 'rgb(var(--ink))', border: '1px solid rgb(var(--line))', borderRadius: '10px', fontSize: '12px' }}
               />
-              <Bar dataKey="solveCount" name="Solves" fill="rgb(var(--brand))" radius={[0, 4, 4, 0]}>
+              <Bar isAnimationActive={false} dataKey="solveCount" name="Solves" fill="rgb(var(--brand))" radius={[0, 4, 4, 0]}>
                 {analytics?.topChallenges.map((_, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
@@ -135,12 +138,13 @@ const Analytics: React.FC = () => {
         <div className="card p-8 bg-background-card border-surface-border h-[400px]">
           <h3 className="font-sans font-bold text-text-primary uppercase flex items-center gap-3 mb-8">
             <PieIcon size={18} className="text-brand" />
-            Challenges by category
+            Solves by category
           </h3>
           <div className="flex items-center h-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
+                  isAnimationActive={false}
                   data={analytics?.categoryStats}
                   cx="50%"
                   cy="40%"
@@ -149,13 +153,15 @@ const Analytics: React.FC = () => {
                   paddingAngle={5}
                   dataKey="count"
                   nameKey="category"
-                  label={({ category, percent }) => `${category} (${(percent * 100).toFixed(0)}%)`}
+                  label={false}
                 >
                   {analytics?.categoryStats.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip
+                position={{ x: 8, y: 0 }}
+                wrapperStyle={{ maxWidth: 'calc(100% - 16px)', whiteSpace: 'normal' }}
                   contentStyle={{ backgroundColor: 'rgb(var(--card))', color: 'rgb(var(--ink))', border: '1px solid rgb(var(--line))', borderRadius: '10px', fontSize: '12px' }}
                 />
               <Legend formatter={(value) => <span className="text-xs text-text-secondary">{value}</span>} />
@@ -164,27 +170,13 @@ const Analytics: React.FC = () => {
           </div>
         </div>
 
-        {/* Global Consumption KPI */}
-        <div className="card p-8 flex flex-col items-center justify-center text-center space-y-6">
-           <div className="w-20 h-20 rounded-full border-2 border-brand/30 border-t-neon-green flex items-center justify-center ">
-              <Zap size={32} className="text-brand" />
-           </div>
-           <div>
-              <h3 className="text-4xl font-semibold  text-text-primary tracking-widest">{analytics?.overview.totalSolves}</h3>
-              <p className="font-sans text-xs text-text-muted uppercase tracking-widest mt-1">Global flag captures</p>
-           </div>
-           <div className="w-full h-px bg-surface-border" />
-           <div className="grid grid-cols-2 w-full gap-4">
-              <div className="text-center">
-                 <p className="text-xs font-bold text-text-primary uppercase">{((analytics?.overview.totalSolves || 0) / (analytics?.overview.totalUsers || 1)).toFixed(1)}</p>
-                 <p className="text-xs font-sans text-text-muted uppercase">Solves per Member</p>
-              </div>
-              <div className="text-center">
-                 <p className="text-xs font-bold text-text-primary uppercase">{analytics?.overview.totalChallenges}</p>
-                 <p className="text-xs font-sans text-text-muted uppercase">Published challenges</p>
-              </div>
-           </div>
-        </div>
+        <section className="card p-8 h-[400px]">
+          <h3 className="font-sans font-bold text-text-primary flex items-center gap-3 mb-6"><Flag size={18} className="text-brand" />Solves by difficulty</h3>
+          {!analytics?.difficultyStats.length ? <p className="text-sm text-text-muted">Completed solves will appear here.</p> : <div className="space-y-6">{analytics.difficultyStats.map(item => {
+            const total = analytics.difficultyStats.reduce((sum, row) => sum + row.count, 0);
+            return <div key={item.difficulty}><div className="flex items-center justify-between text-sm mb-2"><span className="capitalize">{item.difficulty}</span><strong className="font-semibold">{item.count.toLocaleString()}</strong></div><progress className="admin-difficulty-progress" value={item.count} max={total || 1} aria-label={`${item.difficulty} completed solves`} /></div>;
+          })}</div>}
+        </section>
       </div>
     </div>
   );

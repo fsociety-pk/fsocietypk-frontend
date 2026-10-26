@@ -36,8 +36,9 @@ interface ResourcesProps {
 const ResourceCard = ({ resource }: { resource: IResource }) => (
   <motion.div
     variants={itemVariants}
-    whileHover={{ y: -1 }}
-    className="group bg-background-card border border-surface-border rounded-xl p-6 hover:border-brand/30 transition-all duration-300 hover:shadow-sm"
+    whileHover={{ y: -4 }}
+    transition={{ duration: .22, ease: 'easeOut' }}
+    className="resource-card group bg-background-card border border-surface-border rounded-xl p-6 hover:border-brand/30 transition-all duration-300 hover:shadow-sm"
   >
     <div className="flex items-start justify-between mb-3">
       <div className="flex-1">
