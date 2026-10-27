@@ -1,3 +1,5 @@
+import { useWriteupUpdates } from '../hooks/useWriteupUpdates';
+import { Link, useSearchParams } from 'react-router-dom';
 import PageHeading from "../components/common/PageHeading";
 import PageState from '../components/common/PageState';
 import React, { useState } from 'react';
@@ -12,31 +14,26 @@ import { useNavigate } from 'react-router-dom';
 const Writeups: React.FC = () => {
   const { challengeId } = useParams<{ challengeId?: string }>();
   const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
+  const mine = params.get('view') === 'mine';
+  useWriteupUpdates();
   const [page, setPage] = useState(1);
   const limit = 10;
 
   const { data: writeupsData, isLoading, isError, refetch } = useQuery({
-    queryKey: ['writeups', challengeId, page],
+    queryKey: ['writeups', challengeId, mine, page],
     queryFn: () => {
       if (challengeId) {
         return writeupService.getWriteupsForChallenge(challengeId, page, limit);
       } else {
-        return writeupService.getUserWriteups(page, limit);
+        return mine ? writeupService.getUserWriteups(page, limit) : writeupService.getApprovedWriteups(page, limit);
       }
     },
     select: (res) => res.data,
+    refetchInterval: 30000,
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background font-sans">
-        <div className="text-center">
-          <div className="w-10 h-10 border-2 border-brand/20 border-t-neon-green rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-brand text-xs uppercase tracking-widest ">Loading writeups…</p>
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <PageState loading title="Loading writeups" description={mine ? 'Gathering your solutions and review updates.' : 'Gathering solutions from the community.'} />;
 
   if (isError) return <PageState title="Writeups could not be loaded" retry={() => refetch()} />;
 
@@ -66,9 +63,14 @@ const Writeups: React.FC = () => {
             Back
           </button>
 
-          <PageHeading eyebrow="Learn from each solve" title={challengeId ? "Challenge writeups" : "My writeups"} description={challengeId ? "Read how other members solved this challenge." : "Your solutions and their review status. For community solutions, open a challenge and choose its writeups."} />
+          <PageHeading eyebrow="Learn from each solve" title={challengeId ? "Challenge writeups" : mine ? "My writeups" : "Community writeups"} description={challengeId ? "Read approved solutions and meet the members behind them." : mine ? "Your solutions and their review status." : "Solutions shared by the community, reviewed and approved by our team."} />
         </motion.div>
 
+        {!challengeId && <div className="tabs-line mb-6" role="tablist" aria-label="Writeup library">
+          <button role="tab" aria-selected={!mine} onClick={() => { setParams({}); setPage(1); }}>Community writeups</button>
+          <button role="tab" aria-selected={mine} onClick={() => { setParams({ view: 'mine' }); setPage(1); }}>My submissions</button>
+        </div>}
+        {challengeId && <Link className="btn-outline mb-6" to={`/challenges/${challengeId}`}>View challenge</Link>}
         {/* Writeups Grid */}
         {writeups.length > 0 ? (
           <div className="space-y-4 mb-8">
@@ -86,7 +88,7 @@ const Writeups: React.FC = () => {
                     {writeup.title}
                   </h3>
                   <p className="text-xs text-text-muted uppercase tracking-widest">
-                    Challenge: {writeup.challengeId.title} • {writeup.challengeId.category}
+                    Challenge: {writeup.challengeId?.title || 'Archived challenge'} • {writeup.challengeId?.category || 'Community'}
                   </p>
                 </div>
 
@@ -99,7 +101,7 @@ const Writeups: React.FC = () => {
                 <div className="flex flex-wrap gap-4 text-xs text-text-muted mb-4">
                   <div className="flex items-center gap-1.5">
                     <User className="w-3 h-3 text-brand" />
-                    {writeup.userId.username}
+                    {writeup.userId?.username ? <Link className="hover:text-brand underline underline-offset-4" to={`/profile/${encodeURIComponent(writeup.userId.username)}`}>@{writeup.userId.username}</Link> : 'Former member'}
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Calendar className="w-3 h-3 text-brand" />
@@ -135,7 +137,7 @@ const Writeups: React.FC = () => {
           <div className="text-center py-16">
             <BookOpen className="w-12 h-12 text-text-muted mx-auto mb-4" />
             <p className="text-text-muted text-sm uppercase tracking-widest">
-              {challengeId ? 'No approved writeups yet for this challenge' : 'No writeups submitted yet'}
+              {challengeId ? 'No approved writeups yet for this challenge' : mine ? 'No writeups submitted yet' : 'Approved community solutions will appear here'}
             </p>
           </div>
         )}

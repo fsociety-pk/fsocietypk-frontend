@@ -1,3 +1,4 @@
+import { useWriteupUpdates } from '../hooks/useWriteupUpdates';
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
@@ -5,6 +6,7 @@ import { writeupService } from "../services/writeup.service";
 import PageState from "../components/common/PageState";
 import { safeDate } from "../components/common/ProfileOverview";
 export default function WriteupDetail() {
+  useWriteupUpdates();
   const { id } = useParams<{ id: string }>();
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["writeup", id],
@@ -36,7 +38,7 @@ export default function WriteupDetail() {
           </span>
           <h1>{data.title}</h1>
           <div className="text-sm text-text-muted">
-            {data.userId?.username || "Community member"} ·{" "}
+            {data.userId?.username ? <Link className="text-brand hover:underline" to={`/profile/${encodeURIComponent(data.userId.username)}`}>@{data.userId.username}</Link> : "Former member"} ·{" "}
             {safeDate(data.createdAt)} · {data.challengeId?.title}
           </div>
           {data.adminNotes && (

@@ -1,3 +1,4 @@
+import LiveSolveFeed from '../components/common/LiveSolveFeed';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Flag, BookOpen, Send, Trophy, Zap, Target, Sparkles } from 'lucide-react';
 import Landing from './Landing';
@@ -65,6 +66,7 @@ function PersonalDashboard() {
           </div>
         </div>
       )}
+      <LiveSolveFeed />
       <div className="section-title">
         <h2>Quick links</h2>
         <Link to="/resources">
@@ -100,7 +102,7 @@ function PersonalDashboard() {
         ))}
       </div>
       <div className="section-title">
-        <h2>Recent activity</h2>
+        <h2>Your recent solves</h2>
         <Link to="/profile">
           View profile <ArrowUpRight size={15} />
         </Link>

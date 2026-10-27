@@ -57,7 +57,7 @@ async (page) => {
   await go('/challenges');
   await page.locator('.challenge-card').first().waitFor();
   check(await page.locator('.challenge-card').count() === 3, 'One card per challenge');
-  check(await page.locator('.challenge-card svg').count() === 0, 'No icons in challenge cards');
+  check(await page.locator('.challenge-card h2 svg').count() === 0, 'Challenge titles stay free of decorative icons');
   check(await page.locator('.challenge-card-solved').count() === 1, 'Only complete challenges have solved styling');
   const card = page.locator('.challenge-card').filter({ hasText: five.title });
   check(await card.getByRole('progressbar').getAttribute('aria-valuenow') === '2', 'Card shows 2 of 5 flags');
@@ -65,12 +65,12 @@ async (page) => {
   check(await page.locator('.challenge-card-solved').getByText('Solved', { exact: true }).isVisible(), 'Solved is explicit text');
   const colors = await page.locator('.challenge-card').evaluateAll(cards => cards.map(c => ({
     background: getComputedStyle(c).backgroundColor,
-    accent: getComputedStyle(c).borderTopColor,
+    accent: getComputedStyle(c.querySelector('.category-label')).color,
     title: getComputedStyle(c.querySelector('h2')).color,
     weight: Number(getComputedStyle(c.querySelector('h2')).fontWeight),
   })));
   check(colors.every(c => c.weight >= 750), 'Challenge titles are bold');
-  check(new Set(colors.map(c => c.accent)).size > 1, 'Categories have distinct color accents');
+  check(new Set(colors.map(c => c.accent)).size > 1, 'Categories retain distinct label colors');
   check(colors[0].background !== await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor), 'Cards contrast with page');
   await page.screenshot({ path: '.playwright-mcp/challenge-cards-light.png', fullPage: true });
   await page.getByRole('combobox', { name: 'Filter by category' }).selectOption('crypto');
@@ -81,7 +81,7 @@ async (page) => {
   await page.getByRole('textbox', { name: 'Search challenges' }).fill('');
   // Obsolete local storage must never override server progress.
   await page.evaluate(({ id }) => localStorage.setItem(`flag-progress:v3:507f1f77bcf86cd799439011:${id}`, '[1,2,3,4,5]'), { id: five._id });
-  await card.click();
+  await card.getByRole('link', { name: five.title, exact: true }).click();
   await page.getByRole('heading', { name: five.title, exact: true }).waitFor();
   check(await page.getByRole('progressbar', { name: 'Flags solved' }).getAttribute('aria-valuenow') === '2', 'Server overrides stale local progress');
   check(await page.locator('input[placeholder="fsociety{your_flag_here}"]').count() === 5, 'All five flag stages render');

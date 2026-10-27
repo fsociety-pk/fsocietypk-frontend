@@ -23,7 +23,11 @@ export interface SubmitChallengeResponse {
   points: number;
 }
 
+export interface CommunitySolve {
+  id: string; username: string; avatar?: string; challengeId: string; challengeTitle: string; points: number; timestamp: string;
+}
 export const challengeService = {
+  getRecentActivity: async (): Promise<ApiResponse<CommunitySolve[]>> => (await api.get('/challenges/activity/recent')).data,
   /** Get all approved active challenges */
   getChallenges: async (): Promise<ApiResponse<IChallenge[]>> => {
     const response = await api.get<ApiResponse<IChallenge[]>>('/challenges');

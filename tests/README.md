@@ -127,3 +127,37 @@ node fsocietypk-backend/tests/challenge-url.cjs
 These use actual middleware/controllers and stub database/provider methods; SMTP
 transport in email checks is fake. The system check reads local host metrics and
 stubs MongoDB availability. Operational setup is documented in `ADMIN_PORTAL.md`.
+
+## Community publication, live solves and compact certificates
+
+After building and running `node tests/prepare-browser.cjs`, run the generated
+`browser-fixtures.js`, then `tests/browser-community.js` with connected Playwright.
+This uses intercepted build files, mocked HTTP APIs, and a simulated Socket.IO
+handshake. It verifies approval events publishing attributed guides, separate own
+submissions, challenge writeup links/counts, live solve broadcasts and the 30-second
+refresh fallback, light/dark cards, animated rankings, reduced motion, compact
+certificate controls through 320×568, PNG export, focus restoration, and explicit
+staff flag reveal/hide. No production API or WebSocket connection is used.
+Screenshots are saved under `<workspace>/.playwright-mcp/community-*`.
+
+`tests/browser-challenge-progress.js` retains its 32 checks for partial and full
+solves, filtering, refresh persistence, progress counts, distinct profile history,
+and responsive cards. Its visual assertions now follow neutral cards with colored
+category labels and independent challenge/writeup links.
+
+From the backend directory, after building, run `node tests/community-updates.cjs`.
+It uses real routers, JWT verification, controllers, encryption, and an isolated
+MongoDB database. Checks cover pending/rejected visibility, author attribution,
+approval/revocation events, availability counts, completion timestamp ordering,
+partial-solve exclusion, role-protected flags, and verified recovery of older
+hash-only flags without changing progress or scores.
+
+## Shared animated loading states
+
+`tests/browser-system-states.js` holds session and page requests open to inspect
+the actual loading UI. It measures animation changes over time, checks reduced
+motion, verifies light/dark layouts through 320×568 and landscape 844×390, and
+confirms the challenge list, challenge detail, and writeup library use the same
+loader without hiding workspace navigation. Releasing each request must remove
+the loader. The suite also retains the route-recovery checks. All API and
+WebSocket traffic is intercepted.

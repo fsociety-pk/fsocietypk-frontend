@@ -44,6 +44,7 @@ export default function CommunityReviews() {
     },
     onSuccess: () => {
       toast.success("Review saved");
+      for (const queryKey of [["writeups"], ["writeup"], ["challenges"], ["challenge-writeups"]]) void client.invalidateQueries({ queryKey });
       client.invalidateQueries({ queryKey: ["pending-writeups"] });
       client.invalidateQueries({ queryKey: ["pending-resources"] });
       client.invalidateQueries({ queryKey: ['admin-stats'] });

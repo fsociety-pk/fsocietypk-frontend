@@ -74,6 +74,7 @@ export interface IChallenge {
   files: IFile[]
   attachments: Array<string | IChallengeAttachment>
   solveCount: number
+  writeupCount?: number
   isActive: boolean
   status: ChallengeStatus
   rejectionReason?: string | null

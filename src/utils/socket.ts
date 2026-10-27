@@ -7,7 +7,7 @@ class SocketService {
   private socket: Socket | null = null;
 
   connect() {
-    if (this.socket?.connected) return;
+    if (this.socket) { if (!this.socket.connected) this.socket.connect(); return; }
 
     this.socket = io(SOCKET_URL, {
       withCredentials: API_WITH_CREDENTIALS,
@@ -23,6 +23,8 @@ class SocketService {
     });
   }
 
+  isConnected() { return this.socket?.connected ?? false; }
+
   disconnect() {
     if (this.socket) {
       this.socket.disconnect();
@@ -37,8 +39,9 @@ class SocketService {
     this.socket?.on(event, callback);
   }
 
-  off(event: string) {
-    this.socket?.off(event);
+  off(event: string, callback?: (data: any) => void) {
+    if (callback) this.socket?.off(event, callback);
+    else this.socket?.off(event);
   }
 
   emit(event: string, data: any) {

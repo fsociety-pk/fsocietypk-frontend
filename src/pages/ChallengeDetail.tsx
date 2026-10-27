@@ -1,5 +1,6 @@
+import CyberLoader from '../components/common/CyberLoader';
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Terminal, FileDown, HelpCircle, Trophy, Send, CheckCircle2, Loader2, Lock, Unlock, Users, Linkedin } from 'lucide-react';
 import { challengeService } from '../services/challenge.service';
@@ -10,6 +11,8 @@ import WriteupSubmissionModal from '../components/common/WriteupSubmissionModal'
 import CertificateModal from '../components/common/CertificateModal';
 import { CertificateData } from '../utils/certificateGenerator';
 
+import { writeupService } from '../services/writeup.service';
+import { useWriteupUpdates } from '../hooks/useWriteupUpdates';
 import { IChallenge } from '../types';
 import { toast } from 'react-hot-toast';
 import { API_BASE_URL } from '../services/apiConfig';
@@ -29,6 +32,7 @@ const incorrectFlagMessages = [
 ];
 
 const ChallengeDetail: React.FC = () => {
+  useWriteupUpdates();
   const { id } = useParams<{ id: string }>();
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
@@ -47,6 +51,13 @@ const ChallengeDetail: React.FC = () => {
   const [showCertificateModal, setShowCertificateModal] = useState(false);
   const [certificateData, setCertificateData] = useState<CertificateData | null>(null);
 
+  const { data: writeups } = useQuery({
+    queryKey: ['challenge-writeups', id],
+    queryFn: () => writeupService.getWriteupsForChallenge(id!, 1, 1),
+    enabled: !!id,
+    refetchInterval: 30000,
+    select: res => res.data,
+  });
   const { data: recentSolvers } = useQuery({
     queryKey: ['challenge-solvers', id],
     queryFn: () => challengeService.getRecentSolvers(id!),
@@ -147,10 +158,6 @@ const ChallengeDetail: React.FC = () => {
             type: 'success',
             message: `Flag ${step} verified. Challenge completed.`,
           });
-          toast.success(`Challenge completed: +${result.points ?? 0} PTS`, {
-            style: { border: '1px solid rgb(var(--success))', padding: '16px', color: 'rgb(var(--success))', background: 'var(--page-color)' },
-            iconTheme: { primary: 'rgb(var(--success))', secondary: 'var(--page-color)' },
-          });
           const allDone = Array.from({ length: totalFlagSteps }, (_, index) => index + 1);
           setCompletedFlagSteps(allDone);
           setChallenge(prev => prev ? { ...prev, isSolved: true, completedAt: result.completedAt } : null);
@@ -167,9 +174,7 @@ const ChallengeDetail: React.FC = () => {
           setCertificateData(certData);
 
           // Show one completion dialog; writeup submission remains user initiated.
-          setTimeout(() => {
-            setShowCertificateModal(true);
-          }, 800);
+          setShowCertificateModal(true);
         } else {
           const nextStep = result.nextSequence ?? (step + 1);
           setFlagFeedback({
@@ -210,13 +215,7 @@ const ChallengeDetail: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background font-sans">
-        <Loader2 className="w-12 h-12 text-brand animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return <CyberLoader title="Loading challenge" description="Getting the challenge and your progress ready." />;
 
   if (!challenge) return null;
 
@@ -241,7 +240,10 @@ const ChallengeDetail: React.FC = () => {
         onClose={() => setShowCertificateModal(false)}
       />
       <div className="max-w-4xl mx-auto">
-        {isChallengeSolvedUI && <button className="btn-outline mb-6" onClick={() => setShowWriteupModal(true)}>Share your solution</button>}
+        <div className="flex flex-wrap gap-3 mb-6">
+          <Link className="btn-outline" to={`/writeups/challenge/${id}`}>Writeups{writeups?.pagination?.total ? ` (${writeups.pagination.total})` : ''}</Link>
+          {isChallengeSolvedUI && <button className="btn-outline" onClick={() => setShowWriteupModal(true)}>Share your solution</button>}
+        </div>
         {/* ── Navigation ────────────────────────────────────────────── */}
         <button
           onClick={() => navigate('/challenges')}

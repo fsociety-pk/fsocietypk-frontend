@@ -1,3 +1,4 @@
+import AdminChallengeFlags from '../../components/admin/AdminChallengeFlags';
 import { hasPermission } from '../../utils/roles';
 import { useAuthStore } from '../../store/authStore';
 import { useEffect, useState, type FormEvent } from 'react';
@@ -49,6 +50,7 @@ export default function ChallengeEditor() {
       {canWrite && <div className="admin-field"><label htmlFor="edit-flags">Replacement flags, one per line</label><textarea className="input" id="edit-flags" value={form.flags} onChange={e => setForm({ ...form, flags: e.target.value })} placeholder="fsociety{new_flag}" autoComplete="off" spellCheck={false} /><small>Optional. Leave empty to keep the current {query.data?.totalFlags || 1} flag(s). Replacement flags are stored securely.</small></div>}
       <div className="flex flex-wrap gap-3">{canWrite && <button className="btn-primary" disabled={save.isPending || publish.isPending}><Save size={16} />{save.isPending ? 'Saving…' : 'Save changes'}</button>}{canReview && <button className="btn-outline" type="button" disabled={save.isPending || publish.isPending} onClick={() => publish.mutate()}><Check size={16} />{query.data?.status === 'approved' ? 'Queue launch emails' : 'Publish saved version'}</button>}</div>
     </form>
+    {id && <AdminChallengeFlags key={id + query.data?.updatedAt} id={id} canWrite={canWrite} />}
     {!!query.data?.attachments.length && <section className="admin-form-panel mt-6"><h2>Challenge attachments</h2><p>Download and inspect the submitted files before publishing.</p><div className="flex flex-wrap gap-3">{query.data.attachments.map((file, index) => typeof file !== 'string' && file._id ? <a className="btn-outline" key={file._id} href={`${API_BASE_URL}/challenges/${id}/attachments/${file._id}/download`}><Download size={15} />{file.originalName}</a> : typeof file === 'string' && /^https?:\/\//i.test(file) ? <a className="btn-outline" key={index} href={file} target="_blank" rel="noreferrer">Attachment {index + 1}</a> : null)}</div></section>}
   </div>;
 }

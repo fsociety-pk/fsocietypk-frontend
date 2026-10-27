@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, ArrowUpRight, BookOpen, CheckCircle2 } from "lucide-react";
 import { challengeService } from "../services/challenge.service";
 import PageState from "../components/common/PageState";
 import FlagProgress from "../components/common/FlagProgress";
 import { CHALLENGE_CATEGORIES, CATEGORY_LABELS } from "../utils/categories";
+import { useWriteupUpdates } from '../hooks/useWriteupUpdates';
 export default function Challenges() {
+  useWriteupUpdates();
   const [params] = useSearchParams();
   const [category, setCategory] = useState(params.get("category") || "all");
   useEffect(() => setCategory(params.get("category") || "all"), [params]);
@@ -21,6 +23,7 @@ export default function Challenges() {
     queryKey: ["challenges"],
     queryFn: () => challengeService.getChallenges(),
     select: (r) => r.data,
+    refetchInterval: 30000,
   });
   const filtered = challenges.filter(
     (c) =>
@@ -81,7 +84,7 @@ export default function Challenges() {
         </select>
       </div>
       {isLoading ? (
-        <PageState loading />
+        <PageState loading title="Loading challenges" description="Finding your next challenge." />
       ) : isError ? (
         <PageState
           title="Challenges couldn't be loaded"
@@ -121,9 +124,8 @@ export default function Challenges() {
               const solved = c.isSolved;
               const started = (c.completedFlags ?? 0) > 0;
               return (
-                <Link
+                <article
                   key={c._id}
-                  to={"/challenges/" + c._id}
                   className={`challenge-card${solved ? " challenge-card-solved" : ""}`}
                   data-category={c.category}
                 >
@@ -133,7 +135,7 @@ export default function Challenges() {
                       {c.difficulty}
                     </span>
                   </div>
-                  <h2>{c.title}</h2>
+                  <h2><Link to={"/challenges/" + c._id}>{c.title}</Link></h2>
                   <p>{c.description}</p>
                   {(c.totalFlags ?? 1) > 1 && (
                     <FlagProgress completed={c.completedFlags ?? 0} total={c.totalFlags!} />
@@ -142,11 +144,15 @@ export default function Challenges() {
                     <span>{c.solveCount || 0} {(c.solveCount || 0) === 1 ? "solver" : "solvers"}</span>
                     <strong>{c.points} pts</strong>
                   </footer>
-                  <div className="challenge-card-action">
-                    <strong>{solved ? "Solved" : started ? "Continue challenge" : "Start challenge"}</strong>
-                    <span>{solved ? "All flags complete" : started ? "In progress" : "Unsolved"}</span>
+                  <div className="challenge-writeups">
+                    {(c.writeupCount ?? 0) > 0 ? <Link to={`/writeups/challenge/${c._id}`}><BookOpen size={14} />{c.writeupCount} {(c.writeupCount ?? 0) === 1 ? 'writeup' : 'writeups'} available</Link> : <span><BookOpen size={14} />No writeups yet</span>}
+                    {solved && <span className="text-brand"><CheckCircle2 size={14} />Solved</span>}
                   </div>
-                </Link>
+                  <Link className="challenge-card-action" to={"/challenges/" + c._id}>
+                    <strong>{solved ? "View completed challenge" : started ? "Continue challenge" : "Start challenge"}</strong>
+                    <ArrowUpRight size={16} />
+                  </Link>
+                </article>
               );
             })}
           </div>

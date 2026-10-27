@@ -1,8 +1,42 @@
+import { useId } from 'react';
 import '../../styles/system-states.css';
 
-export default function CyberLoader({ fullPage = false, title = 'Loading page', description = 'Please wait a moment.' }: { fullPage?: boolean; title?: string; description?: string }) {
-  return <div className={`cyber-loading ${fullPage ? 'cyber-loading-page' : ''}`} role="status" aria-live="polite" aria-busy="true">
-    <svg className="loading-orbit" viewBox="0 0 64 64" aria-hidden="true"><circle className="loading-orbit-track" cx="32" cy="32" r="27" /><circle className="loading-orbit-head" cx="32" cy="32" r="27" strokeDasharray="55 115" /><circle className="loading-orbit-center" cx="32" cy="32" r="3" /></svg>
-    <h2>{title}</h2><p>{description}</p>
-  </div>;
+interface CyberLoaderProps {
+  fullPage?: boolean;
+  compact?: boolean;
+  title?: string;
+  description?: string;
+}
+
+export default function CyberLoader({
+  fullPage = false,
+  compact = false,
+  title = 'Loading your workspace',
+  description = 'Everything will be ready in a moment.',
+}: CyberLoaderProps) {
+  const titleId = useId();
+  const descriptionId = useId();
+
+  return (
+    <div
+      className={`cyber-loading${fullPage ? ' cyber-loading-page' : ''}${compact ? ' cyber-loading-compact' : ''}`}
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      aria-labelledby={titleId}
+      aria-describedby={descriptionId}
+    >
+      <div className="loading-content">
+        <span className="loading-brand" aria-hidden="true">Fsociety<span>PK</span></span>
+        <div className="loading-symbol" aria-hidden="true">
+          <div className="loading-matrix">
+            {Array.from({ length: 9 }, (_, index) => <span key={index} />)}
+          </div>
+        </div>
+        <h2 id={titleId}>{title}</h2>
+        <p id={descriptionId}>{description}</p>
+        <div className="loading-track" aria-hidden="true"><span /></div>
+      </div>
+    </div>
+  );
 }

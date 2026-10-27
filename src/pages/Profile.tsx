@@ -136,7 +136,7 @@ export default function Profile() {
   if (isLoading)
     return (
       <div className="page-wrap">
-        <PageState loading />
+        <PageState loading title="Loading your profile" description="Gathering your progress and recent solves." />
       </div>
     );
   if (isError || !profile)

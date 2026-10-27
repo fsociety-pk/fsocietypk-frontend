@@ -14,6 +14,8 @@ export interface AdminStats {
   bannedUsers: number;
 }
 
+export interface AdminFlagData { flags: { sequence: number; value: string }[] | null; totalFlags: number; recoverable: boolean }
+
 export interface AdminChallengeUpdate {
   title?: string; description?: string; category?: IChallenge['category']; difficulty?: IChallenge['difficulty'];
   challengeUrl?: string; hints?: { content: string; cost: number }[];
@@ -64,6 +66,8 @@ export const adminService = {
     return data;
   },
 
+  getChallengeFlags: async (id: string): Promise<ApiResponse<AdminFlagData>> => (await apiClient.get(`/admin/challenges/${id}/flags`)).data,
+  restoreChallengeFlags: async (id: string, flags: string[]): Promise<ApiResponse<null>> => (await apiClient.put(`/admin/challenges/${id}/flags`, { flags })).data,
   getChallenge: async (id: string): Promise<ApiResponse<IChallenge>> => (await apiClient.get(`/admin/challenges/${id}`)).data,
   updateChallenge: async (id: string, payload: AdminChallengeUpdate): Promise<ApiResponse<IChallenge>> => (await apiClient.patch(`/admin/challenges/${id}`, payload)).data,
   createChallenge: async (payload: FormData) => (await apiClient.post('/admin/challenges', payload, { headers: { 'Content-Type': 'multipart/form-data' }, timeout: 600000 })).data,

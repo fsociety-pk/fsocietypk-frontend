@@ -2,7 +2,7 @@
 async (page) => {
   const checks = [];
   const assert = (value, label) => { if (!value) throw new Error(label); checks.push(label); };
-  const dialog = page.getByRole('dialog', { name: 'Achievement certificate' });
+  const dialog = page.getByRole('dialog', { name: 'Your achievement certificate' });
   for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     assert(await dialog.evaluate(el => el.scrollWidth <= el.clientWidth), `Certificate dialog fits at ${width}px`);
@@ -34,7 +34,7 @@ async (page) => {
   await page.goto('http://fsociety.test/challenges/507f1f77bcf86cd799439022');
   await page.waitForLoadState('networkidle');
   await page.getByRole('button', { name: /certificate/i }).first().click();
-  await page.getByRole('dialog', { name: 'Achievement certificate' }).waitFor();
+  await page.getByRole('dialog', { name: 'Your achievement certificate' }).waitFor();
   assert((await page.locator('[role="dialog"] svg[role="img"]').textContent()).includes('02 January 2025'), 'Reopened challenge certificate keeps actual solve date');
   await page.keyboard.press('Escape');
   await page.goto('http://fsociety.test/profile');

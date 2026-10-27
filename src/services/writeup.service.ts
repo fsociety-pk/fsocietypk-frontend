@@ -30,6 +30,7 @@ export interface WriteupPayload {
 }
 
 export const writeupService = {
+  getApprovedWriteups: async (page = 1, limit = 10): Promise<ApiResponse<{ writeups: Writeup[]; pagination: { page: number; limit: number; total: number; pages: number } }>> => (await apiClient.get('/writeups', { params: { page, limit } })).data,
   getAdminWriteups: async (page = 1, limit = 10, status = 'pending'): Promise<ApiResponse<{ writeups: Writeup[]; pagination: { page: number; limit: number; total: number; pages: number } }>> => (await apiClient.get('/admin/writeups', { params: { page, limit, status } })).data,
   // Submit new writeup
   submitWriteup: async (payload: WriteupPayload): Promise<ApiResponse<Writeup>> => {
