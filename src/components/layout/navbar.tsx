@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import {
+  Headphones,
   LayoutDashboard,
   Flag,
   Trophy,
@@ -128,6 +129,7 @@ export default function Navbar() {
     }
   };
   const personal = [
+    { to: "/support", label: "Support", icon: Headphones },
     { to: "/submissions", label: "My submissions", icon: Send },
     { to: "/profile", label: "My profile", icon: User },
     ...(user?.role === "admin"

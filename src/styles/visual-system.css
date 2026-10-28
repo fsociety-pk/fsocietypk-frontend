@@ -1,0 +1,204 @@
+/* Product-wide materials. Theme channels are defined once in design-refresh.css.
+   Elevation separates content surfaces; borders identify controls and data rows. */
+:root { --radius-control: 10px; --radius-panel: 16px; --content-width: 1240px; }
+body { -webkit-font-smoothing: antialiased; }
+::selection { background: rgb(var(--brand) / .22); color: rgb(var(--ink)); }
+* { scrollbar-color: rgb(var(--muted) / .35) transparent; scrollbar-width: thin; }
+a { text-underline-offset: 4px; }
+:root :is(button,a,input,textarea,select):focus-visible { outline: 3px solid rgb(var(--brand)); outline-offset: 3px; }
+:root :is(.app-content,.admin-content) { min-width: 0; }
+:root .page-wrap { max-width: var(--content-width); padding: 40px 40px 64px; }
+:root .page-heading { margin: 0 0 32px; gap: 24px; }
+:root :is(.page-heading,.admin-page-heading) h1 { font-size: clamp(28px, 2.7vw, 38px); font-weight: 750; letter-spacing: -.035em; line-height: 1.18; }
+:root :is(.page-heading,.admin-page-heading) p { font-size: 14px; line-height: 1.75; margin-top: 12px; max-width: 66ch; }
+:root :is(.page-heading,.support-section-heading,.support-history-heading) .eyebrow { display: none; }
+:root .section-title { margin-top: 36px; margin-bottom: 20px; }
+:root .section-title h2 { font-size: 19px; letter-spacing: -.025em; }
+/* Consistent material surfaces across member, public and staff screens. */
+:root :is(.soft-panel,.card,.surface-panel,.action-card,.project-card,.resource-card,.challenge-card,.review-card,.profile-banner,.dashboard-welcome,.solve-feed,.support-intro,.support-conversation,.support-empty,.feature-card,.discipline-card,.dashboard-preview) {
+  background: rgb(var(--card));
+  border: 1px solid transparent;
+  border-radius: var(--radius-panel);
+  box-shadow: var(--panel-shadow);
+}
+:root :is(.soft-panel,.surface-panel) { padding: 28px; }
+:root .table-scroll { padding: 0; }
+:root :is(.card,.soft-panel,.surface-panel) :is(.card,.soft-panel,.surface-panel) { box-shadow: none; background: rgb(var(--elevated)); }
+:root :is(.action-card,.resource-card,.project-card,.challenge-card) { position: relative; isolation: isolate; }
+:root .challenge-card { border-top-width: 1px; }
+:root .challenge-card :is(.challenge-card-description,p) { color: rgb(var(--muted)); }
+:root .challenge-card footer { background: rgb(var(--elevated)); border-top: 0; }
+:root .challenge-card-action { background: rgb(var(--category-color, var(--brand)) / .09); }
+:root :is(.feature-icon,.admin-queue-icon,.support-ticket-icon) { border: 0; border-radius: 12px; background: rgb(var(--brand) / .09); color: rgb(var(--brand)); }
+:root .action-card { padding: 28px; }
+:root .action-card > svg { box-sizing: content-box; padding: 12px; background: rgb(var(--action-color) / .08); border-radius: 12px; }
+:root .project-card > div .feature-icon { margin-bottom: 0; }
+:root :is(.resource-card,.review-card,.project-card) h2 { letter-spacing: -.025em; }
+:root :is(.project-card footer,.review-content,.support-messages) { border-color: rgb(var(--line)); }
+:root :is(.status-pill,.badge,.support-status) { border-color: transparent; background: rgb(var(--surface)); font-weight: 600; }
+:root .support-status.open { background: rgb(var(--warning) / .11); }
+:root .support-status.in_progress { background: rgb(var(--info) / .1); }
+:root .support-status.resolved { background: rgb(var(--success) / .1); }
+/* Controls retain a clear edge, unlike the large elevated surfaces. */
+:root :is(.input,input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),textarea,select) {
+  background: rgb(var(--elevated)); color: rgb(var(--ink));
+  border-color: rgb(var(--field-edge)); border-radius: var(--radius-control);
+  transition: background-color var(--motion-fast), border-color var(--motion-fast), box-shadow var(--motion-fast);
+}
+:root :is(input,textarea)::placeholder { color: rgb(var(--muted)); opacity: 1; }
+:root :is(.input,input,textarea,select):focus { border-color: rgb(var(--brand)); box-shadow: 0 0 0 3px rgb(var(--brand) / .12); }
+:root :is(input,textarea,select):disabled { opacity: .6; }
+:root .input[aria-invalid="true"] { border-color: rgb(var(--error)); }
+:root :is(.btn-primary,.btn-outline,.btn-ghost) { border-radius: var(--radius-control); font-size: 13px; min-height: 44px; font-weight: 650; transition: transform var(--motion-fast) var(--ease-out), background-color var(--motion-fast), box-shadow var(--motion-fast); }
+:root .btn-primary { background: rgb(var(--brand)); color: rgb(var(--on-brand)); border: 1px solid transparent; box-shadow: 0 3px 6px rgb(0 0 0 / .1), inset 0 1px 0 rgb(255 255 255 / .14); }
+:root .btn-primary:hover { background: color-mix(in srgb, rgb(var(--brand)), rgb(var(--ink)) 7%); }
+:root .btn-primary:active { transform: translateY(1px); box-shadow: none; }
+:root .btn-outline { background: rgb(var(--card)); border-color: rgb(var(--line)); color: rgb(var(--ink)); }
+:root .btn-outline:hover { background: rgb(var(--surface)); }
+:root :is(.btn-primary,.btn-outline,.btn-ghost):disabled { transform: none; box-shadow: none; cursor: not-allowed; }
+/* Navigation: the same neutral material in both workspaces. */
+:root :is(.app-sidebar,.admin-sidebar,.admin-mobile-navigation) { background: rgb(var(--card)); color: rgb(var(--ink)); border: 0; box-shadow: 2px 0 18px rgb(0 0 0 / .035); }
+:root :is(.site-header,.admin-header) { background: rgb(var(--page) / .96); border-bottom: 0; box-shadow: 0 1px 0 rgb(var(--line) / .55); }
+:root .is-landing .site-header { background: transparent; box-shadow: none; }
+:root .sidebar-caption, :root .admin-nav-group { font-size: 10px; letter-spacing: .08em; color: rgb(var(--muted)); opacity: 1; }
+:root :is(.sidebar-nav a,.admin-nav a) { color: rgb(var(--muted)); opacity: 1; min-height: 44px; border-radius: 10px; font-size: 13px; }
+:root :is(.sidebar-nav a,.admin-nav a):hover { background: rgb(var(--surface)); color: rgb(var(--ink)); }
+:root :is(.sidebar-nav a,.admin-nav a).active { background: rgb(var(--brand) / .1); color: rgb(var(--brand)); font-weight: 650; }
+:root .admin-nav a svg { opacity: 1; }
+:root :is(.admin-brand,.admin-brand small,.admin-sidebar-footer,.admin-access-note,.admin-sidebar-footer button) { color: rgb(var(--ink)); }
+:root .admin-access-note { background: rgb(var(--surface)); border-color: transparent; }
+:root .admin-sidebar-footer { border-color: rgb(var(--line)); }
+:root .admin-mobile-navigation .icon-button { color: rgb(var(--ink)); }
+:root .sidebar-community { border: 0; background: rgb(var(--elevated)); }
+:root .user-chip { background: rgb(var(--card)); border-color: transparent; box-shadow: var(--panel-shadow); }
+:root .icon-button { background: rgb(var(--card)); border-color: transparent; box-shadow: 0 2px 6px rgb(0 0 0 / .035); }
+:root .site-footer { border-color: transparent; }
+/* Dashboard: overview as a composition, metrics as separate readable objects. */
+:root .dashboard-welcome { background: rgb(var(--card)); padding: 36px; gap: 36px; }
+:root .dashboard-welcome h1 { margin-top: 0; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.12; }
+:root .dashboard-welcome .welcome-note { background: rgb(var(--info) / .07); border: 0; padding: 28px; }
+:root .welcome-note :is(svg,a) { color: rgb(var(--info)); }
+:root :is(.stats-strip,.admin-stat-row) { padding: 0; gap: 16px; background: transparent; border: 0; box-shadow: none; overflow: visible; border-radius: 0; }
+:root :is(.stats-strip > div,.admin-stat) { padding: 24px; border: 0; border-radius: var(--radius-panel); background: rgb(var(--card)); box-shadow: var(--panel-shadow); }
+:root .stats-strip > div:first-child { padding-left: 24px; }
+:root .stats-strip strong { font-size: 30px; color: rgb(var(--ink)); }
+:root .stat-icon { box-sizing: content-box; padding: 9px; background: rgb(var(--stat-color) / .09); border-radius: 10px; margin-bottom: 16px; }
+:root .admin-stat strong { font-size: 30px; }
+:root .admin-stat-label svg { color: rgb(var(--info)); }
+:root .admin-stat.needs-review { background: color-mix(in srgb, rgb(var(--card)), rgb(var(--warning)) 5%); }
+/* Reading and forms share hierarchy and materials without moving on hover. */
+:root .reading-page { max-width: 900px; padding-top: 40px; }
+:root .writeup-content { line-height: 1.9; font-size: 16px; padding: 32px; border: 0; border-radius: var(--radius-panel); background: rgb(var(--card)); box-shadow: var(--panel-shadow); }
+:root .form-page { max-width: 1000px; }
+:root :is(.form-section,.form-actions) { border-color: rgb(var(--line)); }
+:root .profile-banner { padding: 32px; }
+:root .notice { border: 0; background: rgb(var(--brand) / .08); border-radius: 12px; }
+:root .tabs-line { border-color: rgb(var(--line)); gap: 24px; }
+:root .tabs-line button { font-weight: 600; padding-bottom: 14px; }
+:root .data-table thead { background: rgb(var(--elevated)); }
+:root .data-table :is(th,td) { padding: 18px 22px; border-color: rgb(var(--line) / .65); }
+:root .data-table tbody tr:hover { background: rgb(var(--brand) / .035); }
+:root .fame-heading { border: 0; }
+:root .fame-podium .podium-card { background: rgb(var(--card)); border: 1px solid transparent; border-radius: var(--radius-panel); box-shadow: var(--panel-shadow); }
+:root .fame-podium .fame-place-1 { background: color-mix(in srgb, rgb(var(--card)), rgb(var(--warning)) 6%); }
+:root .podium-card::before { display: none; }
+/* Staff surfaces use exactly the same elevation, controls, spacing and motion. */
+:root .admin-shell .admin-content :is(.card,.soft-panel,.admin-panel,.admin-form-panel,.admin-challenge-card) { background: rgb(var(--card)); border: 1px solid transparent; border-radius: var(--radius-panel); box-shadow: var(--panel-shadow); }
+:root .admin-content .input { background: rgb(var(--elevated)); }
+:root .admin-panel-heading { padding: 24px; }
+:root .admin-queue-row { border-top-color: rgb(var(--line) / .6); padding-block: 20px; }
+:root .admin-tool { border-color: transparent; background: rgb(var(--elevated)); border-radius: 12px; }
+:root .admin-tool:hover { background: rgb(var(--surface)); }
+:root .admin-identity > span { border-color: transparent; background: rgb(var(--brand) / .1); }
+/* Support joins the same material system, including private message threads. */
+:root .support-page { padding: 40px; max-width: var(--content-width); }
+:root .admin-content .support-page { padding: 0; }
+:root .support-intro-copy { background: rgb(var(--brand) / .06); border-right: 0; }
+:root .support-create { padding: 32px; }
+:root .support-history-heading .eyebrow { display: none; }
+:root .support-ticket-row { border-bottom-color: rgb(var(--line)); }
+:root .support-message { border: 0; background: rgb(var(--elevated)); }
+:root .support-message.admin { background: rgb(var(--brand) / .09); }
+:root .support-success, :root .support-resolved { border: 0; }
+/* Challenge detail: a full brief, a stable submission surface, a quiet sidebar. */
+:root .challenge-detail-content { width: 100%; }
+:root .challenge-detail-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; justify-content: space-between; }
+:root .challenge-detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 28px; align-items: start; }
+:root .challenge-detail-main, :root .challenge-detail-aside { display: grid; gap: 24px; min-width: 0; }
+:root .challenge-brief { padding: 32px; }
+:root .challenge-brief h1 { margin-top: 16px; font-size: clamp(28px, 3vw, 38px); font-weight: 750; }
+:root .challenge-brief .prose { line-height: 1.85; font-size: 15px; white-space: pre-wrap; overflow-wrap: anywhere; }
+:root .challenge-destination { background: rgb(var(--brand) / .065); padding: 24px; border: 0; border-radius: 12px; margin-top: 24px; }
+:root .challenge-flag-section { margin: 0; }
+:root .challenge-flag-panel { padding: 28px; }
+:root .challenge-flag-panel > .space-y-3 > .border { border-color: transparent; background: rgb(var(--elevated)); padding: 16px; }
+:root .challenge-flag-panel h3 { margin-bottom: 24px; }
+:root .challenge-summary { padding: 24px; }
+:root .challenge-summary > div { border-color: rgb(var(--line) / .65); }
+:root .challenge-summary > div:nth-child(2) > span:last-child { font-size: 11px; letter-spacing: 0; }
+:root .challenge-solvers { padding: 24px; }
+/* One shared motion language. The controller updates only transform properties.
+   Content is visible before JS and while observers are unavailable. */
+:root [data-surface-motion] { --surface-rx: 0deg; --surface-ry: 0deg; transform: perspective(1000px) rotateX(var(--surface-rx)) rotateY(var(--surface-ry)) translateY(var(--surface-lift, 0px)); transition: transform var(--motion-ui) var(--ease-out), box-shadow var(--motion-ui) var(--ease-out); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :root [data-surface-motion][data-surface-active] { --surface-lift: -5px; box-shadow: var(--shadow-raised); }
+  :root [data-surface-motion]:focus-within { --surface-lift: -3px; }
+  :root .btn-primary:hover { transform: translateY(-1px); }
+}
+@keyframes surface-arrival { from { transform: translateY(12px); opacity: .8; } to { transform: translateY(0); opacity: 1; } }
+@media (prefers-reduced-motion: no-preference) {
+  :root .surface-arrived:not([data-surface-active]) { animation: surface-arrival var(--motion-enter) var(--ease-out) both; animation-delay: var(--surface-delay, 0ms); }
+}
+@media (max-width: 1100px) { :root .challenge-detail-grid { grid-template-columns: minmax(0, 1fr) 260px; gap: 20px; } }
+@media (max-width: 900px) {
+  :root .page-wrap, :root .support-page { padding: 28px 24px 48px; }
+  :root .challenge-detail-grid { grid-template-columns: minmax(0, 1fr); }
+  :root .challenge-detail-aside { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  :root .dashboard-welcome { gap: 24px; padding: 28px; }
+}
+@media (max-width: 600px) {
+  :root .page-wrap, :root .support-page { padding: 28px 16px 40px; }
+  :root .page-heading { margin-bottom: 24px; }
+  :root :is(.soft-panel,.surface-panel,.challenge-brief,.challenge-flag-panel,.profile-banner) { padding: 22px; }
+  :root .table-scroll { padding: 0; }
+  :root .dashboard-welcome { padding: 24px; grid-template-columns: 1fr; }
+  :root :is(.stats-strip,.admin-stat-row) { gap: 12px; }
+  :root :is(.stats-strip > div,.admin-stat) { padding: 18px; }
+  :root .stats-strip > div:first-child { padding-left: 18px; }
+  :root .stats-strip strong { font-size: 26px; }
+  :root .challenge-detail-aside { grid-template-columns: minmax(0, 1fr); }
+  :root .support-create { padding: 24px 20px; }
+  :root .support-intro-copy { padding: 24px; }
+  :root .app-content .support-page { padding-inline: 16px; }
+  :root .writeup-content { padding: 24px 20px; }
+  :root .admin-content .support-page { padding: 0; }
+  :root .data-table :is(th,td) { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root [data-surface-motion], :root .surface-arrived { transform: none !important; animation: none !important; transition: none !important; }
+  :root :is(.btn-primary,.btn-outline,.btn-ghost,.action-card,.project-card,.resource-card,.challenge-card,.podium-card):hover { transform: none; }
+}
+/* Dialogs and recovery states share the same material without card tilt. */
+:root :is(.certificate-dialog,.cyber-toast,.lost-terminal) { border-color: transparent; box-shadow: var(--shadow-raised); }
+:root .access-header { border-bottom-color: rgb(var(--line) / .6); }
+:root .access-shell { background-color: rgb(var(--page)); }
+/* Public story uses the chosen theme instead of an unrelated inverted palette. */
+:root .cinematic-hero, :root .specimen-header { color: rgb(var(--ink)); }
+:root .hero-name { color: rgb(var(--ink)); }
+:root .is-landing .site-header { color: rgb(var(--ink)); }
+:root .is-landing .site-header :is(.brand-lockup,.public-nav a,.btn-ghost,.icon-button) { color: rgb(var(--ink)); }
+:root .hero-manifesto { color: rgb(var(--ink)); }
+:root .hero-side-note, :root .hero-edition { color: rgb(var(--muted)); }
+:root .notification-card { border: 1px solid transparent; background: rgb(var(--card)); box-shadow: var(--panel-shadow); border-radius: var(--radius-panel); padding: 24px; }
+/* Nested task grids must shrink below native input intrinsic widths. */
+:root .challenge-detail-main { grid-template-columns: minmax(0, 1fr); }
+:root .challenge-detail-main > *, :root .surface-panel { min-width: 0; }
+:root .form-actions { flex-wrap: wrap; }
+:root .review-card { min-width: 0; overflow-wrap: anywhere; }
+:root .section-title .eyebrow { display: none; }
+:root .admin-tools { gap: 12px; padding-bottom: 24px; }
+:root .admin-tool { padding: 18px; }
+:root .challenge-hint { background: rgb(var(--elevated)); border: 1px solid transparent; border-radius: 12px; }
+
+:root[data-theme="dark"] .admin-brand .brand-artwork { background: #edf2f9; border-radius: 8px; padding: 4px; }
+:root .btn-outline.text-status-error { color: rgb(var(--error)); }

@@ -201,7 +201,7 @@ const Notifications: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ delay: index * 0.05 }}
-                className={`border rounded-lg p-4 transition-all ${
+                className={`notification-card border rounded-lg p-4 transition-all ${
                   notif.read
                     ? 'bg-background-elevated/30 border-surface-border/30'
                     : `${getNotificationBgColor(notif.type)} active:scale-95`

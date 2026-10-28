@@ -80,7 +80,7 @@ const Writeups: React.FC = () => {
                 initial={false}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className="bg-background-card border border-surface-border rounded-xl p-6 hover:border-brand/30 transition-all group"
+                className="surface-panel bg-background-card border border-surface-border rounded-xl p-6 hover:border-brand/30 transition-all group"
               >
                 {/* Title and Challenge */}
                 <div className="mb-4">

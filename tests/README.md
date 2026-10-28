@@ -161,3 +161,23 @@ confirms the challenge list, challenge detail, and writeup library use the same
 loader without hiding workspace navigation. Releasing each request must remove
 the loader. The suite also retains the route-recovery checks. All API and
 WebSocket traffic is intercepted.
+
+## Shared visual system (October 29)
+
+Build with `VITE_API_URL= npm run build`, then run `node tests/prepare-browser.cjs`.
+Load the generated browser fixture through the connected browser, then run:
+
+- `tests/browser-redesign.js`: 16 member routes, both themes, 320/768/1440px,
+  real pointer tilt/reset and reduced motion. Uses illustrative intercepted API data.
+- Reload the base fixture, then `tests/browser-admin-fixtures.js` and
+  `tests/browser-admin.js`: existing staff workflows, role restrictions,
+  responsive routes, mobile focus and session behavior.
+- Reload the base fixture, then `tests/browser-auth.js`: existing signup,
+  OTP, validation, password visibility and login flows.
+- `tests/browser-public-redesign.js`: signed-out landing, login, signup and
+  unknown-route screens, both themes and three viewport widths.
+- `tests/browser-support.js`: private ticket creation, preserved error draft,
+  member/admin replies, resolve/reopen and mobile layouts.
+
+The redesign suite saves reviewed screenshots under `/tmp/redesign-*.png`.
+Build normally after testing to restore the deployment's configured API origin.

@@ -46,6 +46,7 @@ export default function MainLayout() {
           </span>
           <span className="flex gap-5">
             <Link to="/resources">Learn</Link>
+            {authenticated && <Link to="/support">Support</Link>}
             {authenticated && <Link to="/about-admin">About the admin</Link>}
             <Link to="/submit-challenge">Contribute</Link>
             <a

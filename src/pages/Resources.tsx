@@ -198,7 +198,7 @@ export const Resources: React.FC<ResourcesProps> = ({ showDashboardSection = fal
           {showSubmitForm && (
             <motion.div
               variants={itemVariants}
-              className="bg-background-card border border-brand/20 rounded-xl p-8 space-y-6"
+              className="surface-panel bg-background-card border border-brand/20 rounded-xl p-8 space-y-6"
             >
               <h3 className="text-lg font-bold text-brand uppercase tracking-wider">Share Your Resource</h3>
               <form onSubmit={handleSubmit} className="space-y-4">

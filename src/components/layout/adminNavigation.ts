@@ -1,7 +1,8 @@
-import { LayoutDashboard, Flag, BookOpen, Users, FolderKanban, BarChart3, Megaphone, ShieldCheck, ContactRound, Bell, UserCog, Activity, type LucideIcon } from 'lucide-react';
+import { Headphones, LayoutDashboard, Flag, BookOpen, Users, FolderKanban, BarChart3, Megaphone, ShieldCheck, ContactRound, Bell, UserCog, Activity, type LucideIcon } from 'lucide-react';
 import type { Permission } from '../../utils/roles';
 export const adminNavigation: { to: string; label: string; description: string; icon: LucideIcon; group: string; permission?: Permission }[] = [
   { to: '/admin', label: 'Overview', description: 'Platform activity and the review queue', icon: LayoutDashboard, group: 'Platform', permission: 'overview' },
+  { to: '/admin/support', label: 'Support inbox', description: 'Read and respond to member requests', icon: Headphones, group: 'Platform', permission: 'support' },
   { to: '/admin/challenges', label: 'Challenges', description: 'Create, review, edit, and publish challenges', icon: Flag, group: 'Platform', permission: 'challenges.read' },
   { to: '/admin/reviews', label: 'Community reviews', description: 'Moderate writeups and learning resources', icon: BookOpen, group: 'Platform', permission: 'reviews' },
   { to: '/admin/users', label: 'Members', description: 'Search accounts and manage member access', icon: Users, group: 'Platform', permission: 'members' },

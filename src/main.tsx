@@ -8,6 +8,7 @@ import "./index.css";
 import "./styles/design-refresh.css";
 import './styles/product-polish.css';
 import './styles/community.css';
+import './styles/visual-system.css';
 import { applyTheme } from './hooks/useTheme';
 
 applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');

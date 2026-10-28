@@ -56,7 +56,7 @@ const Analytics: React.FC = () => {
             key={card.title}
             initial={false}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-background-card border border-surface-border rounded-xl p-6 relative overflow-hidden group"
+            className="surface-panel bg-background-card border border-surface-border rounded-xl p-6 relative overflow-hidden group"
           >
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-lg bg-surface border border-surface-border group-hover:border-brand/50 transition-all">

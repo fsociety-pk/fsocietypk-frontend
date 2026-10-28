@@ -186,7 +186,7 @@ const SubmitWriteup: React.FC = () => {
           initial={false}
           animate={{ opacity: 1, y: 0 }}
           onSubmit={handleSubmit}
-          className="bg-background-card border border-surface-border rounded-xl p-8 space-y-6"
+          className="surface-panel bg-background-card border border-surface-border rounded-xl p-8 space-y-6"
         >
           {/* Error Banner */}
           {errors.form && (

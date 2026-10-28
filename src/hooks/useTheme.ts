@@ -9,7 +9,7 @@ export function applyTheme(theme: Theme = 'light') {
     document.documentElement.style.colorScheme = theme;
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute('content', theme === 'dark' ? '#101715' : '#f7f9f8');
+      ?.setAttribute('content', theme === 'dark' ? '#0d1420' : '#f2f5f9');
     try { localStorage.setItem(storageKey, theme); } catch { /* The current tab still works without storage. */ }
     window.dispatchEvent(new Event(themeEvent));
   }

@@ -1,26 +1,36 @@
 /* Shared semantic palette. RGB channels are the compatibility adapter for Tailwind 3. */
 :root, :root[data-theme="dark"] {
-  --palette-green: oklch(79% .11 160); --palette-coral: oklch(82% .10 40);
-  --palette-mint: oklch(80% .12 165); --palette-lilac: oklch(79% .12 300);
-  --page: 16 23 21; --card: 25 34 31; --elevated: 31 43 37;
-  --surface: 36 48 42; --hover: 43 57 49; --line: 57 76 65;
-  --ink: 237 243 240; --muted: 174 193 182; --brand: 120 215 178; --on-brand: 16 45 35;
-  --success: 105 214 177; --warning: 247 189 118; --error: 255 155 169; --info: 132 210 208;
-  --violet: 192 166 255; --coral: 255 172 150;
-  --ice: #edf3f0; --aubergine: #143c2b; --green: #143c2b; --marigold: #78d7b2;
-  --hero: #143326; --page-color: #101715; --shadow: none;
+  --palette-green: oklch(80% .15 165); --palette-coral: oklch(77% .12 40);
+  --palette-mint: oklch(80% .13 165); --palette-lilac: oklch(78% .12 290);
+  --page: 13 20 32; --card: 24 34 50; --elevated: 31 44 63;
+  --surface: 34 48 67; --hover: 41 57 77; --line: 46 62 82;
+  --ink: 237 242 249; --muted: 164 180 201; --brand: 85 221 176; --on-brand: 10 40 32;
+  --success: 85 221 176; --warning: 242 192 111; --error: 255 153 169; --info: 134 189 249;
+  --violet: 187 173 247; --coral: 246 173 145;
+  --ice: #edf2f9; --aubergine: #142235; --green: #142235; --marigold: #55ddb0;
+  --hero: #101d2d; --page-color: #0d1420;
+  --shadow: 0 8px 24px rgb(0 0 0 / .16);
+  --panel-base: var(--card); --panel-edge: var(--line);
+  --panel-shadow: 0 6px 18px rgb(0 0 0 / .13), 0 1px 2px rgb(0 0 0 / .1);
+  --shadow-raised: 0 18px 42px rgb(0 0 0 / .25), 0 4px 10px rgb(0 0 0 / .14);
+  --field-edge: 110 130 155;
   --font-body: 'Onest', 'Manrope', sans-serif; --font-display: 'Anton', sans-serif;
-  --motion-fast: 180ms; --motion-ui: 260ms; --ease-out: cubic-bezier(.22,1,.36,1);
+  --motion-fast: 160ms; --motion-ui: 240ms; --motion-enter: 440ms;
+  --ease-out: cubic-bezier(.16,1,.3,1);
   color-scheme: dark;
 }
 :root[data-theme="light"] {
-  --page: 247 249 248; --card: 255 255 255; --elevated: 239 245 242;
-  --surface: 235 243 239; --hover: 224 237 230; --line: 204 218 210;
-  --ink: 29 43 36; --muted: 79 100 88; --brand: 8 120 79; --on-brand: 255 255 255;
-  --success: 20 124 96; --warning: 149 96 11; --error: 184 51 80; --info: 22 110 107;
-  --violet: 118 80 184; --coral: 182 78 51;
-  --ice: #edf3f0; --aubergine: #143c2b; --marigold: #08784f;
-  --hero: #e8f2ec; --page-color: #f7f9f8;
+  --page: 242 245 249; --card: 255 255 255; --elevated: 247 249 252;
+  --surface: 235 240 246; --hover: 225 233 242; --line: 219 227 237;
+  --ink: 24 36 54; --muted: 83 100 122; --brand: 7 119 89; --on-brand: 255 255 255;
+  --success: 7 119 89; --warning: 141 92 15; --error: 183 51 76; --info: 40 98 164;
+  --violet: 112 79 172; --coral: 171 75 48;
+  --ice: #edf2f9; --aubergine: #142235; --marigold: #077759;
+  --hero: #e7eff5; --page-color: #f2f5f9;
+  --shadow: 0 8px 24px rgb(26 44 72 / .06);
+  --panel-shadow: 0 4px 16px rgb(26 44 72 / .045), 0 1px 3px rgb(26 44 72 / .035);
+  --shadow-raised: 0 18px 40px rgb(26 44 72 / .1), 0 3px 8px rgb(26 44 72 / .04);
+  --field-edge: 125 140 161;
   color-scheme: light;
 }
 body { background: rgb(var(--page)); color: rgb(var(--ink)); }
@@ -143,7 +153,6 @@ input:autofill { box-shadow: 0 0 0 1000px rgb(var(--surface)) inset; -webkit-tex
   min-width: 0;
   padding: var(--challenge-padding) var(--challenge-padding) 0;
   border: 1px solid rgb(var(--category-color) / .4);
-  border-top: 5px solid rgb(var(--category-color));
   border-radius: 12px;
   background: color-mix(in srgb, rgb(var(--card)), rgb(var(--category-color)) 5%);
   box-shadow: 0 4px 12px rgb(var(--ink) / .045);
@@ -195,8 +204,8 @@ input:autofill { box-shadow: 0 0 0 1000px rgb(var(--surface)) inset; -webkit-tex
 .progress-item:nth-child(3n) .progress-track > div { background: rgb(var(--violet)); }
 .progress-item:nth-child(3n + 1) .progress-track > div { background: rgb(var(--success)); }
 /* Landing shares the workspace palette rather than creating its own green theme. */
-.cinematic-landing { --hero: #143326; --marigold: #78d7b2; --ice: #edf3f0; }
-:root[data-theme="light"] .is-landing, :root[data-theme="light"] .cinematic-landing { --hero: #e8f2ec; --marigold: #08784f; --ice: #1d3b2b; }
+.cinematic-landing { --hero: var(--page-color); --marigold: rgb(var(--brand)); --ice: rgb(var(--ink)); }
+:root[data-theme="light"] .is-landing, :root[data-theme="light"] .cinematic-landing { --hero: var(--page-color); --marigold: rgb(var(--brand)); --ice: rgb(var(--ink)); }
 .is-landing .site-header { color: var(--ice); border-color: rgb(var(--line)); }
 .is-landing .site-header .public-nav a, .is-landing .site-header .brand-lockup small { color: rgb(var(--muted)); }
 .cinematic-landing .hero-edition { color: rgb(var(--muted)); }

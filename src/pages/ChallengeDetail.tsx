@@ -220,7 +220,7 @@ const ChallengeDetail: React.FC = () => {
   if (!challenge) return null;
 
   return (
-    <div className="min-h-screen bg-background text-text-primary font-sans p-4 sm:p-6 md:p-8">
+    <div className="page-wrap challenge-detail">
       <WriteupSubmissionModal
         isOpen={showWriteupModal}
         onClose={() => setShowWriteupModal(false)}
@@ -239,27 +239,22 @@ const ChallengeDetail: React.FC = () => {
         isOpen={showCertificateModal}
         onClose={() => setShowCertificateModal(false)}
       />
-      <div className="max-w-4xl mx-auto">
-        <div className="flex flex-wrap gap-3 mb-6">
-          <Link className="btn-outline" to={`/writeups/challenge/${id}`}>Writeups{writeups?.pagination?.total ? ` (${writeups.pagination.total})` : ''}</Link>
-          {isChallengeSolvedUI && <button className="btn-outline" onClick={() => setShowWriteupModal(true)}>Share your solution</button>}
+      <div className="challenge-detail-content">
+        <div className="challenge-detail-actions">
+          <button onClick={() => navigate('/challenges')} className="btn-ghost challenge-back"><ArrowLeft size={16} />Back to challenges</button>
+          <div className="flex flex-wrap gap-3">
+            <Link className="btn-outline" to={`/writeups/challenge/${id}`}>Writeups{writeups?.pagination?.total ? ` (${writeups.pagination.total})` : ''}</Link>
+            {isChallengeSolvedUI && <button className="btn-outline" onClick={() => setShowWriteupModal(true)}>Share your solution</button>}
+          </div>
         </div>
-        {/* ── Navigation ────────────────────────────────────────────── */}
-        <button
-          onClick={() => navigate('/challenges')}
-          className="flex items-center gap-2 text-text-muted hover:text-brand transition-colors mb-8 uppercase tracking-widest text-sm"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to challenges
-        </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="challenge-detail-grid">
           {/* ── Main Content ────────────────────────────────────────── */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="challenge-detail-main">
             <motion.div
               initial={false}
               animate={{ opacity: 1, x: 0 }}
-            >
+             className="challenge-brief surface-panel">
               <div className="flex items-center gap-3 mb-2">
                 <span className={`px-2 py-0.5 text-xs border border-brand/30 text-brand uppercase rounded`}>
                   {challenge.category}
@@ -277,7 +272,7 @@ const ChallengeDetail: React.FC = () => {
               </div>
 
               {challenge.challengeUrl && /^https?:\/\//i.test(challenge.challengeUrl) && (
-                <div className="mb-6 rounded-lg border border-brand/30 bg-brand/5 p-4">
+                <div className="challenge-destination">
                   <h2 className="text-sm font-bold mb-2">Challenge website</h2>
                   <p className="break-all text-sm text-text-secondary mb-4">{challenge.challengeUrl}</p>
                   <a className="btn-primary" href={challenge.challengeUrl} target="_blank" rel="noopener noreferrer">
@@ -335,11 +330,9 @@ const ChallengeDetail: React.FC = () => {
               initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className={`p-1 mb-8 rounded-xl bg-gradient-to-br transition-all ${
-                isChallengeSolvedUI ? 'from-brand/20 to-transparent p-0' : 'from-brand/10 to-transparent'
-              }`}
+              className="challenge-flag-section"
             >
-              <div className={`p-6 bg-background-elevated/90 backdrop-blur rounded-xl border border-surface-border ${
+              <div className={`surface-panel challenge-flag-panel ${
                 isChallengeSolvedUI ? 'border-brand/40' : ''
               }`}>
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
@@ -462,12 +455,12 @@ const ChallengeDetail: React.FC = () => {
           </div>
 
           {/* ── Sidebar Stats ────────────────────────────────────────── */}
-          <div className="space-y-6">
+          <div className="challenge-detail-aside">
             <motion.div
               initial={false}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
-              className="p-6 bg-background-elevated/50 border border-surface-border rounded-xl space-y-6"
+              className="surface-panel challenge-summary space-y-6"
             >
               <div className="flex justify-between items-center text-sm border-b border-surface-border pb-4">
                 <span className="text-text-muted flex items-center gap-2"><Trophy className="w-4 h-4 text-status-warning" /> Challenge points</span>
@@ -485,7 +478,7 @@ const ChallengeDetail: React.FC = () => {
                 <span className={`font-bold uppercase tracking-wider ${
                    challenge.difficulty === 'easy' ? 'text-brand' :
                    challenge.difficulty === 'medium' ? 'text-status-warning' :
-                   challenge.difficulty === 'hard' ? 'text-status-error' : 'text-emerald-400'
+                   challenge.difficulty === 'hard' ? 'text-status-error' : 'text-status-info'
                 }`}>
                   {challenge.difficulty}
                 </span>
@@ -504,7 +497,7 @@ const ChallengeDetail: React.FC = () => {
                   <HelpCircle className="w-4 h-4" /> Hints
                 </h3>
                 {challenge.hints.map((hint, i) => (
-                  <div key={hint._id} className="p-4 bg-background-elevated/30 border border-surface-border rounded-lg text-xs leading-relaxed text-text-secondary space-y-3">
+                  <div key={hint._id} className="challenge-hint p-4 bg-background-elevated/30 border border-surface-border rounded-lg text-xs leading-relaxed text-text-secondary space-y-3">
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-text-muted uppercase tracking-widest text-xs">Hint {i + 1}</span>
                       {unlockedHintIds.includes(hint._id) ? (
@@ -546,7 +539,7 @@ const ChallengeDetail: React.FC = () => {
               initial={false}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              className="bg-background-elevated/50 border border-surface-border rounded-xl p-6 space-y-4"
+              className="surface-panel challenge-solvers space-y-4"
             >
               <h3 className="text-sm font-bold text-text-muted uppercase flex items-center gap-2">
                 <Users className="w-4 h-4" /> Recent solves

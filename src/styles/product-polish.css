@@ -1,26 +1,4 @@
-/* Material separation: tinted surfaces distinguish cards from the page. */
-:root { --panel-base: 29 45 37; --panel-edge: 70 96 80; --panel-shadow: 0 3px 12px rgb(0 0 0 / .12); }
-:root[data-theme="light"] { --panel-base: 232 241 235; --panel-edge: 187 207 194; --panel-shadow: 0 3px 12px rgb(26 58 39 / .07); }
-:is(.soft-panel, .card, .dashboard-welcome, .stats-strip, .podium-card) { background: rgb(var(--panel-base)); border-color: rgb(var(--panel-edge)); }
-:is(.action-card, .project-card, .resource-card, .challenge-card) { --card-tone: var(--info); background: color-mix(in srgb, rgb(var(--panel-base)), rgb(var(--card-tone)) 10%); border: 1px solid color-mix(in srgb, rgb(var(--panel-edge)), rgb(var(--card-tone)) 25%); border-radius: 14px; box-shadow: var(--panel-shadow); transition: transform 220ms var(--ease-out), border-color 220ms var(--ease-out), background-color 220ms var(--ease-out); }
-.action-card { --card-tone: var(--action-color); }
-.project-card { --card-tone: var(--success); }
-.resource-card { --card-tone: var(--violet); }
-.challenge-card { --card-tone: var(--category-color); border-top-width: 1px; }
-.challenge-card-action { background: rgb(var(--card-tone) / .1); }
-.action-card > svg { transition: transform 220ms var(--ease-out); }
-.action-card:nth-child(2), .resource-card:nth-child(3n + 2) { background: color-mix(in srgb, rgb(var(--panel-base)), rgb(var(--violet)) 13%); }
-.action-card:nth-child(3), .resource-card:nth-child(3n) { background: color-mix(in srgb, rgb(var(--panel-base)), rgb(var(--coral)) 12%); }
-.admin-shell .admin-content :is(.card, .soft-panel, .admin-panel) { background: rgb(var(--panel-base)); border-color: rgb(var(--panel-edge)); }
-.admin-stat-row { background: rgb(var(--panel-base)); border-color: rgb(var(--panel-edge)); }
-.cinematic-landing .discipline-card { background: color-mix(in srgb, rgb(var(--panel-base)), rgb(var(--brand)) 10%); border-color: rgb(var(--panel-edge)); transition: transform 220ms var(--ease-out), background-color 220ms var(--ease-out); }
-.cinematic-landing .discipline-card:nth-child(2n) { background: color-mix(in srgb, rgb(var(--panel-base)), rgb(var(--violet)) 13%); }
-:is(.action-card, .project-card, .resource-card, .challenge-card):focus-within { border-color: rgb(var(--brand)); }
-@media (hover: hover) and (pointer: fine) {
-  :is(.action-card, .project-card, .resource-card, .challenge-card):hover { transform: translateY(-4px); border-color: rgb(var(--card-tone)); box-shadow: var(--panel-shadow); }
-  .action-card:hover > svg { transform: translate(2px, -2px); }
-  .cinematic-landing .discipline-card:hover { transform: translateY(-4px); }
-}
+/* Card materials and motion live in visual-system.css. */
 /* Preserve the detailed black lettering on dark surfaces without changing the logo. */
 :root[data-theme="dark"] :is(.brand-lockup .brand-artwork, .footer-logo, .lost-terminal-body > img) { background: #eaf3ed; border-radius: 8px; padding: 4px; }
 /* Suggestions are interactive ideas, never a promise of username availability. */
@@ -40,7 +18,7 @@
 @keyframes intro-scene { 0% { opacity: 0; transform: translateY(10px) scale(.98); } 20%, 80% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-4px); } }
 .cinematic-intro-text.intro-scene-1 { animation-duration: 1850ms; }
 @media (prefers-reduced-motion: reduce) {
-  :is(.action-card, .project-card, .resource-card, .challenge-card, .discipline-card), .action-card > svg { transition: none !important; transform: none !important; }
+
   .cinematic-intro-text { animation: none; }
 }
 

@@ -1,3 +1,4 @@
+import { useSurfaceMotion } from './hooks/useSurfaceMotion';
 import { Suspense, lazy, useEffect } from "react";
 import PageState from "./components/common/PageState";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -13,6 +14,7 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 import PublicRoute from "./components/common/PublicRoute";
 
 // ── Pages ────────────────────────────────────────────────────────
+const Support = lazy(() => import("./pages/Support"));
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -47,6 +49,7 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 import { API_URL } from "./services/apiConfig";
 
 function App() {
+  useSurfaceMotion();
   const { user, setUser, setLoading } = useAuthStore();
 
   useEffect(() => {
@@ -172,6 +175,7 @@ function App() {
               }
             >
               <Route index element={<AdminDashboard />} />
+              <Route path="support" element={<Support admin />} />
               <Route path="profile" element={<AdminAboutAdmin />} />
               <Route path="reviews" element={<CommunityReviews />} />
               <Route path="analytics" element={<Analytics />} />
@@ -298,6 +302,7 @@ function App() {
               }
             />
 
+            <Route path="/support" element={<ProtectedRoute><Support /></ProtectedRoute>} />
             <Route path="/about-admin" element={<ProtectedRoute><AboutAdmin /></ProtectedRoute>} />
 
 

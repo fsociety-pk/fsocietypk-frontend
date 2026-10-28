@@ -51,6 +51,6 @@ async (page) => {
   });
   await page.goto(origin + '/signup');
   await page.waitForLoadState('networkidle');
-  await page.locator('.auth-title h1').waitFor();
+  await page.getByRole('button', { name: 'Create account', exact: true }).waitFor();
   return { mode: 'intercepted production build and mock API', files: Object.keys(files).length, url: page.url() };
 }
