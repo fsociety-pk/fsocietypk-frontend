@@ -42,6 +42,7 @@ const SubmitChallenge = lazy(() => import("./pages/SubmitChallenge"));
 const Projects = lazy(() => import("./pages/Projects"));
 const ManageProjects = lazy(() => import("./pages/admin/ManageProjects"));
 const AboutAdmin = lazy(() => import("./pages/AboutAdmin"));
+const AboutTeamManager = lazy(() => import('./pages/admin/AboutTeamManager'));
 const AdminAboutAdmin = lazy(() => import("./pages/admin/AdminAboutAdmin"));
 const Resources = lazy(() => import("./pages/Resources"));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -104,22 +105,26 @@ function App() {
   }, [user]);
 
   useEffect(() => {
+    const controller = new AbortController();
+    let active = true;
+    // Remove the legacy persisted user; only /auth/me establishes authentication.
+    try {
+      localStorage.removeItem("fsocietypk-auth");
+    } catch {
+      // Authentication also works when browser storage is unavailable.
+    }
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
     const initAuth = async () => {
       setLoading(true);
 
-      // Set 10 second timeout for auth check
-      const timeoutId = setTimeout(() => {
-        console.warn("Auth check timed out after 10s");
-        setLoading(false);
-      }, 10000);
-
       try {
-        const response = await authService.getMe();
-        clearTimeout(timeoutId);
+        const response = await authService.getMe(controller.signal);
+        if (!active) return;
         // getMe returns user directly in data, not wrapped in { user }
         setUser(response.data);
       } catch (error: any) {
-        clearTimeout(timeoutId);
+        if (!active) return;
         setUser(null);
         // Silently handle 401 on initial load (user not logged in)
         if (
@@ -132,33 +137,17 @@ function App() {
           }
         }
       } finally {
-        setLoading(false);
+        clearTimeout(timeoutId);
+        if (active) setLoading(false);
       }
     };
 
-    // Check if stored auth is valid before attempting verification
-    const storedAuth = localStorage.getItem("fsocietypk-auth");
-    if (storedAuth) {
-      try {
-        const parsed = JSON.parse(storedAuth);
-        // Only verify if we have a valid user object
-        if (parsed.state?.user?.username && parsed.state?.user?._id) {
-          initAuth();
-        } else {
-          // Invalid stored auth state - clear and skip verification
-          localStorage.removeItem("fsocietypk-auth");
-          setLoading(false);
-        }
-      } catch (error) {
-        // Corrupted localStorage - clear it and skip verification
-        console.warn("Corrupted auth storage, clearing...");
-        localStorage.removeItem("fsocietypk-auth");
-        setLoading(false);
-      }
-    } else {
-      // No stored auth, quick verification
-      initAuth();
-    }
+    initAuth();
+    return () => {
+      active = false;
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, [setUser, setLoading]);
 
   return (
@@ -177,6 +166,7 @@ function App() {
               <Route index element={<AdminDashboard />} />
               <Route path="support" element={<Support admin />} />
               <Route path="profile" element={<AdminAboutAdmin />} />
+              <Route path="team" element={<AboutTeamManager />} />
               <Route path="reviews" element={<CommunityReviews />} />
               <Route path="analytics" element={<Analytics />} />
               <Route path="challenges" element={<ManageChallenges />} />

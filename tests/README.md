@@ -1,5 +1,33 @@
 # Local regression checks
 
+## Team site and R2 certificate manager
+
+See [team manager, API/storage and deployment notes](../docs/TEAM_SITE.md).
+Build and prepare the browser files, then run generated `browser-fixtures.js`,
+generated `browser-team-fixtures.js` and `tests/browser-team.js`. The fixture
+host, team/member data, certificates and storage responses are intercepted.
+Screenshots are written to `/tmp/team-*.png`. No real awards are published.
+Reset the generated fixtures and run `tests/browser-certificate-shelf.js` for the
+3D shelf, wraparound, drag/wheel/keyboard, paper/ink reveal, focus/Escape and mobile
+checks. Its screenshots are under `/tmp/certificate-shelf-*.png`.
+The backend `tests/team.cjs` covers auth, Zod, real multipart/file inspection,
+temporary-file cleanup, R2 upload/replace/rollback contracts and draft protection
+using stubbed database/provider methods.
+
+## Browser sessions
+
+After building the backend, run `node fsocietypk-backend/tests/browser-session.cjs`
+from the workspace. This checks real Express cookie headers for login and email
+verification, JWT expiry, authenticated requests and logout using stubbed DB methods.
+After preparing browser fixtures, run `tests/browser-session.js` in a fresh browser
+context. It checks stale storage, login, authenticated reload, session rejection,
+corrupted legacy data and blocked storage with mock API responses.
+
+Login cookies have no `Expires` or `Max-Age`; browser session restore may still
+restore them. JWT expiry remains the server-side upper limit. Existing persistent
+cookies are replaced on the next login, so sign out and back in after deployment
+when verifying this change.
+
 The browser suites exercise the production frontend with **mock API responses**.
 They do not verify MongoDB persistence, SMTP delivery or real authentication.
 Every HTTP request is intercepted; external font requests are suppressed and the

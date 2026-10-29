@@ -1,0 +1,32 @@
+/* Progressive enhancement: text is readable until its observer is attached. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-text-reveal] {
+    --text-reveal-distance: 20px;
+    transition:
+      opacity var(--motion-enter) var(--ease-out) var(--text-reveal-delay, 0ms),
+      transform var(--motion-enter) var(--ease-out) var(--text-reveal-delay, 0ms);
+  }
+
+  p[data-text-reveal] {
+    --text-reveal-distance: 10px;
+    transition-duration: var(--motion-ui);
+  }
+
+  [data-text-reveal='pending'] {
+    opacity: 0;
+    transform: translate3d(0, var(--text-reveal-distance), 0);
+  }
+
+  [data-text-reveal='visible'] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-text-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

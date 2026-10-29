@@ -1,0 +1,27 @@
+.social-handle { position: relative; display: block; width: 100%; min-width: 0; height: 76px; color: rgb(var(--ink)); border-radius: 24px; isolation: isolate; }
+.social-pill-surface { position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: rgb(var(--card)); box-shadow: var(--panel-shadow); transform-origin: center; }
+.social-handle-icon { position: absolute; top: 22px; left: 22px; width: 32px; height: 32px; display: grid; place-items: center; color: rgb(var(--brand)); }
+.social-handle[data-social-kind='github'] .social-handle-icon, .social-handle[data-social-kind='x'] .social-handle-icon { color: rgb(var(--ink)); }
+.social-handle-copy { display: flex; flex-direction: column; justify-content: center; position: absolute; inset: 0 48px 0 76px; min-width: 0; }
+.social-handle-copy > strong { display: block; font-size: 18px; line-height: 1.3; font-weight: 650; letter-spacing: -.025em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.social-handle-copy > span { display: block; font-size: 13px; line-height: 1.5; color: rgb(var(--muted)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.social-handle-arrow { position: absolute; top: 29px; right: 22px; color: rgb(var(--muted)); }
+.social-brand-glyph { display: block; flex-shrink: 0; }
+.social-handle[data-social-motion='pending'] > * { visibility: hidden; }
+.social-handle:focus-visible { outline-offset: 5px; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .social-brand-glyph { transition: transform var(--motion-ui) var(--ease-out); }
+  .social-handle:hover .social-brand-glyph { transform: translateY(-2px) scale(1.06); }
+}
+@media (max-width: 600px) {
+  .social-handle { height: 72px; border-radius: 22px; }
+  .social-handle-icon { top: 20px; left: 20px; }
+  .social-handle-copy { left: 70px; right: 42px; }
+  .social-handle-copy > strong { font-size: 17px; }
+  .social-handle-copy > span { font-size: 12px; }
+  .social-handle-arrow { top: 27px; right: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .social-handle > * { visibility: visible !important; }
+  .social-brand-glyph { transition: none; transform: none; }
+}

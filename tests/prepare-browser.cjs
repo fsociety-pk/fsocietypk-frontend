@@ -13,4 +13,6 @@ walk(root);
 const code = fs.readFileSync(path.join(__dirname, 'browser-fixtures.js'), 'utf8').replace('/* BUILD_FILES */ {}', JSON.stringify(files));
 const output = path.resolve(__dirname, '../../.playwright-mcp/browser-fixtures.js');
 fs.writeFileSync(output, code);
+const teamCode = fs.readFileSync(path.join(__dirname, 'browser-team-fixtures.js'), 'utf8').replace('/* BUILD_FILES */ {}', JSON.stringify(files));
+fs.writeFileSync(path.resolve(__dirname, '../../.playwright-mcp/browser-team-fixtures.js'), teamCode);
 console.log(`Prepared ${output} for the connected Playwright tool. API data is mocked.`);

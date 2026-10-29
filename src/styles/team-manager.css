@@ -1,0 +1,50 @@
+.team-manager-tabs { display: flex; gap: 8px; margin-bottom: 28px; padding: 6px; background: rgb(var(--surface)); border-radius: 12px; width: fit-content; }
+.team-manager-tabs button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 10px 18px; border-radius: 8px; color: rgb(var(--muted)); font-size: 14px; font-weight: 600; }
+.team-manager-tabs button[aria-pressed='true'] { background: rgb(var(--card)); color: rgb(var(--ink)); }
+.team-manager-form fieldset, .team-certificate-editor fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.team-manager-form fieldset:disabled, .team-certificate-editor fieldset:disabled { opacity: .7; }
+.team-manager-form .admin-form-panel { margin-bottom: 24px; }
+.team-manager-section-heading { display: flex; justify-content: space-between; align-items: start; gap: 16px; margin-bottom: 20px; }
+.team-manager-section-heading h2, .team-manager-section-heading h3 { margin: 0; }
+.team-manager-section-heading > button { flex-shrink: 0; }
+.team-manager-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
+.team-manager-member, .team-manager-social { padding: 24px; background: rgb(var(--surface)); border-radius: 12px; margin-top: 20px; }
+.team-manager-link { display: grid; grid-template-columns: 1fr 1.6fr auto; gap: 16px; align-items: end; }
+.team-manager-link > button { margin-bottom: 20px; }
+.team-manager-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.team-certificate-manager > .team-manager-section-heading { margin-bottom: 24px; }
+.team-certificate-editor { margin-bottom: 28px; }
+.team-upload-field { padding: 24px; border-radius: 12px; background: rgb(var(--surface)); margin-block: 20px; }
+.team-upload-field > label { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 16px; }
+.team-upload-field input { display: block; max-width: 100%; font-size: 14px; }
+.team-upload-field a { display: inline-flex; align-items: center; gap: 8px; color: rgb(var(--brand)); overflow-wrap: anywhere; }
+.team-upload-preview { display: block; max-height: 240px; max-width: 100%; object-fit: contain; margin-top: 20px; border-radius: 8px; }
+.team-publish-toggle { display: flex; align-items: start; gap: 12px; padding-block: 12px; cursor: pointer; }
+.team-publish-toggle input { width: 18px; height: 18px; margin-top: 4px; accent-color: rgb(var(--brand)); flex-shrink: 0; }
+.team-publish-toggle span { font-size: 14px; font-weight: 600; }
+.team-publish-toggle small { display: block; color: rgb(var(--muted)); font-size: 12px; font-weight: 400; margin-top: 4px; }
+.team-admin-filter { display: flex; align-items: center; justify-content: end; gap: 12px; margin-bottom: 24px; font-size: 14px; }
+.team-admin-filter select { width: auto; min-width: 180px; }
+.team-admin-certificate-list { display: grid; gap: 20px; }
+.team-admin-certificate { display: grid; grid-template-columns: 180px 1fr; gap: 28px; }
+.team-admin-certificate-preview { display: grid; place-items: center; min-height: 140px; background: rgb(var(--surface)); color: rgb(var(--brand)); border-radius: 10px; overflow: hidden; }
+.team-admin-certificate-preview img { width: 100%; height: 140px; object-fit: contain; }
+.team-admin-certificate-details { min-width: 0; }
+.team-admin-certificate-details .team-manager-section-heading { margin-bottom: 8px; }
+.team-admin-certificate-details h3 { font-size: 19px; overflow-wrap: anywhere; }
+.team-admin-certificate-details p { margin: 0 0 4px; color: rgb(var(--muted)); font-size: 14px; }
+.team-admin-certificate-details small { color: rgb(var(--muted)); font-size: 12px; overflow-wrap: anywhere; }
+.team-publish-status { padding: 4px 10px; background: rgb(var(--surface)); border-radius: 6px; font-size: 12px; flex-shrink: 0; }
+.team-publish-status.published { background: rgb(var(--brand) / .1); color: rgb(var(--brand)); }
+@media (max-width: 700px) {
+  .team-manager-fields { grid-template-columns: 1fr; }
+  .team-manager-section-heading { flex-wrap: wrap; }
+  .team-manager-member, .team-manager-social, .team-upload-field { padding: 20px; }
+  .team-manager-link { grid-template-columns: 1fr; gap: 0; }
+  .team-manager-link > button { justify-self: end; }
+  .team-admin-certificate { grid-template-columns: 1fr; gap: 20px; }
+  .team-admin-certificate-preview { max-height: 180px; }
+  .team-admin-certificate-preview img { height: 180px; }
+  .team-manager-tabs { width: 100%; }
+  .team-manager-tabs button { flex: 1; justify-content: center; padding-inline: 10px; }
+}

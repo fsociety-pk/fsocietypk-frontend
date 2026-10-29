@@ -8,6 +8,7 @@ import { Brand } from "./navbar";
 import ThemeToggle from "../common/ThemeToggle";
 import { ArrowLeft } from "lucide-react";
 import PageState from '../common/PageState';
+import { TEAM_ABOUT_URL } from '../../data/team';
 export default function MainLayout() {
   const authenticated = useAuthStore((state) => state.isAuthenticated);
   const role = useAuthStore((state) => state.user?.role);
@@ -44,8 +45,9 @@ export default function MainLayout() {
           <span>
             © {new Date().getFullYear()} Fsociety PK. Learn. Practice. Share.
           </span>
-          <span className="flex gap-5">
+          <span className="flex flex-wrap gap-x-5 gap-y-2">
             <Link to="/resources">Learn</Link>
+            <a href={TEAM_ABOUT_URL}>About the team</a>
             {authenticated && <Link to="/support">Support</Link>}
             {authenticated && <Link to="/about-admin">About the admin</Link>}
             <Link to="/submit-challenge">Contribute</Link>

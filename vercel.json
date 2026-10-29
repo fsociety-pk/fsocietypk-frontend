@@ -1,6 +1,11 @@
 {
   "rewrites": [
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "about.fsocietypk.tech" }],
+      "destination": "/about.html"
+    },
+    {
       "source": "/api/v1/:path*",
       "destination": "http://16.171.55.64:5000/api/v1/:path*"
     },

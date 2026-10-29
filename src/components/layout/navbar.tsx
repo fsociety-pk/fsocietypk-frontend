@@ -17,6 +17,7 @@ import {
   LogOut,
   ArrowUpRight,
   ChevronRight,
+  Users,
 } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { authService } from "../../services/auth.service";
@@ -27,6 +28,7 @@ import {
 import BrandLogo from "../common/BrandLogo";
 import ThemeToggle from "../common/ThemeToggle";
 import { toast } from "react-hot-toast";
+import { TEAM_ABOUT_URL } from '../../data/team';
 const workspaceLinks = [
   { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { to: "/challenges", label: "Challenges", icon: Flag },
@@ -146,6 +148,7 @@ export default function Navbar() {
             {label}
           </NavLink>
         ))}
+        <a href={TEAM_ABOUT_URL}><Users size={17} />About the team<ArrowUpRight size={14} /></a>
       </nav>
       <div className="sidebar-caption">Personal</div>
       <nav className="sidebar-nav" aria-label="Personal">
@@ -217,6 +220,7 @@ export default function Navbar() {
             <NavLink to="/challenges">Challenges</NavLink>
             <NavLink to="/resources">Resources</NavLink>
             <NavLink to="/projects">Projects</NavLink>
+            <a href={TEAM_ABOUT_URL}>About the team</a>
           </nav>
         )}
         <div className="header-actions">
@@ -305,6 +309,7 @@ export default function Navbar() {
                     {label}
                   </NavLink>
                 ))}
+              <a href={TEAM_ABOUT_URL}><Users size={18} />About the team<ArrowUpRight size={14} /></a>
             </nav>
           )}
           <div className="mobile-drawer-footer">

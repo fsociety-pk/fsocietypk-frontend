@@ -137,3 +137,31 @@ Latest auth refinement: signup validates username availability through the new p
 Login/signup alone mount the supplied WebGL fluid simulation as an isolated decorative background, with green/lilac/teal colors and a quiet center for legibility. It uses local MIT-licensed assets, capped resolution/frame rate, and no demo controls or analytics. Only pointer coordinates and visibility state enter the frame. Reduced motion removes it; GPU loss falls back to a static surface. Other pages and the prank do not use the effect. Loading is a professional animated orbit with no logo. See AUTH_UI.md for the API and deployment contract.
 
 Light-theme fluid visibility now uses full opacity, stronger saturation, and a less restrictive center mask. Dark-theme rendering keeps its previous values.
+
+## Team site and motion, October 29
+
+The standalone `about.html` entry serves `about.fsocietypk.tech`, retaining the
+original masked logo and shared themes. The dashboard links to it. Administrators
+edit the introduction, roster, social links and CTF certificates at `/admin/team`.
+Certificate files live in private R2 storage; MongoDB holds metadata. Never
+invent members, competition results or awards for empty sections.
+
+The certificate archive follows the owner's physical book/VHS reference: CSS 3D
+spines turn into full covers, masked captions follow selection, and the detail
+sheet grows from the cover with an ink reveal. Native scrolling, keyboard and
+touch navigation remain available. The animation loop pauses offscreen and
+cleans up on navigation. Reduced motion immediately reveals the document.
+
+Social links follow the owner's Jitter “White Social Handle” reference: a rounded
+icon badge pops in, expands horizontally, and moves the brand mark left as its
+label enters. Entrances stagger once on scroll without changing link geometry.
+Inline brand SVGs support all nine existing social kinds. Keyboard focus reveals
+the complete badge immediately; live reduced-motion changes cancel animation.
+Dashboard section headings also reveal once as they enter the viewport.
+
+Validation: production build, 28 certificate shelf checks, 33 team manager checks
+and 18 social badge checks passed with intercepted APIs/storage. Desktop light,
+phone dark and intermediate animation frames were reviewed. Social checks cover
+320/390/768/1280px layouts, links, focus, live reduced motion, resize during entry
+and hover. These checks do not establish a production deployment or real R2
+uploads. See [team site setup](TEAM_SITE.md) for deployment configuration.

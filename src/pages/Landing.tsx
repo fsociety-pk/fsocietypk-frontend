@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties } from 'react';
+import { useRef, type CSSProperties } from 'react';
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import BrandLogo from '../components/common/BrandLogo';
 import CinematicIntro from '../components/common/CinematicIntro';
+import { useScrollTextReveal } from '../hooks/useScrollTextReveal';
+import { TEAM_ABOUT_URL } from '../data/team';
 
 const features = [
   {
@@ -151,6 +153,7 @@ function NameLine({ text, line }: { text: string; line: number }) {
 
 export default function Landing() {
   const root = useRef<HTMLDivElement>(null);
+  useScrollTextReveal(root, 'section:not(.cinematic-hero) h2, section:not(.cinematic-hero) h3, section:not(.cinematic-hero) p, .footer-tagline, .footer-col-title');
   const hero = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: hero, offset: ['start start', 'end start'] });
@@ -159,27 +162,6 @@ export default function Landing() {
   const portraitY = useTransform(smoothProgress, [0, 1], [0, 42]);
   const portraitScale = useTransform(smoothProgress, [0, 1], [1, 1.025]);
   const heroCopyOpacity = useTransform(smoothProgress, [0.08, 0.44], [1, 0]);
-
-  useEffect(() => {
-    const node = root.current;
-    if (!node || reduced) return;
-    node.classList.add('scroll-motion-ready');
-    const observer = new IntersectionObserver(
-      entries =>
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-            observer.unobserve(entry.target);
-          }
-        }),
-      { threshold: 0.16, rootMargin: '0px 0px -24px 0px' }
-    );
-    root.current?.querySelectorAll('[data-reveal]').forEach(element => observer.observe(element));
-    return () => {
-      observer.disconnect();
-      node.classList.remove('scroll-motion-ready');
-    };
-  }, [reduced]);
 
   return (
     <div className="landing cinematic-landing" ref={root}>
@@ -253,7 +235,7 @@ export default function Landing() {
 
       {/* Section 01: Practice CTFs */}
       <section id="practice" className="editorial-section">
-        <div className="editorial-intro" data-reveal>
+        <div className="editorial-intro">
           <span className="eyebrow eyebrow-emerald">01 / Practice. Learn. Share.</span>
           <h2>
             CTF practice.<br />
@@ -267,10 +249,9 @@ export default function Landing() {
           </Link>
         </div>
         <div className="feature-rows">
-          {features.map(({ number, title, text, to, accent, tag }, index) => (
+          {features.map(({ number, title, text, to, accent, tag }) => (
             <Link
-              data-reveal
-              style={{ '--reveal-delay': `${index * 60}ms`, '--feature-accent': accent } as CSSProperties}
+              style={{ '--feature-accent': accent } as CSSProperties}
               to={to}
               key={number}
               className="feature-row-item"
@@ -288,7 +269,7 @@ export default function Landing() {
       </section>
 
       {/* Section 02: Challenge Library */}
-      <section className="library-section" data-reveal>
+      <section className="library-section">
         <div>
           <span className="eyebrow eyebrow-cyan">02 / Challenge library</span>
           <h2>
@@ -344,7 +325,7 @@ export default function Landing() {
       </section>
 
       {/* Section 03: Community Invitation (Hall of Fame removed) */}
-      <section className="community-invitation" data-reveal>
+      <section className="community-invitation">
         <span className="eyebrow eyebrow-gold">03 / Join Fsociety PK</span>
         <h2>
           Start with<br />
@@ -385,6 +366,7 @@ export default function Landing() {
             <div className="footer-col">
               <h3 className="footer-col-title">Platform</h3>
               <ul className="footer-col-links">
+                <li><a href={TEAM_ABOUT_URL}>About the team</a></li>
                 <li><Link to="/challenges">Challenges</Link></li>
                 <li><Link to="/writeups">Writeups</Link></li>
                 <li><Link to="/resources">Resources</Link></li>

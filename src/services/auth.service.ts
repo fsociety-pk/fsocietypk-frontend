@@ -50,8 +50,8 @@ export const authService = {
     return response.data;
   },
 
-  getMe: async (): Promise<GetMeResponse> => {
-    const response = await api.get<GetMeResponse>('/auth/me');
+  getMe: async (signal?: AbortSignal): Promise<GetMeResponse> => {
+    const response = await api.get<GetMeResponse>('/auth/me', { signal });
     return response.data;
   },
 };

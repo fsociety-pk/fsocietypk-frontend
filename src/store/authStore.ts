@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist, devtools } from 'zustand/middleware'
+import { devtools } from 'zustand/middleware'
 import type { IUser } from '../types'
 
 interface AuthState {
@@ -14,25 +14,19 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   devtools(
-    persist(
-      (set) => ({
-        user: null,
-        isAuthenticated: false,
-        isLoading: true,
+    (set) => ({
+      user: null,
+      isAuthenticated: false,
+      isLoading: true,
 
-        setUser: (user) =>
-          set({ user, isAuthenticated: !!user, isLoading: false }),
+      setUser: (user) =>
+        set({ user, isAuthenticated: !!user, isLoading: false }),
 
-        setLoading: (isLoading) => set({ isLoading }),
+      setLoading: (isLoading) => set({ isLoading }),
 
-        logout: () =>
-          set({ user: null, isAuthenticated: false, isLoading: false }),
-      }),
-      {
-        name: 'fsocietypk-auth',
-        partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
-      },
-    ),
+      logout: () =>
+        set({ user: null, isAuthenticated: false, isLoading: false }),
+    }),
     { name: 'AuthStore' },
   ),
 )

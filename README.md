@@ -36,6 +36,13 @@ Serve the generated `dist` directory with SPA fallback to `index.html`. The Verc
 
 The original organization logo and community links are preserved.
 
+## Team subdomain
+
+The standalone team page previews at `/about.html` and is prepared for
+`about.fsocietypk.tech`. Administrators manage team details, members, social links
+and CTF certificates at `/admin/team`. Certificate files live in R2; metadata
+lives in MongoDB. See [team management and domain setup](docs/TEAM_SITE.md).
+
 ## Documentation
 
 - [Design system and current visual direction](docs/DESIGN.md)

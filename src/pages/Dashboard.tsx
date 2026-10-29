@@ -1,13 +1,18 @@
 import LiveSolveFeed from '../components/common/LiveSolveFeed';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, Flag, BookOpen, Send, Trophy, Zap, Target, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Flag, BookOpen, Send, Trophy, Zap, Target, Sparkles, Users } from 'lucide-react';
+import { TEAM_ABOUT_URL } from '../data/team';
 import Landing from './Landing';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../store/authStore';
 import { userService } from '../services/userService';
 import CyberLoader from '../components/common/CyberLoader';
 import PageState from '../components/common/PageState';
+import { useRef } from 'react';
+import { useScrollTextReveal } from '../hooks/useScrollTextReveal';
 function PersonalDashboard() {
+  const root = useRef<HTMLDivElement>(null);
+  useScrollTextReveal(root, '.dashboard-welcome :is(h1, h2, p), .section-title h2, .action-card :is(h3, p)');
   const user = useAuthStore((state) => state.user);
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["profile"],
@@ -15,7 +20,7 @@ function PersonalDashboard() {
     select: (r) => r.data,
   });
   return (
-    <div className="page-wrap">
+    <div className="page-wrap" ref={root}>
       <section className="dashboard-welcome">
         <div>
           <h1>
@@ -31,6 +36,9 @@ function PersonalDashboard() {
           </Link>
         </div>
         <div className="welcome-note"><BookOpen size={25}/><h2>A little help for<br />your next breakthrough.</h2><p>Community guides and useful tools, all in one place.</p><Link to="/resources">Explore resources <ArrowRight size={16} /></Link></div>
+      </section>
+      <section className="team-dashboard-link" aria-labelledby="dashboard-team-heading">
+        <Users size={24} aria-hidden="true" /><div><h2 id="dashboard-team-heading">Meet Fsociety PK</h2><p>The people, CTFs, and community behind the platform.</p></div><a href={TEAM_ABOUT_URL}>About the team <ArrowUpRight size={16} /></a>
       </section>
       {isLoading ? (
         <CyberLoader title="Loading your progress" description="Gathering your solves, points, and next steps." />

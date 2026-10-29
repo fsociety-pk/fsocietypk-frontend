@@ -9,6 +9,8 @@ import "./styles/design-refresh.css";
 import './styles/product-polish.css';
 import './styles/community.css';
 import './styles/visual-system.css';
+import './styles/scroll-text-reveal.css';
+import './styles/team-link.css';
 import { applyTheme } from './hooks/useTheme';
 
 applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');

@@ -13,5 +13,6 @@ export const adminNavigation: { to: string; label: string; description: string; 
   { to: '/admin/system', label: 'Backend status', description: 'Monitor your EC2 backend and email delivery', icon: Activity, group: 'Workspace', permission: 'system' },
   { to: '/admin/notifications', label: 'Notifications', description: 'Review alerts about platform activity', icon: Bell, group: 'Workspace' },
   { to: '/admin/profile', label: 'Admin profile', description: 'Manage the profile shown to your community', icon: ContactRound, group: 'Workspace', permission: 'profile' },
+  { to: '/admin/team', label: 'About team manager', description: 'Manage team details, members, and CTF certificates', icon: Users, group: 'Workspace', permission: 'team' },
   { to: '/admin/security', label: 'Account security', description: 'Update your password and manage your session', icon: ShieldCheck, group: 'Workspace' },
 ];
