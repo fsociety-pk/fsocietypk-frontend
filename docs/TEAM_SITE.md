@@ -129,6 +129,12 @@ It plays once on entry, keeps link destinations unchanged and immediately shows
 the complete badge for keyboard focus or reduced-motion preferences. SVG brand
 marks support the social kinds already available in the manager.
 
+CTF records also accept scoreboard screenshots. Event dates preserve their
+known precision: YYYY, YYYY-MM, YYYY-MM-DD, or blank for undated records. Unknown
+dates are not added to the year filter. The reviewed nine-image import manifest
+and operator script live in the backend repository; see its
+`docs/TEAM_CTF_IMPORT.md`. Image bytes remain in R2, never in the frontend bundle.
+
 ## Verification
 
 Backend: build, then run `node tests/team.cjs`, `node tests/admin-access.cjs`

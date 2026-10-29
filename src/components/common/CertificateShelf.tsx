@@ -10,7 +10,12 @@ const EASE = 'cubic-bezier(.2,.8,.2,1)';
 const SHEET_EASE = 'cubic-bezier(.76,0,.18,1)';
 const inks = ['#244d40', '#344b69', '#875442', '#575b3d', '#674151', '#3d6261'];
 const inkBlots = [[.3, .37, 0], [.7, .67, 120], [.5, .13, 220], [.18, .84, 300], [.8, .28, 360], [.52, .96, 420], [.46, .52, 180]];
-const dateLabel = (date: string) => new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`));
+const dateLabel = (date: string) => {
+  if (!date) return 'Undated';
+  if (date.length === 4) return date;
+  const full = date.length === 7 ? `${date}-01` : date;
+  return new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${full}T00:00:00Z`));
+};
 const clipFor = (rect: DOMRect) => `inset(${Math.max(0, rect.top)}px ${Math.max(0, innerWidth - rect.right)}px ${Math.max(0, innerHeight - rect.bottom)}px ${Math.max(0, rect.left)}px round 3px)`;
 
 function CertificateCover({ certificate, load }: { certificate: PublicTeamCertificate; load: boolean }) {
@@ -20,7 +25,7 @@ function CertificateCover({ certificate, load }: { certificate: PublicTeamCertif
     <span className="certificate-cover-label">Fsociety PK / CTF archive</span>
     <strong className="certificate-cover-title">{certificate.title}</strong>
     <span className="certificate-cover-document">{image && load && !failed ? <img src={teamService.fileUrl(certificate.id)} alt="" draggable={false} onError={() => setFailed(true)} /> : <FileBadge size={42} strokeWidth={1.2} />}</span>
-    <span className="certificate-cover-bottom"><span>{certificate.eventDate.slice(0, 4)}</span><span>{certificate.placement || (image ? 'Certificate' : 'PDF certificate')}</span></span>
+    <span className="certificate-cover-bottom"><span>{certificate.eventDate.slice(0, 4) || 'Undated'}</span><span>{certificate.placement || (image ? 'CTF record' : 'PDF certificate')}</span></span>
   </>;
 }
 
@@ -121,7 +126,7 @@ export default function CertificateShelf({ certificates }: { certificates: Publi
           const virtual = copy * certificates.length + index;
           const accessibleCopy = certificates.length > 1 ? 1 : 0;
           return <button type="button" className="certificate-tape" key={`${copy}-${certificate.id}`} data-copy={copy} data-virtual={virtual} data-certificate-id={certificate.id} tabIndex={-1} aria-hidden={copy !== accessibleCopy} aria-label={`Select ${certificate.title} certificate`} aria-pressed={index === active.index} onClick={() => controller.current?.choose(virtual)} style={{ '--book-ink': inks[index % inks.length] } as CSSProperties}>
-            <span className="certificate-book-spine"><span className="certificate-spine-year">{certificate.eventDate.slice(0, 4)}</span><strong>{certificate.title}</strong><span className="certificate-spine-stamp">Fsociety<span>PK</span></span></span>
+            <span className="certificate-book-spine"><span className="certificate-spine-year">{certificate.eventDate.slice(0, 4) || 'Undated'}</span><strong>{certificate.title}</strong><span className="certificate-spine-stamp">Fsociety<span>PK</span></span></span>
             <span className="certificate-book-cover"><CertificateCover certificate={certificate} load={distance <= 1} /></span>
           </button>;
         }))}
@@ -139,7 +144,7 @@ export default function CertificateShelf({ certificates }: { certificates: Publi
     {createPortal(<dialog className="certificate-detail" ref={dialog} aria-labelledby="certificate-detail-title" aria-describedby="certificate-detail-description" onCancel={event => { event.preventDefault(); closeDetail(); }} onClose={() => setSelected(null)}>
       <header className="certificate-detail-header"><button type="button" className="certificate-detail-close" onClick={closeDetail}><X size={17} />Close</button><span>Fsociety PK / CTF archive</span></header>
       {selected && <div className="certificate-detail-layout">
-        <div className="certificate-detail-copy"><div className="certificate-line-mask"><span data-detail-line className="certificate-detail-date">{dateLabel(selected.eventDate)}</span></div><h2 className="certificate-line-mask" id="certificate-detail-title"><span data-detail-line>{selected.title}</span></h2><div className="certificate-line-mask"><p data-detail-line className="certificate-detail-placement">{selected.placement || 'Certificate of participation'}</p></div><div className="certificate-line-mask"><p data-detail-line id="certificate-detail-description">{selected.description || 'Explore the certificate from this Fsociety PK CTF.'}</p></div><div className="certificate-line-mask"><div data-detail-line className="certificate-detail-actions"><a href={teamService.fileUrl(selected.id)} target="_blank" rel="noopener noreferrer">Open original {selected.certificate.contentType === 'application/pdf' ? 'PDF' : 'certificate'} <ArrowUpRight size={16} /></a>{selected.eventUrl && <a href={selected.eventUrl} target="_blank" rel="noopener noreferrer">Event / scoreboard <ArrowUpRight size={16} /></a>}<a href={teamService.fileUrl(selected.id, false, true)} target="_blank" rel="noopener noreferrer">Download certificate <ArrowUpRight size={16} /></a></div></div></div>
+        <div className="certificate-detail-copy"><div className="certificate-line-mask"><span data-detail-line className="certificate-detail-date">{dateLabel(selected.eventDate)}</span></div><h2 className="certificate-line-mask" id="certificate-detail-title"><span data-detail-line>{selected.title}</span></h2><div className="certificate-line-mask"><p data-detail-line className="certificate-detail-placement">{selected.placement || 'Competition record'}</p></div><div className="certificate-line-mask"><p data-detail-line id="certificate-detail-description">{selected.description || 'Explore this record from the Fsociety PK CTF archive.'}</p></div><div className="certificate-line-mask"><div data-detail-line className="certificate-detail-actions"><a href={teamService.fileUrl(selected.id)} target="_blank" rel="noopener noreferrer">Open original {selected.certificate.contentType === 'application/pdf' ? 'PDF' : 'certificate'} <ArrowUpRight size={16} /></a>{selected.eventUrl && <a href={selected.eventUrl} target="_blank" rel="noopener noreferrer">Event / scoreboard <ArrowUpRight size={16} /></a>}<a href={teamService.fileUrl(selected.id, false, true)} target="_blank" rel="noopener noreferrer">Download certificate <ArrowUpRight size={16} /></a></div></div></div>
         <div className="certificate-detail-artwork">{selected.certificate.contentType.startsWith('image/') && !posterFailed ? <svg ref={poster} viewBox="0 0 1000 760" role="img" aria-label={`Certificate for ${selected.title}`}>
           <defs><filter id={filterId} filterUnits="userSpaceOnUse" x="-200" y="-200" width="1400" height="1160"><feTurbulence type="fractalNoise" baseFrequency=".011" numOctaves="3" seed="7" result="noise" /><feDisplacementMap in="SourceGraphic" in2="noise" scale="90" xChannelSelector="R" yChannelSelector="G" /></filter><mask id={maskId} maskUnits="userSpaceOnUse" x="-200" y="-200" width="1400" height="1160"><g filter={reduced ? undefined : `url(#${filterId})`}>{inkBlots.map(([x, y], index) => <circle key={index} data-ink-blot cx={x * 1000} cy={y * 760} r={reduced ? 1500 : 0} fill="white" />)}</g></mask></defs>
           <image href={teamService.fileUrl(selected.id)} width="1000" height="760" preserveAspectRatio="xMidYMid meet" mask={`url(#${maskId})`} onLoad={() => setPosterReady(true)} onError={() => setPosterFailed(true)} />

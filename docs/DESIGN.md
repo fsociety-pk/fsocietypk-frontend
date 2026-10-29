@@ -172,3 +172,11 @@ host fallback must serve the team document for old platform paths. Keep static
 assets and the API proxy available. The team entry never mounts the platform
 router, cinematic intro, session check or account navigation. The dedicated
 routing regression covers this boundary with real clicked links and popup tabs.
+
+The archive supports the owner's real certificates and scoreboard screenshots.
+Retain the original image proportions and bytes. Dates display only the supplied
+precision (year, month or full date); unknown dates say “Undated”. Do not infer
+awards, event dates or final placements from a cropped scoreboard. The nine
+supplied images were reviewed in the actual 3D shelf and image detail at desktop
+and phone sizes using intercepted file responses; publishing is a separate R2
+import through the configured backend.
