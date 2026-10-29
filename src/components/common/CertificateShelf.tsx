@@ -44,6 +44,7 @@ export default function CertificateShelf({ certificates }: { certificates: Publi
   const inkFrame = useRef(0);
   const closing = useRef(false);
   const [active, setActive] = useState({ index: 0, direction: 1 });
+  const [hasPreview, setHasPreview] = useState(false);
   const [selected, setSelected] = useState<PublicTeamCertificate | null>(null);
   const [posterReady, setPosterReady] = useState(false);
   const [posterFailed, setPosterFailed] = useState(false);
@@ -54,7 +55,8 @@ export default function CertificateShelf({ certificates }: { certificates: Publi
     origin.current = rect; opener.current = document.activeElement as HTMLElement;
     closing.current = false; setPosterReady(false); setPosterFailed(false); setSelected(certificates[index]);
   }, [certificates]);
-  const controller = useCertificateShelf({ viewport, count: certificates.length, reduced, onActive, onOpen });
+  const onPreview = useCallback(() => setHasPreview(true), []);
+  const controller = useCertificateShelf({ viewport, count: certificates.length, reduced, onActive, onOpen, onPreview });
   const current = certificates[active.index] || certificates[0];
   const copies = certificates.length > 1 ? [0, 1, 2] : [0];
 
@@ -118,14 +120,14 @@ export default function CertificateShelf({ certificates }: { certificates: Publi
   }, [selected, posterReady, reduced]);
 
   return <div className="certificate-archive" data-reduced-motion={reduced}>
-    <div className="certificate-archive-toolbar"><span>Fsociety PK / Competition archive</span><label className="certificate-picker-label">Select certificate<select aria-label="Select a team certificate" value={active.index} onChange={event => controller.current?.select(Number(event.target.value))}>{certificates.map((certificate, index) => <option key={certificate.id} value={index}>{certificate.title}</option>)}</select></label></div>
+    <div className="certificate-archive-toolbar"><span>Fsociety PK / Competition archive</span><label className="certificate-picker-label">Select certificate<select aria-label="Select a team certificate" value={hasPreview ? active.index : ''} onChange={event => controller.current?.select(Number(event.target.value))}><option value="" disabled>Choose a certificate</option>{certificates.map((certificate, index) => <option key={certificate.id} value={index}>{certificate.title}</option>)}</select></label></div>
     <div ref={viewport} className="certificate-shelf-viewport" tabIndex={0} role="group" aria-roledescription="carousel" aria-label="Team CTF certificate shelf" aria-describedby="certificate-shelf-help">
       <div className="certificate-shelf-stage">
         {copies.flatMap(copy => certificates.map((certificate, index) => {
           const distance = Math.min(Math.abs(index - active.index), certificates.length - Math.abs(index - active.index));
           const virtual = copy * certificates.length + index;
           const accessibleCopy = certificates.length > 1 ? 1 : 0;
-          return <button type="button" className="certificate-tape" key={`${copy}-${certificate.id}`} data-copy={copy} data-virtual={virtual} data-certificate-id={certificate.id} tabIndex={-1} aria-hidden={copy !== accessibleCopy} aria-label={`Select ${certificate.title} certificate`} aria-pressed={index === active.index} onClick={() => controller.current?.choose(virtual)} style={{ '--book-ink': inks[index % inks.length] } as CSSProperties}>
+          return <button type="button" className="certificate-tape" key={`${copy}-${certificate.id}`} data-copy={copy} data-virtual={virtual} data-certificate-id={certificate.id} tabIndex={-1} aria-hidden={copy !== accessibleCopy} aria-label={`Select ${certificate.title} certificate`} aria-pressed={hasPreview && index === active.index} onClick={() => controller.current?.choose(virtual)} style={{ '--book-ink': inks[index % inks.length] } as CSSProperties}>
             <span className="certificate-book-spine"><span className="certificate-spine-year">{certificate.eventDate.slice(0, 4) || 'Undated'}</span><strong>{certificate.title}</strong><span className="certificate-spine-stamp">Fsociety<span>PK</span></span></span>
             <span className="certificate-book-cover"><CertificateCover certificate={certificate} load={distance <= 1} /></span>
           </button>;
@@ -136,10 +138,10 @@ export default function CertificateShelf({ certificates }: { certificates: Publi
       <span className="certificate-shelf-cursor" aria-hidden="true"><span className="certificate-cursor-ring" /><span className="certificate-cursor-dot" /><span className="certificate-cursor-label">Open</span></span>
     </div>
     <div className="certificate-archive-caption-row"><button className="certificate-shelf-arrow" aria-label="Previous certificate" disabled={certificates.length < 2} onClick={() => controller.current?.step(-1)}><ArrowLeft size={22} /></button>
-      <div className="certificate-archive-caption" ref={caption} aria-live="polite" aria-atomic="true"><div className="certificate-caption-mask"><h3 data-caption-line>{current.title}</h3></div><div className="certificate-caption-mask"><p data-caption-line>{dateLabel(current.eventDate)}{current.placement && ` / ${current.placement}`}</p></div><span className="certificate-archive-count">{String(active.index + 1).padStart(2, '0')} / {String(certificates.length).padStart(2, '0')}</span></div>
+      <div className="certificate-archive-caption" ref={caption} aria-live="polite" aria-atomic="true"><div className="certificate-caption-mask"><h3 data-caption-line>{hasPreview ? current.title : 'Choose a book'}</h3></div><div className="certificate-caption-mask"><p data-caption-line>{hasPreview ? `${dateLabel(current.eventDate)}${current.placement ? ` / ${current.placement}` : ''}` : 'Select a spine to preview a certificate.'}</p></div><span className="certificate-archive-count">{hasPreview ? `${String(active.index + 1).padStart(2, '0')} / ${String(certificates.length).padStart(2, '0')}` : `${certificates.length} ${certificates.length === 1 ? 'certificate' : 'certificates'}`}</span></div>
       <button className="certificate-shelf-arrow" aria-label="Next certificate" disabled={certificates.length < 2} onClick={() => controller.current?.step(1)}><ArrowRight size={22} /></button>
     </div>
-    <div className="certificate-archive-bottom"><p id="certificate-shelf-help">Drag to browse · Arrow keys · Shift + scroll</p><button className="certificate-open-button" onClick={() => controller.current?.open()}>Open certificate <ArrowUpRight size={16} /></button></div>
+    <div className="certificate-archive-bottom"><p id="certificate-shelf-help">Drag to browse · Arrow keys · Shift + scroll</p><button className="certificate-open-button" onClick={() => controller.current?.open()}>{hasPreview ? 'Open certificate' : 'Preview first certificate'} <ArrowUpRight size={16} /></button></div>
 
     {createPortal(<dialog className="certificate-detail" ref={dialog} aria-labelledby="certificate-detail-title" aria-describedby="certificate-detail-description" onCancel={event => { event.preventDefault(); closeDetail(); }} onClose={() => setSelected(null)}>
       <header className="certificate-detail-header"><button type="button" className="certificate-detail-close" onClick={closeDetail}><X size={17} />Close</button><span>Fsociety PK / CTF archive</span></header>

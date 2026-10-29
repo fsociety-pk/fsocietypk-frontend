@@ -180,3 +180,10 @@ awards, event dates or final placements from a cropped scoreboard. The nine
 supplied images were reviewed in the actual 3D shelf and image detail at desktop
 and phone sizes using intercepted file responses; publishing is a separate R2
 import through the configured backend.
+
+The shelf starts with every book closed and asks visitors to choose a spine.
+The first selection previews a cover; a second cover click opens its detail.
+Only one cover face is visible at a time. Switching books closes the previous
+cover before opening the next, including during rapid input. Hidden side faces
+must not peek between spines. Reduced motion keeps the same selection behavior
+with immediate turns; a single-book shelf also starts closed.

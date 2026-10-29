@@ -135,6 +135,12 @@ dates are not added to the year filter. The reviewed nine-image import manifest
 and operator script live in the backend repository; see its
 `docs/TEAM_CTF_IMPORT.md`. Image bytes remain in R2, never in the frontend bundle.
 
+Every shelf begins with closed spines. Select a book to preview its cover, then
+click the cover or Open certificate for the full image. Switching selections
+closes the previous book before opening the next; at most one cover is visible.
+The initial Preview first certificate action and keyboard Enter can also select
+the first book. Refreshing or changing the archive filter resets the closed shelf.
+
 ## Verification
 
 Backend: build, then run `node tests/team.cjs`, `node tests/admin-access.cjs`

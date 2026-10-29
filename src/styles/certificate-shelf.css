@@ -27,6 +27,8 @@
 .certificate-book-spine::after, .certificate-book-cover::after { content: ''; position: absolute; inset: 0; background: #000; pointer-events: none; }
 .certificate-book-spine::after { opacity: var(--spine-shade, 0); }
 .certificate-book-cover::after { opacity: var(--cover-shade, .5); }
+.certificate-book-cover { visibility: hidden; }
+.certificate-shelf-viewport:not([data-preview-state='open']) .certificate-cover-open-ring { visibility: hidden; }
 .certificate-book-spine { left: 0; width: var(--book-spine, 52px); padding: 16px 8px 14px; align-items: center; gap: 12px; transform: translateZ(calc(var(--book-depth, 160px) / 2)); background: var(--book-ink); box-shadow: inset 2px 0 rgb(255 255 255 / .18), inset -2px 0 rgb(0 0 0 / .24); }
 .certificate-spine-year { font-size: clamp(9px, .9vw, 12px); letter-spacing: .06em; line-height: 1; border: 1px solid currentColor; padding: 4px 3px; }
 .certificate-book-spine > strong { writing-mode: vertical-rl; transform: rotate(180deg); max-height: calc(var(--book-height-px, 300px) - 125px); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-family: var(--font-display); font-size: clamp(19px, 2.1vw, 27px); font-weight: 400; line-height: 1.15; letter-spacing: .02em; margin-block: auto; }

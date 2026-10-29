@@ -65,6 +65,7 @@ async page => {
   const afterAbout = await state({});
   assert(afterAbout.requests.filter(r => r.pathname.endsWith('/auth/me')).length === beforeAbout.requests.filter(r => r.pathname.endsWith('/auth/me')).length, 'Standalone about page makes no authentication request');
   await page.locator('#ctfs').scrollIntoViewIfNeeded();
+  await page.getByRole('button', { name: 'Preview first certificate', exact: true }).click();
   assert(await page.locator('.certificate-book-cover img').first().evaluate(el => el.complete && el.naturalWidth > 0), 'Image certificates appear on the 3D book covers');
   await page.getByRole('button', { name: 'Next certificate', exact: true }).click();
   await page.getByRole('heading', { name: 'Fixture CTF Summer', exact: true }).waitFor();
@@ -77,7 +78,7 @@ async page => {
   await page.screenshot({ path: '/tmp/team-public-desktop.png', fullPage: true });
   await page.getByRole('button', { name: 'Show certificates from 2025', exact: true }).click();
   await page.waitForFunction(() => document.querySelectorAll('.certificate-tape').length === 1);
-  assert(await page.locator('.certificate-archive-caption').getByRole('heading', { name: 'Fixture CTF Summer', exact: true }).isVisible(), 'Competition year filter selects the right certificates');
+  assert(await page.getByRole('combobox', { name: 'Select a team certificate' }).locator('option').filter({ hasText: 'Fixture CTF Summer' }).count() === 1, 'Competition year filter includes the right certificate');
   await page.getByRole('button', { name: 'Show all certificates', exact: true }).click();
   await page.waitForFunction(() => document.querySelectorAll('.certificate-tape[data-copy="1"]').length === 2);
   for (const width of [320, 768, 1440]) { await page.setViewportSize({ width, height: 900 }); await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))); assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Team page fits ${width}px viewport`); }
@@ -91,6 +92,8 @@ async page => {
   await page.reload();
   await page.locator('.certificate-archive').waitFor();
   await page.locator('.certificate-shelf-viewport').scrollIntoViewIfNeeded();
+  await page.getByRole('button', { name: 'Preview first certificate', exact: true }).click();
+  await page.waitForFunction(() => document.querySelector('.certificate-shelf-viewport')?.dataset.settled === 'true' && document.querySelector('.certificate-shelf-viewport')?.dataset.previewState === 'open');
   await page.getByRole('button', { name: 'Next certificate', exact: true }).click();
   const samples = await page.locator('.certificate-tape[data-copy="1"]').last().evaluate(async el => { const values = []; for (let i = 0; i < 24; i++) { await new Promise(requestAnimationFrame); values.push(el.style.transform); } return values; });
   assert(new Set(samples).size > 4, 'Certificate books physically turn in 3D while browsing');
@@ -111,6 +114,7 @@ async page => {
   assert(await record.getByText('Published', { exact: true }).isVisible(), 'Editing can replace the file, update metadata and publish');
   assert((await record.innerText()).includes('replacement.pdf'), 'Replacement filename appears in the admin list');
   await page.goto('https://about.fsocietypk.tech/');
+  await page.getByRole('combobox', { name: 'Select a team certificate' }).selectOption({ label: 'Published browser fixture' });
   await page.getByRole('heading', { name: 'Published browser fixture', exact: true }).waitFor();
   assert(await page.locator('.certificate-tape[data-copy="1"]').count() === 3, 'Published upload appears on the team page');
   await page.goto('http://fsociety.test/admin/team');
