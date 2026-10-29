@@ -135,12 +135,6 @@ dates are not added to the year filter. The reviewed nine-image import manifest
 and operator script live in the backend repository; see its
 `docs/TEAM_CTF_IMPORT.md`. Image bytes remain in R2, never in the frontend bundle.
 
-Public certificate file URLs use the team's own `/api/v1/team/certificates/:id/file`
-path. A dedicated Vercel rule forwards only that published-file route to the
-HTTPS API before the general API proxy. This prevents the API's default
-same-origin resource policy on redirects from blocking images on the team
-subdomain. Private admin files continue to use the authenticated API host.
-
 ## Verification
 
 Backend: build, then run `node tests/team.cjs`, `node tests/admin-access.cjs`
@@ -167,7 +161,7 @@ after preparing fixtures to verify the subdomain routing regression. It reads
 the actual vercel.json routes and models their ordered filesystem lookup against
 the production build, including root/index priority, assets and API destinations.
 It clicks real dashboard/public links and intercepts popup requests at browser
-context level. The 28 checks cover new tabs, refreshes, legacy platform paths,
+context level. The 27 checks cover new tabs, refreshes, legacy platform paths,
 CTF/member/social sections, no platform intro or auth calls, and mobile layouts.
 This fixture does not substitute for a live Vercel deployment check.
 

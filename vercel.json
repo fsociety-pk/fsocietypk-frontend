@@ -7,10 +7,6 @@
       "dest": "/about.html"
     },
     {
-      "src": "/api/v1/team/certificates/([a-fA-F0-9]{24})/file",
-      "dest": "https://api.fsocietypk.tech/api/v1/team/certificates/$1/file"
-    },
-    {
       "src": "/api/v1(?:/(.*))?",
       "dest": "http://16.171.55.64:5000/api/v1/$1"
     },

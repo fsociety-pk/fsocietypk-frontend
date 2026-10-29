@@ -1,6 +1,6 @@
 import axios from 'axios';
 import apiClient from './apiClient';
-import { API_BASE_URL, API_PREFIX } from './apiConfig';
+import { API_BASE_URL } from './apiConfig';
 import type { TeamProfileData } from '../data/team';
 
 export interface TeamCertificateInput {
@@ -21,9 +21,7 @@ const publicApi = axios.create({ baseURL: API_BASE_URL, timeout: 15000, withCred
 export const teamService = {
   getProfile: async (): Promise<TeamProfileData> => (await publicApi.get('/team')).data.data,
   listCertificates: async (page = 1, year = ''): Promise<TeamCertificatePage> => (await publicApi.get('/team/certificates', { params: { page, ...(year && { year }) } })).data.data,
-  // Public images use the site's media proxy, so redirect security headers apply
-  // to the team site's own origin. Admin files retain API-host authentication.
-  fileUrl: (id: string, admin = false, download = false) => `${admin ? API_BASE_URL : API_PREFIX}/${admin ? 'admin/team' : 'team'}/certificates/${encodeURIComponent(id)}/file${download ? '?download=1' : ''}`,
+  fileUrl: (id: string, admin = false, download = false) => `${API_BASE_URL}/${admin ? 'admin/team' : 'team'}/certificates/${encodeURIComponent(id)}/file${download ? '?download=1' : ''}`,
   getAdminProfile: async (): Promise<AdminTeamProfile> => (await apiClient.get('/admin/team')).data.data,
   saveProfile: async (profile: AdminTeamProfile): Promise<AdminTeamProfile> => (await apiClient.put('/admin/team', profile)).data.data,
   listAdminCertificates: async (page = 1, status = 'all'): Promise<TeamCertificatePage<TeamCertificate>> => (await apiClient.get('/admin/team/certificates', { params: { page, status } })).data.data,
