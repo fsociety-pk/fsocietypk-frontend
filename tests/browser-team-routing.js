@@ -34,6 +34,7 @@ async page => {
   const asset = Object.keys(files).find(file => file.startsWith('/assets/') && file.endsWith('.js'));
   assert(resolve(new URL(about + asset)) === files[asset], 'Team JavaScript assets retain filesystem routing');
   assert(resolve(new URL(about + '/api/v1/team')) === 'http://16.171.55.64:5000/api/v1/team', 'Team API proxy retains its backend destination');
+  assert(resolve(new URL(about + '/api/v1/team/certificates/507f1f77bcf86cd799439011/file')) === 'https://api.fsocietypk.tech/api/v1/team/certificates/507f1f77bcf86cd799439011/file', 'Published image proxy uses the reachable HTTPS API before the general API rule');
   assert(resolve(new URL(platform + '/api/v1/admin/team')) === 'http://16.171.55.64:5000/api/v1/admin/team', 'Admin API proxy retains its backend destination');
 
   const user = { _id: '507f1f77bcf86cd799439011', username: 'routing_fixture', role: 'user', score: 0, rank: 1, solvedChallenges: [], solveHistory: [], proficiencyIndex: [] };
