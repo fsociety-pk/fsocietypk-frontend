@@ -209,3 +209,14 @@ Load the generated browser fixture through the connected browser, then run:
 
 The redesign suite saves reviewed screenshots under `/tmp/redesign-*.png`.
 Build normally after testing to restore the deployment's configured API origin.
+
+## Team subdomain routing regression
+
+After a normal production build and `node tests/prepare-browser.cjs`, run the
+generated `.playwright-mcp/browser-team-routing.js` directly with connected
+Playwright. It loads the actual ordered Vercel configuration against build files
+and models filesystem index selection. Context interception covers new popup
+tabs, so a real dashboard/public link click must show the standalone team site
+and preserve the original tab. Includes root/index priority, refresh/deep paths,
+asset/API routing, no platform intro/auth, and 320/390px layouts. APIs are mocked;
+verify the deployed hostname separately after pushing.

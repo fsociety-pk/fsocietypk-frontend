@@ -47,7 +47,7 @@ export default function MainLayout() {
           </span>
           <span className="flex flex-wrap gap-x-5 gap-y-2">
             <Link to="/resources">Learn</Link>
-            <a href={TEAM_ABOUT_URL}>About the team</a>
+            <a href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer">About the team</a>
             {authenticated && <Link to="/support">Support</Link>}
             {authenticated && <Link to="/about-admin">About the admin</Link>}
             <Link to="/submit-challenge">Contribute</Link>

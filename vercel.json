@@ -1,17 +1,24 @@
 {
-  "rewrites": [
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "routes": [
     {
-      "source": "/",
+      "src": "/(?:index\\.html)?",
       "has": [{ "type": "host", "value": "about.fsocietypk.tech" }],
-      "destination": "/about.html"
+      "dest": "/about.html"
     },
     {
-      "source": "/api/v1/:path*",
-      "destination": "http://16.171.55.64:5000/api/v1/:path*"
+      "src": "/api/v1(?:/(.*))?",
+      "dest": "http://16.171.55.64:5000/api/v1/$1"
+    },
+    { "handle": "filesystem" },
+    {
+      "src": "/.*",
+      "has": [{ "type": "host", "value": "about.fsocietypk.tech" }],
+      "dest": "/about.html"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/.*",
+      "dest": "/index.html"
     }
   ]
 }

@@ -165,3 +165,10 @@ phone dark and intermediate animation frames were reviewed. Social checks cover
 320/390/768/1280px layouts, links, focus, live reduced motion, resize during entry
 and hover. These checks do not establish a production deployment or real R2
 uploads. See [team site setup](TEAM_SITE.md) for deployment configuration.
+
+Subdomain routing correction: every platform link to the team opens a new tab.
+Vercel must select the team root/index before its filesystem phase, and its team
+host fallback must serve the team document for old platform paths. Keep static
+assets and the API proxy available. The team entry never mounts the platform
+router, cinematic intro, session check or account navigation. The dedicated
+routing regression covers this boundary with real clicked links and popup tabs.

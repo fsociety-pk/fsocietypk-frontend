@@ -366,7 +366,7 @@ export default function Landing() {
             <div className="footer-col">
               <h3 className="footer-col-title">Platform</h3>
               <ul className="footer-col-links">
-                <li><a href={TEAM_ABOUT_URL}>About the team</a></li>
+                <li><a href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer">About the team</a></li>
                 <li><Link to="/challenges">Challenges</Link></li>
                 <li><Link to="/writeups">Writeups</Link></li>
                 <li><Link to="/resources">Resources</Link></li>

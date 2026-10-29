@@ -105,9 +105,12 @@ existing session, origin and role controls.
 2. Add **about.fsocietypk.tech to the same frontend Vercel project's domains**.
 3. Add the exact DNS record Vercel displays for that project. Do not assume a
    fixed CNAME or IP. Wait for domain verification and HTTPS provisioning.
-4. Open https://about.fsocietypk.tech/. The host-specific root rewrite serves
-   about.html. The main hostname continues to serve the platform. Sections use
-   fragments such as #ctfs and #people.
+4. Open https://about.fsocietypk.tech/. Ordered host-specific routes serve
+   about.html before Vercel's filesystem lookup can select the platform index.
+   The same host's old platform paths, including /dashboard, also serve the team
+   document. Assets and the API proxy retain their normal destinations. The
+   main hostname continues to serve the platform. Sections use fragments such
+   as #ctfs and #people; platform links open the team root in a new tab.
 5. Add your members/certificates at /admin/team, publish a certificate and check
    its public preview/open action.
 
@@ -146,6 +149,15 @@ For the detailed shelf checks, reset the two generated fixtures and run
 tests/browser-certificate-shelf.js. It seeds only local test documents and checks
 wraparound, keyboard/drag/wheel, physical transforms, the paper/ink opening,
 modal focus/Escape, reduced motion, mobile overflow and single-certificate state.
+
+Run the generated browser-team-routing.js directly with the connected browser
+after preparing fixtures to verify the subdomain routing regression. It reads
+the actual vercel.json routes and models their ordered filesystem lookup against
+the production build, including root/index priority, assets and API destinations.
+It clicks real dashboard/public links and intercepts popup requests at browser
+context level. The 27 checks cover new tabs, refreshes, legacy platform paths,
+CTF/member/social sections, no platform intro or auth calls, and mobile layouts.
+This fixture does not substitute for a live Vercel deployment check.
 
 References: [Vite 5 multipage builds](https://v5.vite.dev/guide/build.html#multi-page-app),
 [Vercel conditional rewrites](https://vercel.com/docs/project-configuration#rewrites).

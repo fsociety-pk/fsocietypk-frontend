@@ -15,4 +15,8 @@ const output = path.resolve(__dirname, '../../.playwright-mcp/browser-fixtures.j
 fs.writeFileSync(output, code);
 const teamCode = fs.readFileSync(path.join(__dirname, 'browser-team-fixtures.js'), 'utf8').replace('/* BUILD_FILES */ {}', JSON.stringify(files));
 fs.writeFileSync(path.resolve(__dirname, '../../.playwright-mcp/browser-team-fixtures.js'), teamCode);
+const routingCode = fs.readFileSync(path.join(__dirname, 'browser-team-routing.js'), 'utf8')
+  .replace('/* BUILD_FILES */ {}', JSON.stringify(files))
+  .replace('/* VERCEL_CONFIG */ {}', fs.readFileSync(path.resolve(__dirname, '../vercel.json'), 'utf8'));
+fs.writeFileSync(path.resolve(__dirname, '../../.playwright-mcp/browser-team-routing.js'), routingCode);
 console.log(`Prepared ${output} for the connected Playwright tool. API data is mocked.`);
