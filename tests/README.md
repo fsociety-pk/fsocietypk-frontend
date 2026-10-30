@@ -1,5 +1,15 @@
 # Local regression checks
 
+## Member overview
+
+Build, run `node tests/prepare-browser.cjs`, then load the generated
+`browser-fixtures.js` and `tests/browser-overview.js` with connected Playwright.
+The suite intercepts both HTTP and WebSockets. It checks actual profile metrics,
+unfinished challenge links, personal solve history, level progress, the compact
+right-hand activity box, keyboard scrolling, live arrivals, 320–1600px layouts,
+light/dark themes, loading/empty/error states, retry and reduced motion.
+Screenshots are saved as `/tmp/overview-redesign-*.png`.
+
 ## Notifications and support
 
 After building and running `node tests/prepare-browser.cjs`, load the generated

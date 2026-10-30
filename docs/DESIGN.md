@@ -1,5 +1,40 @@
 # Fsociety PK design system
 
+## Member overview, October 30
+
+Artifact: the member's daily learning dashboard. Direction: clear, focused,
+welcoming, practical. Essence: **Progress guides practice.** Preserve the shared
+Onest typography, green identity and light/dark surfaces. This supersedes the
+oversized welcome/resource card, full-width team banner, separate stat tiles,
+and full-width community feed in the earlier overview.
+
+| Decision | Existing token / treatment |
+| --- | --- |
+| Interface type | `--font-body` (Onest), compact 12/14/16/20/24/32 scale |
+| Background, surface, text | `--page`, `--card`, `--ink`, `--muted` |
+| Actions, progress | `--brand`, `--on-brand`; no new page palette |
+| Separation | `--line` for table rows; shared `--panel-shadow` for panels |
+| Spacing, geometry | 4px rhythm, 20–24px panel padding, `--radius-panel` |
+| Motion | Shared focus/hover feedback; activity rows stay stable in all modes |
+
+The page opens with a short title and one unified, three-part progress band.
+The main column contains resumable challenges, the member's recent completions,
+and compact contribution links. The narrower right column contains level
+progress and a bounded recent-solves panel showing who solved which challenge.
+Only the activity list scrolls internally; the feed never occupies a full-width
+row or grows with its item count. The team link is a small secondary link.
+At narrower widths the columns stack with personal tasks first. Real API data
+drives metrics, progress, history and live activity. Loading, empty and failure
+states retain this layout and do not imply zero results on a failed fetch.
+
+Finish review: 9/10 against the design checklist. The daily learning task drives
+the hierarchy; shared fonts/tokens and clear controls preserve the product's
+identity. Reviewed real renders in both themes and on desktop/phone. The build,
+36 overview checks and 28 team-routing checks pass with intercepted API data.
+The signature is the compact personal summary with the community ledger confined
+to the right column. No decorative charts, new palette, or page-wide activity
+feed is added.
+
 ## Product and direction
 Fsociety PK is a cybersecurity learning community with CTF challenges, writeups, resources, member profiles, rankings, and admin tools. Preserve its content and working authentication, including email verification.
 
