@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Camera,
-  Award,
   Eye,
   EyeOff,
   ExternalLink,
@@ -12,24 +11,28 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   userService,
   ChangePasswordPayload,
   UpdateProfilePayload,
+  UserProfile,
 } from "../services/userService";
 import { useAuthStore } from "../store/authStore";
 import ProfileOverview, {
   ProfileHeader,
   SolveHistory,
 } from "../components/common/ProfileOverview";
-import CertificateModal from "../components/common/CertificateModal";
+import ChallengeBadgeCollection from "../components/common/ChallengeBadgeCollection";
+import type { ApiResponse } from "../types";
 import PageState from "../components/common/PageState";
 export default function Profile() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState("overview");
+  const [params, setParams] = useSearchParams();
+  const requestedTab = params.get("tab") || (params.has("badge") ? "badges" : "overview");
+  const tab = ["overview", "history", "badges", "edit", "settings"].includes(requestedTab) ? requestedTab : "overview";
+  const setTab = (next: string) => setParams({ tab: next });
   const [avatar, setAvatar] = useState<string | null>(null);
-  const [certificate, setCertificate] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { user, setUser, logout } = useAuthStore();
   const client = useQueryClient();
@@ -39,7 +42,7 @@ export default function Profile() {
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["profile"],
+    queryKey: ["profile", user?._id],
     queryFn: () => userService.getProfile(),
     select: (r) => r.data,
   });
@@ -60,7 +63,7 @@ export default function Profile() {
       userService.updateProfile(payload),
     onSuccess: async (response) => {
       if (response.data) {
-        client.setQueryData(["profile"], response);
+        client.setQueryData<ApiResponse<UserProfile>>(["profile", user?._id], previous => ({ ...response, data: { ...previous?.data, ...response.data } }));
         if (user) setUser({ ...user, ...response.data });
       }
       await Promise.all([client.invalidateQueries({ queryKey: ["publicProfile"] }), client.invalidateQueries({ queryKey: ["leaderboard"] })]);
@@ -149,8 +152,6 @@ export default function Profile() {
         />
       </div>
     );
-  const count = profile.solvedChallenges?.length || 0;
-  const latestCompletion = profile.solveHistory?.find(solve => solve.isCorrect);
   return (
     <div className="page-wrap">
       <div className="flex justify-between items-center">
@@ -207,7 +208,7 @@ export default function Profile() {
         {[
           ["overview", "Overview"],
           ["history", "Solve history"],
-          ["certificates", "Certificates"],
+          ["badges", "Badges"],
           ["edit", "Edit profile"],
           ["settings", "Settings"],
         ].map(([id, label]) => (
@@ -226,28 +227,8 @@ export default function Profile() {
       <div role="tabpanel" id={"panel-" + tab} aria-labelledby={"tab-" + tab}>
         {tab === "overview" && (
           <>
+            <ChallengeBadgeCollection profile={profile} limit={4} onViewAll={() => setTab("badges")} />
             <ProfileOverview profile={profile} />
-            <div className="certificate-banner">
-              <Award size={28} />
-              <div>
-                <h3>
-                  {count >= 5
-                    ? "Your certificates"
-                    : "Small steps. Real progress."}
-                </h3>
-                <p>
-                  {count >= 5
-                    ? "View and share your challenge achievement certificate."
-                    : "Complete five challenges to unlock your profile certificate."}
-                </p>
-              </div>
-              <button
-                className="btn-outline"
-                onClick={() => setTab("certificates")}
-              >
-                View certificates
-              </button>
-            </div>
           </>
         )}
         {tab === "history" && (
@@ -256,38 +237,7 @@ export default function Profile() {
             <SolveHistory profile={profile} />
           </section>
         )}
-        {tab === "certificates" && (
-          <section className="soft-panel">
-            <span className="eyebrow mb-5">Certificates</span>
-            <h2>Achievement certificates</h2>
-            <p className="text-sm text-text-muted mb-7">
-              Your profile certificate becomes available after five completed
-              challenges. Individual challenge certificates are available on
-              completed challenge pages.
-            </p>
-            {count >= 5 ? (
-              <button
-                className="btn-primary"
-                onClick={() => setCertificate(true)}
-              >
-                <Award size={17} />
-                View achievement certificate
-              </button>
-            ) : (
-              <div className="notice">
-                <strong>{count} of 5 challenges completed</strong>
-                <div className="progress-track my-3">
-                  <div
-                    style={{ width: Math.min(100, (count / 5) * 100) + "%" }}
-                  />
-                </div>
-                <Link to="/challenges" className="text-brand underline">
-                  Find your next challenge
-                </Link>
-              </div>
-            )}
-          </section>
-        )}
+        {tab === "badges" && <ChallengeBadgeCollection profile={profile} />}
         {tab === "edit" && (
           <form
             className="profile-editor soft-panel"
@@ -503,18 +453,6 @@ export default function Profile() {
           </form>
         )}
       </div>
-      <CertificateModal
-        isOpen={certificate}
-        onClose={() => setCertificate(false)}
-        data={{
-          userName: profile.username,
-          challengeName: count + " Cybersecurity Challenges",
-          completionDate: latestCompletion?.timestamp ? new Date(latestCompletion.timestamp) : null,
-          totalChallenges: count,
-          platformName: "Fsociety PK",
-          platformURL: "https://fsocietypk.tech",
-        }}
-      />
     </div>
   );
 }

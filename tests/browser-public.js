@@ -1,4 +1,4 @@
-// Run after browser-certificate.js has logged out the fixture user.
+// Run after browser-badge-export.js has logged out the fixture user.
 async (page) => {
   const checks = [];
   const assert = (value, label) => { if (!value) throw new Error(label); checks.push(label); };

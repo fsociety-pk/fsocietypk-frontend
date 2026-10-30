@@ -1,0 +1,25 @@
+.challenge-completion-overlay { position: fixed; inset: 0; z-index: 150; display: grid; place-items: center; padding: 16px; }
+.challenge-completion-backdrop { position: absolute; inset: 0; background: rgb(9 16 25 / .66); }
+.challenge-completion-dialog { position: relative; z-index: 1; width: min(100%, 480px); max-height: calc(100dvh - 32px); overflow-y: auto; background: rgb(var(--card)); color: rgb(var(--ink)); border-radius: var(--radius-panel); box-shadow: var(--shadow-raised); padding: 28px; text-align: center; outline: none; }
+.completion-close { position: absolute; right: 12px; top: 12px; }
+.completion-art { display: grid; place-items: center; height: 208px; margin: 12px 0 20px; }
+.completion-check { display: grid; place-items: center; width: 104px; height: 104px; border-radius: 50%; background: rgb(var(--brand) / .1); color: rgb(var(--brand)); animation: completion-reveal 400ms var(--ease-out) both; }
+.completion-check svg { stroke-dasharray: 70; stroke-dashoffset: 70; animation: completion-check 600ms 100ms ease-out forwards; }
+.completion-points { display: flex; flex-direction: column; gap: 8px; color: rgb(var(--brand)); animation: completion-reveal 400ms var(--ease-out) both; }
+.completion-points > span { font-size: 64px; line-height: 1.1; font-weight: 700; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+.completion-points > small { font-size: 13px; color: rgb(var(--muted)); }
+.completion-earned-mark { animation: completion-reveal 350ms var(--ease-out) both; }
+.completion-earned-mark .challenge-badge-mark { width: 164px; }
+.completion-message h2 { font-size: 25px; font-weight: 650; line-height: 1.3; letter-spacing: -.03em; }
+.completion-message p { font-size: 14px; line-height: 1.7; color: rgb(var(--muted)); margin-top: 12px; }
+.completion-challenge-title { font-size: 13px; font-weight: 600; overflow-wrap: anywhere; margin-top: 20px; }
+.completion-points-total { font-size: 12px; color: rgb(var(--brand)); margin-top: 8px; font-variant-numeric: tabular-nums; }
+.completion-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.completion-actions > * { flex: 1; font-size: 13px; white-space: nowrap; }
+.completion-confetti { position: absolute; inset: 0; z-index: 2; overflow: hidden; pointer-events: none; }
+.completion-confetti > span { position: absolute; top: 44%; left: 50%; width: 6px; height: 11px; border-radius: 1px; background: var(--confetti-color); opacity: 0; animation: completion-confetti 1350ms var(--confetti-delay) cubic-bezier(.12,.65,.5,1) both; }
+@keyframes completion-confetti { 0% { opacity: 0; transform: translate(-50%,-50%) rotate(0); } 8% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(calc(-50% + var(--confetti-x)),calc(-50% + var(--confetti-y))) rotate(var(--confetti-rotation)); } }
+@keyframes completion-reveal { from { opacity: 0; transform: translateY(12px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes completion-check { to { stroke-dashoffset: 0; } }
+@media (max-width: 600px) { .challenge-completion-dialog { padding: 24px 20px; }.completion-art { height: 180px; margin-bottom: 16px; }.completion-earned-mark .challenge-badge-mark { width: 144px; }.completion-message h2 { font-size: 22px; } }
+@media (prefers-reduced-motion: reduce) { .completion-confetti { display: none; }.completion-check,.completion-check svg,.completion-points,.completion-earned-mark { animation: none; }.completion-check svg { stroke-dashoffset: 0; } }

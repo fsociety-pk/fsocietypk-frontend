@@ -1,11 +1,13 @@
 import apiClient from './apiClient';
 import { ApiResponse, IUser } from '../types';
+import type { EarnedChallengeBadge } from '../utils/challengeBadges';
 
 export interface UserProfile extends IUser {
   rank: number;
   grade?: string;
   proficiencyIndex?: { category: string; solved: number; total: number }[];
   solveHistory: any[];
+  earnedBadges?: EarnedChallengeBadge[];
   challengeProgress?: {
     challengeId: { _id: string; title: string };
     completedFlags: number;

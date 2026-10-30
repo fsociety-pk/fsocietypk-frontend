@@ -1,5 +1,21 @@
 # Local regression checks
 
+## Earned challenge badges and completion celebration
+
+After building and preparing fixtures, run generated `browser-fixtures.js` then
+`tests/browser-badges.js`. It covers all ten SVG category assets, collection
+search/filter, actual owner/date/points, exports, public deep links, profile
+visibility, account-edit retention, partial/full challenge completion, the
+celebration → points → completion-message sequence, reduced motion, early close,
+focus restoration, older awards and 320–1600px layouts. Screenshots are saved to
+`/tmp/challenge-badges-*` and `/tmp/challenge-completion-*`.
+
+The backend `tests/challenge-badges.cjs` verifies server completion-derived awards,
+history beyond 20 rows, category coverage, exact points/dates, ownership,
+visibility and rejection of client-minted awards with model doubles.
+`browser-badge-export.js` replaces the old per-challenge certificate export suite.
+Team competition certificates and their shelf retain their existing tests.
+
 ## Member overview
 
 Build, run `node tests/prepare-browser.cjs`, then load the generated
@@ -70,7 +86,7 @@ feedback, and the absence of auth/admin requests. It also checks that a SQL-like
 password still goes unchanged through normal login. The updated `browser-auth.js`
 covers the prank followed by ordinary signup, email verification, and login.
 
-## Pure certificate check
+## Legacy certificate utility check (outside the member flow)
 
 ```sh
 node tests/certificate.cjs
@@ -93,7 +109,7 @@ Use `browser_run_code_unsafe` with `filename`, in this order:
 1. `<workspace>/.playwright-mcp/browser-fixtures.js`
 2. `<workspace>/fsocietypk-frontend/tests/browser-auth.js`
 3. `<workspace>/fsocietypk-frontend/tests/browser-workspace.js`
-4. `<workspace>/fsocietypk-frontend/tests/browser-certificate.js`
+4. `<workspace>/fsocietypk-frontend/tests/browser-badge-export.js`
 5. `<workspace>/fsocietypk-frontend/tests/browser-public.js`
 
 The fixture setup serves built files through Playwright route fulfillment at the
@@ -102,11 +118,11 @@ data lives only in the test process. Restart setup to reset the fixture.
 Run in a fresh browser tab/context or clear that origin's local/session storage
 if a previous test stopped with a pending registration.
 
-Screenshots, the downloaded PNG and a PDF produced from the actual print iframe
-are saved under `.playwright-mcp/continuation-*`. The test replaces `window.print`
-only to detect invocation without an OS print dialog; it renders the same HTML
-to PDF using Chromium. Check the resulting PDF with `pdfinfo` (one A4 landscape
-page) and the PNG with an image reader (2800×1980).
+Screenshots are saved under `.playwright-mcp/continuation-*`. The badge export
+suite downloads a standalone SVG to `/tmp/continuation-badge-export.svg` and
+checks the existing account/password flow. Per-challenge print/PDF controls have
+been retired; the separate team competition certificate shelf retains its own
+coverage.
 
 ## Backend checks
 
@@ -183,7 +199,7 @@ These use actual middleware/controllers and stub database/provider methods; SMTP
 transport in email checks is fake. The system check reads local host metrics and
 stubs MongoDB availability. Operational setup is documented in `ADMIN_PORTAL.md`.
 
-## Community publication, live solves and compact certificates
+## Community publication, live solves and earned badges
 
 After building and running `node tests/prepare-browser.cjs`, run the generated
 `browser-fixtures.js`, then `tests/browser-community.js` with connected Playwright.
@@ -191,7 +207,7 @@ This uses intercepted build files, mocked HTTP APIs, and a simulated Socket.IO
 handshake. It verifies approval events publishing attributed guides, separate own
 submissions, challenge writeup links/counts, live solve broadcasts and the 30-second
 refresh fallback, light/dark cards, animated rankings, reduced motion, compact
-certificate controls through 320×568, PNG export, focus restoration, and explicit
+badge controls through 320×568, SVG export, focus restoration, and explicit
 staff flag reveal/hide. No production API or WebSocket connection is used.
 Screenshots are saved under `<workspace>/.playwright-mcp/community-*`.
 

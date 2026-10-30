@@ -87,7 +87,7 @@ async (page) => {
   check(await page.locator('input[placeholder="fsociety{your_flag_here}"]').count() === 5, 'All five flag stages render');
   const inputs = page.locator('input[placeholder="fsociety{your_flag_here}"]');
   check(await inputs.nth(2).isEnabled() && await inputs.nth(3).isDisabled(), 'Next stage opens and later stages stay locked');
-  check(await page.getByRole('button', { name: 'View Certificate', exact: true }).count() === 0, 'Partial challenge has no certificate');
+  check(await page.getByRole('button', { name: 'View badge', exact: true }).count() === 0, 'Partial challenge has no badge');
   await page.reload();
   await page.waitForLoadState('networkidle');
   check(await page.getByRole('progressbar', { name: 'Flags solved' }).getAttribute('aria-valuenow') === '2', 'Progress survives refresh');
@@ -106,7 +106,7 @@ async (page) => {
   }
   await page.getByRole('dialog').waitFor();
   await page.keyboard.press('Escape');
-  await page.getByRole('button', { name: 'View Certificate', exact: true }).waitFor();
+  await page.getByRole('button', { name: 'View badge', exact: true }).waitFor();
   check(await page.getByText('Challenge completed', { exact: true }).isVisible(), 'Completion unlocks solved state');
   await go('/challenges');
   check(await page.locator('.challenge-card-solved').count() === 2, 'Newly completed challenge appears solved');

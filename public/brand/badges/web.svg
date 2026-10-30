@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="280" viewBox="0 0 240 280" role="img" aria-labelledby="title desc">
+<title id="title">Web security challenge completed</title><desc id="desc">Fsociety PK earned category emblem. A nickel-edged WEB enamel badge with its category symbol and a completion check.</desc>
+<defs>
+<linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#EDE9DD"/><stop offset=".22" stop-color="#A69E8C"/><stop offset=".43" stop-color="#F3EEE0"/><stop offset=".59" stop-color="#726F64"/><stop offset=".78" stop-color="#C9C4B4"/><stop offset="1" stop-color="#888575"/></linearGradient>
+<linearGradient id="metal-face" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#F7F1DE"/><stop offset=".48" stop-color="#DFD9C5"/><stop offset="1" stop-color="#B1AB97"/></linearGradient>
+<linearGradient id="enamel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#174F8F"/><stop offset=".55" stop-color="#082C57"/><stop offset="1" stop-color="#051C36"/></linearGradient>
+<linearGradient id="edge" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#FAF7E9"/><stop offset="1" stop-color="#7F7A6C"/></linearGradient>
+</defs>
+<path d="M120 14 224 66v132l-104 62L16 198V66Z" fill="#161A1E" opacity=".2" transform="translate(0 4)"/>
+<path d="M120 12 224 64v132l-104 62L16 196V64Z" fill="url(#rim)" stroke="#393B37" stroke-width="1.5"/>
+<path d="M120 17 219 67v126l-99 59-99-59V67Z" fill="#292D2C" stroke="url(#edge)" stroke-width="1"/>
+<path d="M120 23 213 71v119l-93 56-93-56V71Z" fill="url(#rim)"/>
+<path d="M120 28 208 74v113l-88 53-88-53V74Z" fill="url(#enamel)" stroke="#111D23" stroke-width="2"/>
+<path d="M120 32 204 77v108l-84 50-84-50V77Z" fill="none" stroke="#F4E8C9" stroke-width=".8" opacity=".46"/>
+<text x="120" y="79" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700" letter-spacing="2.4" fill="#EEE8D8">WEB</text>
+<path d="M47 73h13m120 0h13" stroke="#E5DDC8" stroke-width="1.4" opacity=".85"/>
+<g transform="translate(67 90) scale(1.65)" fill="none" stroke="#131F23" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity=".55"><circle cx='32' cy='32' r='24'/><ellipse cx='32' cy='32' rx='11' ry='24'/><path d='M8 32h48M12 19h40M12 45h40'/></g>
+<g transform="translate(67 88) scale(1.65)" fill="none" stroke="url(#metal-face)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><circle cx='32' cy='32' r='24'/><ellipse cx='32' cy='32' rx='11' ry='24'/><path d='M8 32h48M12 19h40M12 45h40'/></g>
+<text x="120" y="207" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10.5" font-weight="700" letter-spacing="1.8" fill="#EDE6D3">COMPLETED</text>
+<path d="m120 219 23 13v25l-23 14-23-14v-25Z" fill="url(#rim)" stroke="#202A29" stroke-width="1.6"/>
+<path d="m120 224 18 10v20l-18 11-18-11v-20Z" fill="url(#enamel)" stroke="#D3CCB7" stroke-width=".8"/>
+<path d="m111 244 6 6 12-14" fill="none" stroke="#162527" stroke-width="4.3" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 1.5)"/>
+<path d="m111 244 6 6 12-14" fill="none" stroke="url(#metal-face)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

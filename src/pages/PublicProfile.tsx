@@ -5,6 +5,7 @@ import ProfileOverview, {
   ProfileHeader,
 } from "../components/common/ProfileOverview";
 import PageState from "../components/common/PageState";
+import ChallengeBadgeCollection from '../components/common/ChallengeBadgeCollection';
 export default function PublicProfile() {
   const { username } = useParams<{ username: string }>();
   const {
@@ -45,6 +46,7 @@ export default function PublicProfile() {
         <>
           <span className="eyebrow">Meet the community</span>
           <ProfileHeader profile={profile} />
+          <ChallengeBadgeCollection profile={profile} />
           <div className="section-title">
             <h2>Skills and recent solves</h2>
           </div>

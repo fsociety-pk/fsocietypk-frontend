@@ -2,14 +2,16 @@ import CyberLoader from '../components/common/CyberLoader';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Terminal, FileDown, HelpCircle, Trophy, Send, CheckCircle2, Loader2, Lock, Unlock, Users, Linkedin } from 'lucide-react';
+import { ArrowLeft, Terminal, FileDown, HelpCircle, Trophy, Send, CheckCircle2, Loader2, Lock, Unlock, Users } from 'lucide-react';
 import { challengeService } from '../services/challenge.service';
 import { useAuthStore } from '../store/authStore';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import FlagProgress from '../components/common/FlagProgress';
 import WriteupSubmissionModal from '../components/common/WriteupSubmissionModal';
-import CertificateModal from '../components/common/CertificateModal';
-import { CertificateData } from '../utils/certificateGenerator';
+import ChallengeBadgeDetails from '../components/common/ChallengeBadgeDetails';
+import ChallengeBadgeMark from '../components/common/ChallengeBadgeMark';
+import ChallengeCompletionCelebration from '../components/common/ChallengeCompletionCelebration';
+import type { EarnedChallengeBadge } from '../utils/challengeBadges';
 
 import { writeupService } from '../services/writeup.service';
 import { useWriteupUpdates } from '../hooks/useWriteupUpdates';
@@ -48,8 +50,9 @@ const ChallengeDetail: React.FC = () => {
   const [flagFeedback, setFlagFeedback] = useState<FlagFeedback | null>(null);
   const incorrectAttempts = useRef(0);
   const [showWriteupModal, setShowWriteupModal] = useState(false);
-  const [showCertificateModal, setShowCertificateModal] = useState(false);
-  const [certificateData, setCertificateData] = useState<CertificateData | null>(null);
+  const [showBadge, setShowBadge] = useState(false);
+  const [showCompletion, setShowCompletion] = useState(false);
+  const [awardedPoints, setAwardedPoints] = useState(0);
 
   const { data: writeups } = useQuery({
     queryKey: ['challenge-writeups', id],
@@ -71,8 +74,8 @@ const ChallengeDetail: React.FC = () => {
 
       setLoading(true);
       setChallenge(null);
-      setCertificateData(null);
-      setShowCertificateModal(false);
+      setShowBadge(false);
+      setShowCompletion(false);
       setCompletedFlagSteps([]);
       setCurrentFlagStep(1);
       setFlagValues([]);
@@ -141,6 +144,7 @@ const ChallengeDetail: React.FC = () => {
       const result = response.data;
 
       if (result.correct) {
+        toast.dismiss('incorrect-flag');
         const updatedSteps = completedFlagSteps.includes(step)
           ? completedFlagSteps
           : [...completedFlagSteps, step];
@@ -154,27 +158,18 @@ const ChallengeDetail: React.FC = () => {
         const isFinalStep = totalFlagSteps === 1 || result.completed === true || (!result.partial && step >= totalFlagSteps);
 
         if (isFinalStep) {
+          toast.remove('challenge-flag-progress');
           setFlagFeedback({
             type: 'success',
             message: `Flag ${step} verified. Challenge completed.`,
           });
           const allDone = Array.from({ length: totalFlagSteps }, (_, index) => index + 1);
           setCompletedFlagSteps(allDone);
-          setChallenge(prev => prev ? { ...prev, isSolved: true, completedAt: result.completedAt } : null);
+          setChallenge(prev => prev ? { ...prev, isSolved: true, completedAt: result.completedAt || prev.completedAt || null } : null);
 
-          // Create certificate data
-          const certData: CertificateData = {
-            userName: user?.username || 'Member',
-            challengeName: challenge?.title || 'Unknown Challenge',
-            completionDate: result.completedAt ? new Date(result.completedAt) : null,
-            totalChallenges: new Set([...(user?.solvedChallenges || []), id]).size,
-            platformName: 'FSOCIETY.PK',
-            platformURL: window.location.href,
-          };
-          setCertificateData(certData);
-
-          // Show one completion dialog; writeup submission remains user initiated.
-          setShowCertificateModal(true);
+          // One completion award, after every required flag is verified.
+          setAwardedPoints(Math.max(0, result.points ?? 0));
+          setShowCompletion(true);
         } else {
           const nextStep = result.nextSequence ?? (step + 1);
           setFlagFeedback({
@@ -183,6 +178,7 @@ const ChallengeDetail: React.FC = () => {
           });
           setCurrentFlagStep(nextStep);
           toast.success(`Correct flag. +${result.points ?? 0} points. Flag ${nextStep} is now open.`, {
+            id: 'challenge-flag-progress',
             style: { border: '1px solid rgb(var(--success))', padding: '16px', color: 'rgb(var(--success))', background: 'var(--page-color)' },
             iconTheme: { primary: 'rgb(var(--success))', secondary: 'var(--page-color)' },
           });
@@ -219,6 +215,12 @@ const ChallengeDetail: React.FC = () => {
 
   if (!challenge) return null;
 
+  const earnedBadge: EarnedChallengeBadge = {
+    id: `${user?._id || 'member'}:${challenge._id}`,
+    challengeId: challenge._id, title: challenge.title, category: challenge.category,
+    difficulty: challenge.difficulty, points: challenge.points, earnedAt: challenge.completedAt || null,
+  };
+
   return (
     <div className="page-wrap challenge-detail">
       <WriteupSubmissionModal
@@ -227,18 +229,8 @@ const ChallengeDetail: React.FC = () => {
         challengeId={id || ''}
         challengeTitle={challenge?.title || ''}
       />
-      <CertificateModal
-        data={certificateData || {
-          userName: user?.username || 'Member',
-          challengeName: challenge?.title || 'Unknown Challenge',
-          completionDate: challenge.completedAt ? new Date(challenge.completedAt) : null,
-          totalChallenges: 1,
-          platformName: 'FSOCIETY.PK',
-          platformURL: window.location.href,
-        }}
-        isOpen={showCertificateModal}
-        onClose={() => setShowCertificateModal(false)}
-      />
+      <ChallengeBadgeDetails badge={showBadge && isChallengeSolvedUI ? earnedBadge : null} username={user?.username || 'Member'} onClose={() => { setShowBadge(false); requestAnimationFrame(() => document.querySelector<HTMLButtonElement>('.challenge-earned-badge button')?.focus()); }} isPublic={user?.isProfilePublic !== false} showProfileLink />
+      <ChallengeCompletionCelebration badge={showCompletion && isChallengeSolvedUI ? earnedBadge : null} points={awardedPoints} onClose={() => { setShowCompletion(false); requestAnimationFrame(() => document.querySelector<HTMLButtonElement>('.challenge-earned-badge button')?.focus()); }} onViewBadge={() => { setShowCompletion(false); setShowBadge(true); }} />
       <div className="challenge-detail-content">
         <div className="challenge-detail-actions">
           <button onClick={() => navigate('/challenges')} className="btn-ghost challenge-back"><ArrowLeft size={16} />Back to challenges</button>
@@ -351,24 +343,7 @@ const ChallengeDetail: React.FC = () => {
                         <p className="text-xs text-brand/70">You have solved all flags in this challenge.</p>
                       </div>
                     </div>
-                    <div className="flex gap-2 pt-2">
-                      <button
-                        onClick={() => setShowCertificateModal(true)}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-brand/10 border border-brand/40 text-brand hover:bg-brand/20 rounded-lg transition-colors text-xs font-bold uppercase tracking-widest"
-                      >
-                        <Trophy className="w-4 h-4" />
-                        View Certificate
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowCertificateModal(true);
-                        }}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600/10 border border-blue-600/40 text-status-info hover:bg-blue-600/20 rounded-lg transition-colors text-xs font-bold uppercase tracking-widest"
-                      >
-                        <Linkedin className="w-4 h-4" />
-                        Share LinkedIn
-                      </button>
-                    </div>
+                    <div className="challenge-earned-badge"><ChallengeBadgeMark category={challenge.category} decorative /><div><h4>Badge earned</h4><p>This challenge’s category badge is part of your profile collection.</p><button className="btn-outline" onClick={() => setShowBadge(true)}><Trophy size={16} />View badge</button></div></div>
                   </div>
                 ) : (
                   <div className="space-y-3">

@@ -1,5 +1,23 @@
 # Fsociety PK design system
 
+## Earned challenge badges, October 30
+
+Individual challenge achievements use a category-colored nickel/enamel emblem
+with a precise custom symbol, engraved category name and completion check.
+The ten SVG assets share one physical silhouette and material treatment; they
+are generated deterministically from the category design source. Typography and
+geometry are exact vectors, with no neon glow, random illustration, or raster
+lettering. On profiles, emblems sit on quiet shared-theme surfaces with challenge
+title, category, difficulty, earned points and actual date. Category identity is
+present in both color and symbol/text. Earned badges replace user certificates;
+team competition certificate uploads remain a separate archival feature.
+
+Full completion celebrates once: brief confetti/check, increasing earned points,
+then the explicit completion and profile-badge message. Reduced motion shows the
+final state immediately. Dialogs retain close/Escape, focus handling and phone
+scrolling. Details and exports are user initiated. See `CHALLENGE_BADGES.md` for
+the concept provenance, asset generation and earned-data contract.
+
 ## Member overview, October 30
 
 Artifact: the member's daily learning dashboard. Direction: clear, focused,

@@ -48,10 +48,11 @@ async (page) => {
   assert(await page.locator('.profile-avatar img').getAttribute('src') === saved, 'Saved avatar renders after reload with mock persistence');
   const dimensions = await page.locator('.profile-avatar img').evaluate(el => ({ width: el.naturalWidth, height: el.naturalHeight }));
   assert(dimensions.width === 400 && dimensions.height === 400, 'Avatar is cropped to 400x400');
-  await page.getByRole('tab', { name: 'Certificates', exact: true }).click();
-  await page.getByRole('button', { name: 'View achievement certificate' }).click();
-  await page.getByRole('dialog', { name: 'Your achievement certificate' }).waitFor();
-  assert((await page.locator('[role="dialog"] svg[role="img"]').textContent()).includes('02 January 2025'), 'Profile certificate uses recorded completion date');
-  await page.screenshot({ path: '/home/sheriff/fsocietypk-web/.playwright-mcp/continuation-certificate.png', fullPage: true });
+  await page.getByRole('tab', { name: 'Badges', exact: true }).click();
+  await page.locator('.challenge-badge-card').first().click();
+  const badge = page.getByRole('dialog', { name: 'Challenge badge', exact: true });
+  await badge.waitFor();
+  assert((await badge.locator('.challenge-badge-facts').innerText()).includes('Jan 2025'), 'Profile badge uses the recorded completion date');
+  await page.screenshot({ path: '/home/sheriff/fsocietypk-web/.playwright-mcp/continuation-badge.png', fullPage: true });
   return { mode: 'mock API', checks, avatar: dimensions };
 }
