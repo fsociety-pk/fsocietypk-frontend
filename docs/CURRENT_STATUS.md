@@ -338,3 +338,26 @@ APIs; no production data was created. Reviewed desktop/mobile screenshots,
 intermediate 3D frames, and both themes. No horizontal overflow at
 320/390/768/1024/1440px. Copy/action contrast checks pass in both themes
 (minimum measured 6.8:1).
+
+
+## October 30 follow-up — circular ribbon and header alignment
+
+Replaced the rejected whole-title swivel with 16 independently oriented letter
+planes on one circular ribbon. Words occupy opposite arcs, make two full orbits,
+and unfurl into the original two-line heading behind the person. The 6.4-second
+sequence includes wrapping/settling and preserves its timeline during resize.
+Finished glyph animations are cancelled to release compositing layers. Reduced
+motion still shows the final title immediately.
+
+Fixed the navbar's actual alignment problem: plain links and the taller team
+badge now share 44px centered targets. A desktop grid centers the navigation
+between equal outer tracks. The existing menu takes over below 1200px, and its
+position matches the header at phone/tablet widths.
+
+Production build passed with the existing dependency warnings. 70 landing and
+28 team-routing checks passed against the built bundle with intercepted APIs.
+The revised tests check complete 720-degree glyph rotations, depth cycles,
+resize continuity, navbar center/alignment/clearance, and menu placement. Normal
+and reduced motion, keyboard/auth navigation and safe team popups still pass.
+Reviewed circular-animation frames and final layouts in both themes, including
+the owner's 1600px desktop size and 390px phone. No production records changed.

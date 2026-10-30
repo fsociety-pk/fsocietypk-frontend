@@ -14,25 +14,61 @@ async page => {
   check(await page.getByRole('heading', { name: 'Fsociety Pakistan', exact: true }).count() === 1, 'One accessible brand heading');
   const planes = await page.evaluate(() => {
     const heading = document.querySelector('.hero-name');
-    const animation = heading.getAnimations()[0];
-    animation.pause();
+    const animations = heading.getAnimations({ subtree: true });
+    animations.forEach(a => a.pause());
+    const glyph = heading.querySelectorAll('.hero-orbit-glyph')[3];
     const depth = [];
-    for (const time of [5200 / 3, 2600, 5200 * 2 / 3]) {
-      animation.currentTime = time;
-      depth.push(new DOMMatrix(getComputedStyle(heading).transform).m43);
+    const facing = [];
+    for (const progress of [.15,.3,.45,.6,.75]) {
+      animations.forEach(a => a.currentTime = progress * 6400);
+      const matrix = new DOMMatrix(getComputedStyle(glyph).transform);
+      depth.push(matrix.m43);
+      facing.push(matrix.m11);
     }
-    animation.currentTime = 1950;
-    return { depth, matrix: getComputedStyle(heading).transform, perspective: getComputedStyle(document.querySelector('.hero-orbit-scene')).perspective, style: getComputedStyle(document.querySelector('.hero-orbit-scene')).transformStyle };
+    const keyframes = animations[3].effect.getKeyframes();
+    animations.forEach(a => a.currentTime = 6400 * .45);
+    return { depth, facing, count: animations.length, last: keyframes.at(-1).transform,
+      perspective: getComputedStyle(document.querySelector('.hero-orbit-scene')).perspective,
+      style: getComputedStyle(document.querySelector('.hero-orbit-scene')).transformStyle };
   });
-  check(planes.depth[0] > 0 && planes.depth[1] < 0 && planes.depth[2] > 0, 'Two orbits cross in front of and behind the portrait');
-  check(planes.style === 'preserve-3d' && planes.perspective === '1500px' && planes.matrix.startsWith('matrix3d'), 'Real perspective and 3D transforms');
-  await page.screenshot({ path: '/tmp/landing-orbit-perspective.png' });
-  await page.evaluate(() => { const a = document.querySelector('.hero-name').getAnimations()[0]; a.currentTime = 5200 / 3; });
-  await page.screenshot({ path: '/tmp/landing-orbit-in-front.png' });
-  await page.evaluate(() => document.querySelector('.hero-name').getAnimations()[0].finish());
+  check(planes.count === 16, 'Every letter moves independently around the cylinder');
+  check(planes.depth.every((z,i) => i % 2 === 0 ? z > 0 : z < 0), 'Two complete circular orbits cross front and back');
+  check(planes.facing.every((x,i) => i % 2 === 0 ? x > 0 : x < 0), 'Letters turn fully away on the far side instead of swivelling');
+  check(planes.last.includes('rotateY(720deg)'), 'Tangent rotations complete the full 720 degrees');
+  check(planes.style === 'preserve-3d' && planes.perspective === '1500px', 'Real cylinder perspective and depth sorting');
+  await page.screenshot({ path: '/tmp/landing-orbit-ribbon-front.png' });
+  await page.evaluate(() => document.querySelector('.hero-name').getAnimations({subtree:true}).forEach(a => a.currentTime = 6400 * .3));
+  await page.screenshot({ path: '/tmp/landing-orbit-ribbon-back.png' });
+  await page.evaluate(() => document.querySelector('.hero-name').getAnimations({subtree:true}).forEach(a => a.currentTime = 1900));
+  await page.setViewportSize({width:1024,height:900});
+  await page.waitForTimeout(150);
+  check(await page.locator('.hero-name').evaluate(el => {
+    const animations = el.getAnimations({subtree:true});
+    return animations.length === 16 && animations.every(a => a.playState === 'paused' && Math.abs(Number(a.currentTime) - 1900) < 1);
+  }), 'Resizing recomputes the circular path without restarting its timeline');
+  await page.setViewportSize({width:1440,height:900});
+  await page.waitForTimeout(150);
+  await page.evaluate(() => document.querySelector('.hero-name').getAnimations({subtree:true}).forEach(a => a.finish()));
   await page.locator('.hero-orbit-scene[data-orbit="settled"]').waitFor();
   check(await page.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.hero-name')).transform).m43 === -1), 'Orbit settles behind the figure');
+  check(await page.locator('.hero-name').evaluate(el => el.getAnimations({subtree:true}).length === 0), 'Settled letters release all animation layers');
   await page.screenshot({ path: '/tmp/landing-final-desktop.png' });
+  for (const width of [1200,1280,1440,1600]) {
+    await page.setViewportSize({width,height:900});
+    const layout = await page.evaluate(() => {
+      const nav = document.querySelector('.public-nav').getBoundingClientRect();
+      const brand = document.querySelector('.site-header .brand-lockup').getBoundingClientRect();
+      const actions = document.querySelector('.header-actions').getBoundingClientRect();
+      const rects = [...document.querySelectorAll('.public-nav>a')].map(el => el.getBoundingClientRect());
+      return { center: nav.x + nav.width / 2, width: innerWidth,
+        aligned: rects.every(r => Math.abs(r.y + r.height / 2 - (actions.y + actions.height / 2)) < 1),
+        targets: rects.every(r => r.height >= 44),
+        gap: nav.left - brand.right >= 8 && actions.left - nav.right >= 8 };
+    });
+    check(Math.abs(layout.center - layout.width / 2) < 1 && layout.aligned, `${width}px navbar labels and badge share a centered baseline`);
+    check(layout.targets && layout.gap, `${width}px navigation targets fit without collisions`);
+  }
+  await page.setViewportSize({width:1440,height:900});
   const team = page.locator('.public-nav .nav-team-link');
   check(await team.getAttribute('href') === 'https://about.fsocietypk.tech' && await team.getAttribute('target') === '_blank', 'Team badge opens the existing subdomain in a new tab');
   check((await team.getAttribute('rel')).includes('noopener'), 'Team tab retains opener protection');
@@ -63,9 +99,9 @@ async page => {
   await page.locator('.landing-team-invitation').scrollIntoViewIfNeeded();
   await page.screenshot({ path: '/tmp/landing-final-team.png' });
 
-  for (const width of [320,390,768,1024,1440]) {
+  for (const width of [320,390,641,768,1024,1199,1440]) {
     await page.setViewportSize({ width, height: width < 700 ? 844 : 900 });
-    await page.evaluate(() => scrollTo(0,0));
+    await page.evaluate(() => scrollTo({top:0,behavior:'instant'}));
     await page.waitForTimeout(150);
     check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px landing has no horizontal overflow`);
     await page.locator('.landing-team-invitation').scrollIntoViewIfNeeded();
@@ -74,9 +110,21 @@ async page => {
     check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px library fits`);
   }
 
+  for (const width of [641,768,1024,1199]) {
+    await page.setViewportSize({width,height:900});
+    await page.evaluate(() => scrollTo({top:0,behavior:'instant'}));
+    check(!await page.locator('.public-nav').isVisible() && await page.getByRole('button',{name:'Open navigation'}).isVisible(), `${width}px uses the menu before header items become crowded`);
+    await page.getByRole('button',{name:'Open navigation'}).click();
+    await page.locator('#mobile-navigation').evaluate(el => Promise.all(el.getAnimations().map(a => a.finished.catch(() => {}))));
+    check(await page.evaluate(() => Math.abs(document.querySelector('.mobile-drawer').getBoundingClientRect().top - document.querySelector('.site-header').getBoundingClientRect().bottom) < 1), `${width}px menu aligns below the header`);
+    await page.keyboard.press('Escape');
+  }
+
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.evaluate(() => scrollTo(0,0));
+  await page.evaluate(() => scrollTo({top:0,behavior:'instant'}));
   await page.getByRole('button', { name: 'Open navigation' }).click();
+  await page.locator('#mobile-navigation').evaluate(el => Promise.all(el.getAnimations().map(animation => animation.finished.catch(() => {}))));
+  check(await page.evaluate(() => Math.abs(document.querySelector('.mobile-drawer').getBoundingClientRect().top - document.querySelector('.site-header').getBoundingClientRect().bottom) < 1), 'Mobile drawer sits directly below the header');
   const mobileTeam = page.locator('#mobile-navigation .nav-team-link');
   check(await mobileTeam.isVisible(), 'Mobile navigation has the distinct team badge');
   check(await mobileTeam.getAttribute('target') === '_blank', 'Mobile team link opens a new tab');
@@ -90,18 +138,18 @@ async page => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.reload();
   await page.locator('.hero-orbit-scene[data-orbit="reduced"]').waitFor();
-  check(await page.locator('.hero-name').evaluate(el => el.getAnimations().length === 0), 'Reduced motion skips the orbit');
+  check(await page.locator('.hero-name').evaluate(el => el.getAnimations({subtree:true}).length === 0), 'Reduced motion skips the orbit');
   check(await page.locator('.hero-name').evaluate(el => new DOMMatrix(getComputedStyle(el).transform).m43 === -1), 'Reduced motion shows the final composition immediately');
   await page.locator('.editorial-intro').scrollIntoViewIfNeeded();
   check(await page.locator('.editorial-intro').evaluate(el => getComputedStyle(el).opacity === '1' && getComputedStyle(el).transform === 'none'), 'Reduced motion leaves reading blocks visible and still');
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.evaluate(() => scrollTo(0,0));
+  await page.evaluate(() => scrollTo({top:0,behavior:'instant'}));
   await page.locator('.hero-orbit-scene[data-orbit="running"]').waitFor();
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.locator('.hero-orbit-scene[data-orbit="reduced"]').waitFor();
-  check(await page.locator('.hero-name').evaluate(el => el.getAnimations().length === 0), 'Live reduced-motion changes cancel the orbit');
+  check(await page.locator('.hero-name').evaluate(el => el.getAnimations({subtree:true}).length === 0), 'Live reduced-motion changes cancel the orbit');
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.evaluate(() => scrollTo(0,0));
+  await page.evaluate(() => scrollTo({top:0,behavior:'instant'}));
   await page.locator('.nav-login').click();
   await page.waitForURL('**/login');
   await page.locator('.access-shell').waitFor();

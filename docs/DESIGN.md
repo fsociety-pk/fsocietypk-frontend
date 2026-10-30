@@ -198,7 +198,7 @@ settling into the large two-line name behind him. The CSS perspective scene
 retains depth sorting between the title and portrait; do not flatten it with
 opacity, filters, clipping, or isolation on the scene itself. A separate wrapper
 handles hero scroll fade/parallax. Font and portrait decoding precede the finite
-5.2-second Web Animations sequence. Background tabs pause it; unmount and live
+6.4-second Web Animations sequence. Background tabs pause it; unmount and live
 reduced-motion changes cancel it. Navigation is available immediately.
 
 Landing tokens live in `src/styles/landing-refresh.css`, scoped to `.is-landing`
@@ -240,3 +240,33 @@ reversible fades, and live reduced-motion cancellation passed. Measured primary
 copy/action pairs range from 6.8:1 to 15.5:1 in light/dark, exceeding 4.5:1.
 Design self-audit: 9/10; defined edges, restrained accents, original artwork,
 clear action hierarchy and the physical title orbit distinguish the landing.
+
+
+### Circular title and navbar correction
+
+The owner rejected the original flat-panel swivel. The title now consists of
+16 glyph planes on an elliptical cylinder, each continuously rotating through
+720 degrees with the cylinder tangent. Both words occupy opposite arcs of one
+ribbon at shoulder height. The ribbon wraps out of the flat title, circles twice,
+then opens back into two full-size lines behind the portrait. Depth and tangent
+rotation are geometric; rear letters show their reverse as physical lettering
+would, recede, and pass behind the transparent figure. There is no mirrored copy
+of the person and no whole-heading left/right swivel. All glyph animation layers
+are released after settling. Resizing during motion recomputes geometry while
+preserving playback time; background visibility and live reduced motion remain
+supported. The 6.4-second duration includes wrapping and settling.
+
+The public navbar aligns every link and badge in 44px targets. On desktop, equal
+outer grid tracks keep the navigation centered independently of the different
+brand/action widths. All controls share the same vertical center. Below 1200px,
+use the existing accessible menu before links crowd the actions. Its top edge
+matches the appropriate public header height (including the landing's 96/80px).
+No auth, team-site routing, or member workspace navigation behavior changes.
+
+Validation: production build, 70 landing checks and 28 team-routing checks passed.
+The new checks verify independent glyph motion, two front/back cycles, full
+720-degree facing changes, resize continuity, released animation layers, navbar
+centering/target clearance at 1200/1280/1440/1600px, and menu placement at
+390/641/768/1024/1199px. Reviewed front/side/rear/settling frames and light/dark
+phone/desktop screenshots. The circular ribbon is the signature move; there is
+no additional ambient motion, invented content, glow, or change to the palette.

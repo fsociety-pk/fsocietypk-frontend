@@ -205,7 +205,7 @@ export default function Navbar() {
           </div>
         </aside>
       )}
-      <header className="site-header">
+      <header className={`site-header${isAuthenticated ? '' : ' public-site-header'}`}>
         {isAuthenticated ? (
           <div className="app-header-title">
             <span>Workspace</span>
