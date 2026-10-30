@@ -306,6 +306,9 @@
 .sidebar-nav a:hover {
   background: rgb(var(--surface));
 }
+.sidebar-team-link { white-space: nowrap; }
+.sidebar-team-link > svg { flex-shrink: 0; }
+.sidebar-team-link > svg:last-child { margin-left: auto; }
 .sidebar-footer {
   margin-top: auto;
   padding-top: 12px;

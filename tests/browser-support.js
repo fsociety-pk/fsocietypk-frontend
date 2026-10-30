@@ -31,6 +31,11 @@ async (page) => {
   await page.evaluate(value => localStorage.setItem('fsocietypk-auth', JSON.stringify({ state: { user: value, isAuthenticated: true }, version: 0 })), user());
   await page.goto('http://fsociety.test/support');
   await page.getByRole('heading', { name: 'Let’s sort it out.' }).waitFor();
+  await page.getByRole('button', { name: 'New ticket', exact: true }).click();
+  if (!await page.getByLabel('Subject', { exact: true }).evaluate(el => document.activeElement === el)) throw Error('New ticket did not focus the form');
+  await page.getByRole('button', { name: 'Send ticket', exact: true }).click();
+  await page.getByText('Enter a subject with at least 5 characters.', { exact: true }).waitFor();
+  await page.getByText('Describe your request in at least 10 characters.', { exact: true }).waitFor();
   await page.getByLabel('Subject', { exact: true }).fill('Challenge download fails');
   await page.getByLabel('Your message', { exact: true }).fill('Clicking the download button shows a blank page.');
   await page.getByRole('button', { name: 'Send ticket', exact: true }).click();
@@ -39,6 +44,9 @@ async (page) => {
   failCreate = false;
   await page.getByRole('button', { name: 'Send ticket', exact: true }).click();
   await page.getByRole('heading', { name: 'Challenge download fails' }).waitFor();
+  await page.getByRole('button', { name: 'New ticket', exact: true }).click();
+  if (!await page.getByLabel('Subject', { exact: true }).evaluate(el => document.activeElement === el)) throw Error('New ticket from a conversation did not focus the form');
+  await page.getByRole('button', { name: /Challenge download fails/ }).click();
   await page.getByLabel('Add a reply').fill('This happens in Firefox too.');
   await page.getByRole('button', { name: 'Send reply', exact: true }).click();
   await page.getByText('This happens in Firefox too.', { exact: true }).waitFor();
@@ -57,6 +65,7 @@ async (page) => {
   await page.getByRole('heading', { name: 'Let’s sort it out.' }).waitFor();
   for (const width of [320, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 950 });
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) throw Error(`Overflow at ${width}`);
   }
   await page.setViewportSize({ width: 320, height: 950 });
@@ -64,5 +73,5 @@ async (page) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.screenshot({ path: '/tmp/support-desktop.png', fullPage: true });
   if (errors.length) throw Error(errors.join('\n'));
-  return 'PASS empty state, draft preservation on failure, create, member reply, admin reply, resolve/reopen, responsive widths 320/768/1024/1440, no page errors';
+  return 'PASS New ticket focus from list and conversation, explicit invalid-form feedback, draft preservation on failure, create, member reply, admin reply, resolve/reopen, responsive widths 320/768/1024/1440, no page errors';
 }

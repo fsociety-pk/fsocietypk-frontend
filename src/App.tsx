@@ -3,7 +3,8 @@ import { Suspense, lazy, useEffect } from "react";
 import PageState from "./components/common/PageState";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { io } from "socket.io-client";
+import { socketService } from './utils/socket';
+import { useNotificationSync } from './hooks/useNotifications';
 import { useAuthStore } from "./store/authStore";
 import { authService } from "./services/auth.service";
 
@@ -47,20 +48,15 @@ const AdminAboutAdmin = lazy(() => import("./pages/admin/AdminAboutAdmin"));
 const Resources = lazy(() => import("./pages/Resources"));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
-import { API_URL } from "./services/apiConfig";
-
 function App() {
   useSurfaceMotion();
+  useNotificationSync();
   const { user, setUser, setLoading } = useAuthStore();
 
   useEffect(() => {
     if (!user) return;
 
-    const socket = io(API_URL || window.location.origin, {
-      withCredentials: true,
-    });
-
-    socket.on("newAnnouncement", (data: { title: string; message: string }) => {
+    const onAnnouncement = (data: { title: string; message: string }) => {
       toast.custom(
         (t) => (
           <div
@@ -97,12 +93,13 @@ function App() {
         ),
         { duration: 10000, position: "top-right" },
       );
-    });
+    };
+    socketService.on('newAnnouncement', onAnnouncement);
 
     return () => {
-      socket.disconnect();
+      socketService.off('newAnnouncement', onAnnouncement);
     };
-  }, [user]);
+  }, [user?._id]);
 
   useEffect(() => {
     const controller = new AbortController();

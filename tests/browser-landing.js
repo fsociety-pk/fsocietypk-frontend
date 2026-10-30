@@ -39,6 +39,26 @@ async page => {
   await page.screenshot({ path: '/tmp/landing-orbit-ribbon-front.png' });
   await page.evaluate(() => document.querySelector('.hero-name').getAnimations({subtree:true}).forEach(a => a.currentTime = 6400 * .3));
   await page.screenshot({ path: '/tmp/landing-orbit-ribbon-back.png' });
+  const landingDepth = await page.evaluate(() => {
+    const heading = document.querySelector('.hero-name');
+    const glyphs = [...heading.querySelectorAll('.hero-orbit-glyph')];
+    const animations = heading.getAnimations({subtree:true});
+    const headingZ = new DOMMatrix(getComputedStyle(heading).transform).m43;
+    let nearestCorner = -Infinity;
+    // Check the entire landing, including the edges of tilted letter planes.
+    for (let step = 0; step <= 160; step++) {
+      animations.forEach(a => a.currentTime = 6400 * (.84 + step / 160 * .1599));
+      for (const glyph of glyphs) {
+        const matrix = new DOMMatrix(getComputedStyle(glyph).transform);
+        const frontEdge = matrix.m43 + Math.abs(matrix.m13) * glyph.offsetWidth / 2;
+        nearestCorner = Math.max(nearestCorner, headingZ + frontEdge);
+      }
+    }
+    animations.forEach(a => a.currentTime = 6400 * .92);
+    return nearestCorner;
+  });
+  check(landingDepth < 0, 'Every letter stays behind the portrait throughout the final landing');
+  await page.screenshot({ path: '/tmp/landing-orbit-settling.png' });
   await page.evaluate(() => document.querySelector('.hero-name').getAnimations({subtree:true}).forEach(a => a.currentTime = 1900));
   await page.setViewportSize({width:1024,height:900});
   await page.waitForTimeout(150);

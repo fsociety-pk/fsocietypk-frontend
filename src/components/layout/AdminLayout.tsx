@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { MotionConfig } from 'framer-motion';
-import { Bell, ChevronRight, LogOut, Menu, Plus, ShieldCheck, X } from 'lucide-react';
+import { ChevronRight, LogOut, Menu, Plus, ShieldCheck, X } from 'lucide-react';
+import NotificationBell from '../common/NotificationBell';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../../store/authStore';
 import { authService } from '../../services/auth.service';
@@ -50,7 +51,7 @@ export default function AdminLayout() {
     <div className="admin-main">
       <header className="admin-header"><div className="admin-breadcrumb"><button className="icon-button admin-menu-toggle" onClick={() => dialog.current?.showModal()} aria-label="Open admin navigation"><Menu size={19} /></button><span>Administration</span><ChevronRight size={14} /><strong>{title}</strong></div><div className="admin-header-actions">
         {hasPermission(user?.role, 'challenges.write') && <Link to="/admin/challenges/new" className="btn-primary admin-create" aria-label="Create challenge"><Plus size={16} /><span>Create challenge</span></Link>}
-        <ThemeToggle /><Link to="/admin/notifications" className="icon-button" aria-label="Admin notifications"><Bell size={17} /></Link>
+        <ThemeToggle /><NotificationBell to="/admin/notifications" label="Admin notifications" />
         <Link to="/admin/security" className="admin-identity" aria-label={`Staff account: ${user?.username}`}><span><ShieldCheck size={19} /></span><div><strong>{user?.username}</strong><small>{user ? ROLE_LABELS[user.role] : 'Staff'}</small></div></Link>
       </div></header>
       <main id="admin-content" className="admin-content" tabIndex={-1}><>{permitted ? <Outlet /> : <section className="admin-form-panel"><h1>Access is restricted</h1><p>Your assigned role does not include this tool.</p><Link className="btn-primary" to="/admin">Back to overview</Link></section>}</></main>

@@ -25,6 +25,11 @@ class SocketService {
 
   isConnected() { return this.socket?.connected ?? false; }
 
+  reconnect() {
+    if (this.socket) this.socket.disconnect().connect();
+    else this.connect();
+  }
+
   disconnect() {
     if (this.socket) {
       this.socket.disconnect();

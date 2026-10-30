@@ -1,11 +1,12 @@
 import { useAuthStore } from '../store/authStore';
 import { isStaff } from '../utils/roles';
 import PageHeading from "../components/common/PageHeading";
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bell,
   Check,
+  Mail,
   Trash2,
   CheckCheck,
   AlertCircle,
@@ -14,79 +15,14 @@ import {
   Trophy,
   Loader2,
 } from 'lucide-react';
-import { toast } from 'react-hot-toast';
-import { notificationService, INotification } from '../services/notificationService';
+import { useNotifications } from '../hooks/useNotifications';
 
 const Notifications: React.FC = () => {
   const staff = isStaff(useAuthStore(state => state.user?.role));
-  const [notifications, setNotifications] = useState<INotification[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data = [], isLoading: loading, isError, refetch, mutation } = useNotifications();
   const [filter, setFilter] = useState<'all' | 'unread' | 'read'>('all');
-
-  const fetchNotifications = async () => {
-    try {
-      setLoading(true);
-      let data;
-      if (filter === 'unread') {
-        data = await notificationService.getNotifications({ read: false });
-      } else if (filter === 'read') {
-        data = await notificationService.getNotifications({ read: true });
-      } else {
-        data = await notificationService.getNotifications();
-      }
-      setNotifications(data);
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to load notifications');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNotifications();
-  }, [filter]);
-
-  const handleMarkAsRead = async (notificationId: string) => {
-    try {
-      await notificationService.markAsRead(notificationId);
-      setNotifications(prev =>
-        prev.map(n => n._id === notificationId ? { ...n, read: true } : n)
-      );
-      toast.success('Marked as read');
-    } catch (error: any) {
-      toast.error('Failed to mark as read');
-    }
-  };
-
-  const handleDelete = async (notificationId: string) => {
-    try {
-      await notificationService.deleteNotification(notificationId);
-      setNotifications(prev => prev.filter(n => n._id !== notificationId));
-      toast.success('Notification deleted');
-    } catch (error: any) {
-      toast.error('Failed to delete notification');
-    }
-  };
-
-  const handleMarkAllAsRead = async () => {
-    try {
-      await notificationService.markAllAsRead();
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-      toast.success('All notifications marked as read');
-    } catch (error: any) {
-      toast.error('Failed to mark all as read');
-    }
-  };
-
-  const handleClearAll = async () => {
-    try {
-      await notificationService.clearAll();
-      setNotifications([]);
-      toast.success('All notifications cleared');
-    } catch (error: any) {
-      toast.error('Failed to clear notifications');
-    }
-  };
+  const notifications = data.filter(item => filter === 'all' || item.read === (filter === 'read'));
+  const busy = mutation.isPending;
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -135,6 +71,7 @@ const Notifications: React.FC = () => {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
+                aria-pressed={filter === f}
                 className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded text-xs sm:text-xs font-bold uppercase tracking-widest transition-all ${
                   filter === f
                     ? 'bg-brand text-on-brand'
@@ -147,17 +84,19 @@ const Notifications: React.FC = () => {
           </div>
 
           {/* Actions */}
-          {notifications.length > 0 && (
+          {data.length > 0 && (
             <div className="flex flex-wrap gap-1 sm:gap-2">
               <button
-                onClick={handleMarkAllAsRead}
+                onClick={() => mutation.mutate({ type: 'readAll', ids: data.filter(item => !item.read).map(item => item._id) })}
+                disabled={busy || !data.some(item => !item.read)}
                 className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 bg-blue-600/20 border border-blue-500/50 rounded text-xs sm:text-xs font-bold text-status-info hover:bg-blue-600/30 transition-all"
               >
                 <CheckCheck className="w-3 sm:w-4 h-3 sm:h-4" />
                 Mark all as read
               </button>
               <button
-                onClick={handleClearAll}
+                onClick={() => mutation.mutate({ type: 'clear', ids: data.map(item => item._id) })}
+                disabled={busy}
                 className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 bg-red-600/20 border border-red-500/50 rounded text-xs sm:text-xs font-bold text-status-error hover:bg-red-600/30 transition-all"
               >
                 <Trash2 className="w-3 sm:w-4 h-3 sm:h-4" />
@@ -174,8 +113,9 @@ const Notifications: React.FC = () => {
           </div>
         )}
 
+        {isError && <div className="notification-error" role="alert">Notifications could not be refreshed. <button className="btn-outline" onClick={() => void refetch()}>Try again</button></div>}
         {/* Empty State */}
-        {!loading && notifications.length === 0 && (
+        {!loading && !isError && notifications.length === 0 && (
           <motion.div
             initial={false}
             animate={{ opacity: 1 }}
@@ -193,14 +133,16 @@ const Notifications: React.FC = () => {
 
         {/* Notifications List */}
         <AnimatePresence>
-          <div className="space-y-3">
-            {notifications.map((notif, index) => (
+          <div className="space-y-3" aria-busy={busy}>
+            {notifications.map(notif => (
               <motion.div
                 key={notif._id}
                 initial={false}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ duration: .15 }}
+                data-notification-id={notif._id}
+                data-read={notif.read}
                 className={`notification-card border rounded-lg p-4 transition-all ${
                   notif.read
                     ? 'bg-background-elevated/30 border-surface-border/30'
@@ -240,19 +182,21 @@ const Notifications: React.FC = () => {
                       </span>
 
                       <div className="flex items-center gap-2">
-                        {!notif.read && (
                           <button
-                            onClick={() => handleMarkAsRead(notif._id)}
+                            onClick={() => mutation.mutate({ type: 'read', id: notif._id, read: !notif.read })}
+                            disabled={busy}
                             className="p-1.5 text-text-muted hover:text-brand hover:bg-brand/10 rounded transition-all"
-                            title="Mark as read"
+                            title={notif.read ? 'Mark as unread' : 'Mark as read'}
+                            aria-label={notif.read ? 'Mark as unread' : 'Mark as read'}
                           >
-                            <Check className="w-4 h-4" />
+                            {notif.read ? <Mail className="w-4 h-4" /> : <Check className="w-4 h-4" />}
                           </button>
-                        )}
                         <button
-                          onClick={() => handleDelete(notif._id)}
+                          onClick={() => mutation.mutate({ type: 'delete', id: notif._id })}
+                          disabled={busy}
                           className="p-1.5 text-text-muted hover:text-status-error hover:bg-red-500/10 rounded transition-all"
                           title="Delete"
+                            aria-label="Delete notification"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

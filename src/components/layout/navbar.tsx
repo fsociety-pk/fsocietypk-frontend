@@ -13,7 +13,6 @@ import {
   Shield,
   Menu,
   X,
-  Bell,
   LogOut,
   ArrowUpRight,
   ChevronRight,
@@ -21,10 +20,7 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { authService } from "../../services/auth.service";
-import {
-  notificationService,
-  NOTIFICATION_UNREAD_COUNT_UPDATED,
-} from "../../services/notificationService";
+import NotificationBell from '../common/NotificationBell';
 import BrandLogo from "../common/BrandLogo";
 import ThemeToggle from "../common/ThemeToggle";
 import { toast } from "react-hot-toast";
@@ -50,7 +46,6 @@ export function Brand() {
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const [open, setOpen] = useState(false);
-  const [unread, setUnread] = useState(0);
   const [loggingOut, setLoggingOut] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -91,32 +86,6 @@ export default function Navbar() {
       document.removeEventListener("keydown", key);
     };
   }, [open]);
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setUnread(0);
-      return;
-    }
-    let active = true;
-    const fetchCount = () =>
-      notificationService
-        .getUnreadCount()
-        .then((n) => {
-          if (active) setUnread(n);
-        })
-        .catch(() => {});
-    const update = (e: Event) =>
-      setUnread(
-        Number((e as CustomEvent<{ count: number }>).detail?.count || 0),
-      );
-    fetchCount();
-    const timer = setInterval(fetchCount, 30000);
-    window.addEventListener(NOTIFICATION_UNREAD_COUNT_UPDATED, update);
-    return () => {
-      active = false;
-      clearInterval(timer);
-      window.removeEventListener(NOTIFICATION_UNREAD_COUNT_UPDATED, update);
-    };
-  }, [isAuthenticated]);
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
@@ -138,6 +107,9 @@ export default function Navbar() {
       ? [{ to: "/admin", label: "Admin workspace", icon: Shield }]
       : []),
   ];
+  const communityNavigation = <nav className="sidebar-nav" aria-label="Community">
+    <a className="sidebar-team-link" href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer"><Users size={17} aria-hidden="true" /><span>About the team</span><ArrowUpRight size={14} aria-hidden="true" /></a>
+  </nav>;
   const navigation = (
     <>
       <div className="sidebar-caption">Workspace</div>
@@ -148,7 +120,6 @@ export default function Navbar() {
             {label}
           </NavLink>
         ))}
-        <a className="nav-team-link" href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer"><Users size={17} />About the team<ArrowUpRight size={14} /></a>
       </nav>
       <div className="sidebar-caption">Personal</div>
       <nav className="sidebar-nav" aria-label="Personal">
@@ -194,6 +165,7 @@ export default function Navbar() {
             </div>
           </div>
           <div className="sidebar-footer">
+            {communityNavigation}
             <button
               className="btn-ghost w-full justify-start"
               disabled={loggingOut}
@@ -227,16 +199,7 @@ export default function Navbar() {
           <ThemeToggle />
           {isAuthenticated ? (
             <>
-              <Link
-                to="/notifications"
-                className="icon-button relative"
-                aria-label={
-                  "Notifications" + (unread ? ", " + unread + " unread" : "")
-                }
-              >
-                <Bell size={17} />
-                {unread > 0 && <i className="notification-dot" />}
-              </Link>
+              <NotificationBell />
               <NavLink
                 to="/profile"
                 className="user-chip"
@@ -298,7 +261,7 @@ export default function Navbar() {
             Close navigation
           </button>
           {isAuthenticated ? (
-            navigation
+            <>{navigation}<div className="sidebar-caption">Community</div>{communityNavigation}</>
           ) : (
             <nav className="sidebar-nav">
               {workspaceLinks

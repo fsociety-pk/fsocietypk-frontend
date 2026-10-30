@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowUpRight, Headphones, MessageSquare, Plus, ChevronRight, CheckCircle2 } from 'lucide-react';
@@ -16,11 +16,18 @@ export default function Support({ admin = false }: { admin?: boolean }) {
   const [status, setStatus] = useState('all');
   const [page, setPage] = useState(1);
   const [created, setCreated] = useState(false);
+  const [composeRequest, setComposeRequest] = useState(0);
+  useEffect(() => {
+    if (!composeRequest || selected) return;
+    const subject = document.getElementById('support-subject');
+    subject?.scrollIntoView({ block: 'center', behavior: 'instant' });
+    subject?.focus({ preventScroll: true });
+  }, [composeRequest, selected]);
   const query = useQuery({ queryKey: ['support-tickets', userId, admin, status, page], queryFn: () => supportService.list(admin, status, page), refetchInterval: 30000 });
   const select = (id: string) => { setParams({ ticket: id }); };
   const back = () => { setParams({}); setCreated(false); };
   return <div className="support-page">
-    <div className="page-heading"><div><span className="eyebrow">{admin ? 'Community care' : 'We’re here to help'}</span><h1>{admin ? 'Support inbox' : 'Let’s sort it out.'}</h1><p>{admin ? 'Read requests, help your members, and keep every conversation in one place.' : 'Contact the admin, report an issue, or share what’s on your mind.'}</p></div>{!admin && <button className="btn-primary" onClick={() => { back(); requestAnimationFrame(() => document.getElementById("support-subject")?.focus()); }}><Plus size={17} />New ticket</button>}</div>
+    <div className="page-heading"><div><span className="eyebrow">{admin ? 'Community care' : 'We’re here to help'}</span><h1>{admin ? 'Support inbox' : 'Let’s sort it out.'}</h1><p>{admin ? 'Read requests, help your members, and keep every conversation in one place.' : 'Contact the admin, report an issue, or share what’s on your mind.'}</p></div>{!admin && <button type="button" className="btn-primary" aria-controls="support-create-form" onClick={() => { back(); setComposeRequest(value => value + 1); }}><Plus size={17} />New ticket</button>}</div>
     {created && <div className="support-success" role="status"><CheckCircle2 size={20} /><div><strong>Your ticket is with the admin.</strong><p>You can follow the conversation and read replies here.</p></div></div>}
     {selected ? <TicketConversation key={selected} id={selected} admin={admin} onBack={back} /> : <>
       {!admin && <div className="support-intro"><div className="support-intro-copy"><Headphones size={28} /><h2>A direct line to the admin.</h2><p>Every request gets its own space. Describe the issue, keep the details together, and pick up the conversation whenever you need.</p><span><MessageSquare size={16} />Real conversations. All in one place.</span></div><CreateTicket onCreated={id => { select(id); setCreated(true); }} /></div>}

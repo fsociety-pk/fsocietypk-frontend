@@ -41,27 +41,33 @@ export default function LandingPortrait() {
       // Read the untransformed typesetting once; no layout reads per frame.
       const metrics = glyphs.map(glyph => ({
         glyph,
+        halfWidth: glyph.offsetWidth / 2,
         x: glyph.offsetLeft + glyph.offsetWidth / 2 - heading.clientWidth / 2,
         y: heading.offsetTop + glyph.parentElement!.offsetTop + glyph.offsetTop + glyph.offsetHeight / 2,
         row: glyph.parentElement === heading.lastElementChild ? 1 : 0,
       }));
       node.dataset.orbit = 'running';
-      animations = metrics.map(({ glyph, x, y: restingY, row }) => {
+      animations = metrics.map(({ glyph, halfWidth, x, y: restingY, row }) => {
         // The two words occupy opposite arcs of ONE ribbon while circling.
         // On landing, the ribbon opens into the original two separate lines.
         const phase = x / radius * .82 + row * Math.PI;
         const frames: Keyframe[] = Array.from({ length: 161 }, (_, i) => {
           const p = i / 160;
           const wrap = smooth(p / .12) * (1 - smooth((p - .84) / .16));
+          const landing = smooth((p - .72) / .12);
           const turn = smooth((p - .06) / .78) * Math.PI * 4;
           const angle = turn + phase * wrap;
           const dx = (Math.sin(angle) * radius - x) * wrap;
-          const z = Math.cos(angle) * depth * wrap;
           const y = (height * .51 - restingY + Math.cos(angle) * depth * .18) * wrap;
           const scale = 1 - .5 * wrap;
           // The continuous 0→720° tangent rotation is essential. Reducing this
           // to sin(angle) recreates the rejected left/right swivel.
           const yaw = turn * 180 / Math.PI + phase * 180 / Math.PI * wrap;
+          // Move the last arc behind the portrait before opening the two lines.
+          // Include the tilted glyph's front edge so it cannot cross the image
+          // plane while flattening. This offset returns smoothly to zero.
+          const frontEdge = Math.abs(Math.sin(yaw * Math.PI / 180)) * halfWidth * scale;
+          const z = Math.cos(angle) * depth * wrap - landing * (depth * wrap + frontEdge + wrap);
           return {
             offset: p,
             transform: `translate3d(${dx}px,${y}px,${z}px) rotateY(${yaw}deg) scale(${scale})`,

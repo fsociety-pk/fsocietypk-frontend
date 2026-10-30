@@ -1,5 +1,22 @@
 # Local regression checks
 
+## Notifications and support
+
+After building and running `node tests/prepare-browser.cjs`, load the generated
+`browser-fixtures.js`, then `tests/browser-notifications.js` using connected
+Playwright. Reset fixtures before running `tests/browser-support.js`.
+
+Notification checks cover instant read/unread/delete with delayed responses,
+failure rollback, correct filters and badge count, incoming Socket.IO events,
+deduplication, arrivals during bulk read/clear, reduced motion, member/staff
+headers, account isolation, fetch-error recovery and responsive layouts. APIs
+and WebSockets are intercepted; no live messages or accounts are changed.
+Support checks include explicit validation feedback, New ticket focus, preserved
+drafts after failures, creation, member/admin replies and resolve/reopen.
+The backend `tests/notifications.cjs` tests routes/session checks and private
+room delivery with model and transport doubles; `tests/support.cjs` covers
+ticket ownership and persisted email retry behavior.
+
 ## Team site and R2 certificate manager
 
 See [team manager, API/storage and deployment notes](../docs/TEAM_SITE.md).
