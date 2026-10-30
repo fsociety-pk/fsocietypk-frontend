@@ -9,19 +9,6 @@
 .username-ideas button:hover { background: rgb(var(--brand) / .18); }
 .username-ideas button:focus-visible { outline: 2px solid rgb(var(--brand)); outline-offset: 2px; }
 .username-ideas small { display: block; margin-top: 7px; font-size: 10px; color: rgb(var(--muted)); line-height: 1.45; }
-/* The splash is intentionally just white type on black, in two scenes. */
-.cinematic-intro { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background: #000; color: #fff; padding: 32px; }
-.cinematic-intro-text { max-width: 1120px; font-family: var(--font-body); font-size: clamp(36px, 7vw, 112px); font-weight: 850; letter-spacing: -.035em; line-height: 1.05; text-align: center; text-wrap: balance; animation: intro-scene 1450ms cubic-bezier(.22,1,.36,1) both; }
-.cinematic-intro-skip { position: absolute; right: 28px; bottom: 24px; padding: 12px 16px; color: #d0d0d0; font-size: 12px; border-radius: 6px; min-height: 44px; }
-.cinematic-intro-skip:hover { color: #fff; background: #181818; }
-.cinematic-intro-skip:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-@keyframes intro-scene { 0% { opacity: 0; transform: translateY(10px) scale(.98); } 20%, 80% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-4px); } }
-.cinematic-intro-text.intro-scene-1 { animation-duration: 1850ms; }
-@media (prefers-reduced-motion: reduce) {
-
-  .cinematic-intro-text { animation: none; }
-}
-
 .username-availability { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; line-height: 1.4; color: rgb(var(--muted)); white-space: nowrap; }
 .username-availability.is-available { color: rgb(var(--success)); }
 .username-availability.is-taken { color: rgb(var(--error)); }

@@ -148,7 +148,7 @@ export default function Navbar() {
             {label}
           </NavLink>
         ))}
-        <a href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer"><Users size={17} />About the team<ArrowUpRight size={14} /></a>
+        <a className="nav-team-link" href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer"><Users size={17} />About the team<ArrowUpRight size={14} /></a>
       </nav>
       <div className="sidebar-caption">Personal</div>
       <nav className="sidebar-nav" aria-label="Personal">
@@ -220,7 +220,7 @@ export default function Navbar() {
             <NavLink to="/challenges">Challenges</NavLink>
             <NavLink to="/resources">Resources</NavLink>
             <NavLink to="/projects">Projects</NavLink>
-            <a href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer">About the team</a>
+            <a className="nav-team-link" href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer"><Users size={15} aria-hidden="true" /><span>About the team</span><ArrowUpRight size={14} aria-hidden="true" /></a>
           </nav>
         )}
         <div className="header-actions">
@@ -258,11 +258,11 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link to="/login" className="login-link text-sm">
-                Log in
+              <Link to="/login" className="login-link text-sm nav-login">
+                <span>Log in</span><ArrowUpRight size={15} aria-hidden="true" />
               </Link>
-              <Link to="/signup" className="btn-primary join-button">
-                Create account <ArrowUpRight size={15} />
+              <Link to="/signup" className="btn-primary join-button nav-signup">
+                <span>Create account</span><ArrowUpRight size={15} aria-hidden="true" />
               </Link>
             </>
           )}
@@ -309,7 +309,7 @@ export default function Navbar() {
                     {label}
                   </NavLink>
                 ))}
-              <a href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer"><Users size={18} />About the team<ArrowUpRight size={14} /></a>
+              <a className="nav-team-link" href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer"><Users size={18} />About the team<ArrowUpRight size={14} /></a>
             </nav>
           )}
           <div className="mobile-drawer-footer">

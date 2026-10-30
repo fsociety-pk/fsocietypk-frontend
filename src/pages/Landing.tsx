@@ -1,5 +1,5 @@
 import { useRef, type CSSProperties } from 'react';
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   ArrowDown,
@@ -15,8 +15,9 @@ import {
   Shield,
 } from 'lucide-react';
 import BrandLogo from '../components/common/BrandLogo';
-import CinematicIntro from '../components/common/CinematicIntro';
-import { useScrollTextReveal } from '../hooks/useScrollTextReveal';
+import LandingPortrait from '../components/common/LandingPortrait';
+import { useReducedMotionPreference } from '../hooks/useReducedMotionPreference';
+import { useLandingScrollMotion } from '../hooks/useLandingScrollMotion';
 import { TEAM_ABOUT_URL } from '../data/team';
 
 const features = [
@@ -25,7 +26,7 @@ const features = [
     title: 'Practice with CTFs',
     text: 'Solve security challenges at your own pace. Start with beginner tasks and advance to real-world exploits.',
     to: '/challenges',
-    accent: 'rgb(var(--success))',
+    accent: 'rgb(var(--brand))',
     tag: 'Hands-on Labs',
   },
   {
@@ -33,7 +34,7 @@ const features = [
     title: 'Learn from writeups',
     text: 'Read detailed walk-throughs from fellow researchers. Share your methodologies to help others grow.',
     to: '/writeups',
-    accent: 'rgb(var(--info))',
+    accent: 'rgb(var(--brand))',
     tag: 'Knowledge Base',
   },
   {
@@ -41,7 +42,7 @@ const features = [
     title: 'Track your skills',
     text: 'Monitor your solve history, analyze discipline strengths, and build your offensive security profile.',
     to: '/profile',
-    accent: 'rgb(var(--warning))',
+    accent: 'rgb(var(--brand))',
     tag: 'Player Profile',
   },
   {
@@ -49,7 +50,7 @@ const features = [
     title: 'Contribute challenges',
     text: 'Have an interesting vulnerability or binary? Submit a challenge for peer and admin review.',
     to: '/submit-challenge',
-    accent: 'rgb(var(--error))',
+    accent: 'rgb(var(--brand))',
     tag: 'Community Submissions',
   },
 ];
@@ -139,33 +140,19 @@ const socialChannels = [
   },
 ];
 
-function NameLine({ text, line }: { text: string; line: number }) {
-  return (
-    <span className="hero-name-line" aria-hidden="true">
-      {[...text].map((letter, index) => (
-        <span key={index} style={{ '--letter-delay': `${line * 240 + index * 52}ms` } as CSSProperties}>
-          {letter}
-        </span>
-      ))}
-    </span>
-  );
-}
-
 export default function Landing() {
   const root = useRef<HTMLDivElement>(null);
-  useScrollTextReveal(root, 'section:not(.cinematic-hero) h2, section:not(.cinematic-hero) h3, section:not(.cinematic-hero) p, .footer-tagline, .footer-col-title');
+  useLandingScrollMotion(root);
   const hero = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
+  const reduced = useReducedMotionPreference();
   const { scrollYProgress } = useScroll({ target: hero, offset: ['start start', 'end start'] });
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 28, mass: 0.45, restDelta: 0.0001 });
-  const nameY = useTransform(smoothProgress, [0, 1], [0, -60]);
-  const portraitY = useTransform(smoothProgress, [0, 1], [0, 42]);
-  const portraitScale = useTransform(smoothProgress, [0, 1], [1, 1.025]);
+  const sceneY = useTransform(smoothProgress, [0, 1], [0, 65]);
+  const sceneOpacity = useTransform(smoothProgress, [0.1, 0.85], [1, 0]);
   const heroCopyOpacity = useTransform(smoothProgress, [0.08, 0.44], [1, 0]);
 
   return (
     <div className="landing cinematic-landing" ref={root}>
-      <CinematicIntro />
       {/* Cinematic Hero */}
       <section ref={hero} className="cinematic-hero" aria-label="Welcome to Fsociety PK">
         <motion.div className="cinematic-topline" style={reduced ? undefined : { opacity: heroCopyOpacity }}>
@@ -179,22 +166,12 @@ export default function Landing() {
             <p>
               Solve <span className="text-highlight-gold">challenges</span>, inspect real exploits, and contribute to Pakistan&apos;s offensive security ecosystem.
             </p>
-            <span className="hero-edition">CTF PLATFORM / OPEN TO THE CURIOUS</span>
+            <span className="hero-edition">LEARN TOGETHER. THINK DIFFERENTLY.</span>
           </div>
         </motion.div>
 
-        <motion.h1 style={reduced ? undefined : { y: nameY }} className="hero-name" aria-label="Fsociety PK">
-          <NameLine text="FSOCIETY" line={0} />
-          <NameLine text="PAKISTAN" line={1} />
-        </motion.h1>
-
-        <motion.div className="hero-portrait" style={{ x: '-50%', ...(reduced ? {} : { y: portraitY, scale: portraitScale }) }}>
-          <figure className="hero-glitch">
-            <img className="portrait-original" src="/brand/masked-portrait.png" alt="Fsociety masked figure in a black top hat and suit" width="941" height="1672" loading="eager" decoding="async" />
-            <span className="portrait-glitch-slice glitch-slice-top" aria-hidden="true"><img src="/brand/masked-portrait.png" alt="" width="941" height="1672" /></span>
-            <span className="portrait-glitch-slice glitch-slice-middle" aria-hidden="true"><img src="/brand/masked-portrait.png" alt="" width="941" height="1672" /></span>
-            <span className="portrait-glitch-slice glitch-slice-bottom" aria-hidden="true"><img src="/brand/masked-portrait.png" alt="" width="941" height="1672" /></span>
-          </figure>
+        <motion.div className="hero-orbit-wrap" style={reduced ? undefined : { y: sceneY, opacity: sceneOpacity }}>
+          <LandingPortrait />
         </motion.div>
 
         <div className="hero-base" aria-hidden="true" />
@@ -208,7 +185,7 @@ export default function Landing() {
               Master cybersecurity.<br />
               <span className="text-highlight-mint">Capture the flags.</span>
             </p>
-            <Link to="/signup" className="btn-primary">
+            <Link to="/signup" className="btn-primary landing-action">
               Join the community <ArrowUpRight size={18} />
             </Link>
           </div>
@@ -235,8 +212,8 @@ export default function Landing() {
 
       {/* Section 01: Practice CTFs */}
       <section id="practice" className="editorial-section">
-        <div className="editorial-intro">
-          <span className="eyebrow eyebrow-emerald">01 / Practice. Learn. Share.</span>
+        <div className="editorial-intro" data-landing-reveal>
+          <span className="eyebrow eyebrow-emerald">YOUR NEXT SKILL STARTS HERE</span>
           <h2>
             CTF practice.<br />
             <span className="heading-highlight-gold">In one place.</span>
@@ -254,7 +231,7 @@ export default function Landing() {
               style={{ '--feature-accent': accent } as CSSProperties}
               to={to}
               key={number}
-              className="feature-row-item"
+              className="feature-row-item" data-landing-reveal
             >
               <span className="feature-number" style={{ color: accent }}>{number}</span>
               <div>
@@ -268,10 +245,20 @@ export default function Landing() {
         </div>
       </section>
 
+      <a className="landing-team-invitation" href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer">
+        <span className="team-invitation-mark" aria-hidden="true"><BrandLogo /></span>
+        <div data-landing-reveal>
+          <span className="eyebrow">THE PEOPLE BEHIND THE MASK</span>
+          <h2>One team. A shared curiosity.</h2>
+          <p>Meet Fsociety Pakistan. Explore our CTF journey, certificates, and the people building it together.</p>
+        </div>
+        <span className="team-invitation-action">About the team <ArrowUpRight size={22} /></span>
+      </a>
+
       {/* Section 02: Challenge Library */}
       <section className="library-section">
-        <div>
-          <span className="eyebrow eyebrow-cyan">02 / Challenge library</span>
+        <div data-landing-reveal>
+          <span className="eyebrow eyebrow-cyan">THE PRACTICE GROUND</span>
           <h2>
             Choose a category.<br />
             <span className="heading-highlight-green">Start solving.</span>
@@ -295,14 +282,14 @@ export default function Landing() {
               </li>
             ))}
           </ul>
-          <Link className="btn-primary" to="/challenges">
+          <Link className="btn-primary landing-action" to="/challenges">
             Browse challenges <ArrowRight size={17} />
           </Link>
         </div>
-        <div className="challenge-specimen">
+        <div className="challenge-specimen" data-landing-reveal>
           <div className="specimen-header">
             <span>THE CHALLENGE LIBRARY</span>
-            <span className="specimen-badge">LIVE PREVIEW ↗</span>
+            <span className="specimen-badge">EXAMPLE CHALLENGES</span>
           </div>
           {[
             ['Web security', 'HTTP Header Poisoning & SSRF', 'Easy', 'rgb(var(--info))'],
@@ -325,8 +312,8 @@ export default function Landing() {
       </section>
 
       {/* Section 03: Community Invitation (Hall of Fame removed) */}
-      <section className="community-invitation">
-        <span className="eyebrow eyebrow-gold">03 / Join Fsociety PK</span>
+      <section className="community-invitation" data-landing-reveal>
+        <span className="eyebrow eyebrow-gold">BUILT FOR THE CURIOUS</span>
         <h2>
           Start with<br />
           <span className="heading-highlight-gold">a challenge</span>
@@ -336,7 +323,7 @@ export default function Landing() {
           <p className="invitation-lead">
             Create an account to save your progress, unlock community writeups, and submit flags.
           </p>
-          <Link to="/signup" className="btn-primary">
+          <Link to="/signup" className="btn-primary landing-action">
             Create an account <ArrowUpRight size={18} />
           </Link>
         </div>
@@ -351,7 +338,7 @@ export default function Landing() {
               <BrandLogo className="footer-logo" />
               <strong className="footer-brand-name">FSOCIETY PK</strong>
             </div>
-            <p className="footer-tagline">
+            <p className="footer-tagline" data-landing-reveal>
               Pakistan&apos;s premier cybersecurity learning collective and Capture The Flag training platform.
               Solve practical challenges, analyze real exploits, and collaborate with ethical hackers across the nation.
             </p>

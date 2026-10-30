@@ -313,3 +313,28 @@ Replaced logo/terminal loading with a clean animated SVG orbit and relevant text
 Validation: 32 new availability/real-WebGL checks, 27 loading/404 checks, 44 existing product-polish checks, 44 mascot/privacy/layout checks, 16 auth/OTP checks, and 23 prank checks passed (186 browser checks). The backend controller and real HTTP route/quota suites passed with mocked database methods. Light/dark auth/loading screenshots were reviewed, including actual WebGL pixel output and GPU-context-loss fallback. Mechanical design detection reported no findings in the new loading and fluid styles. Backend and frontend must deploy together for the new live endpoint.
 
 Light-theme fluid visibility now uses full opacity, stronger saturation, and a less restrictive center mask. Dark-theme rendering keeps its previous values.
+
+
+## October 30 — direct landing and 3D title orbit
+
+Removed the full-screen cinematic greeting and its inert/scroll lock code.
+Landing now opens directly. A finite 5.2-second, two-orbit CSS perspective title
+passes in front of and behind the original masked figure, then settles into its
+existing backdrop position. The animation waits for the title font and portrait,
+pauses in background tabs, cancels on unmount and live reduced motion, and never
+blocks navigation. Reduced motion immediately shows the settled composition.
+
+Added a green-neutral landing palette in both themes, a compact category index,
+rebalanced practice cards, an explicit example challenge panel, and a dedicated
+team invitation. Public/member/mobile team links have a distinct tinted badge;
+the team destination remains the separate subdomain in a safe new tab. Login
+uses a drawn underline, signup a sliding fill and arrow; all retain focus and
+reduced-motion behavior. Lower reading blocks fade at viewport edges and return
+when scrolling back, with focus revealing the complete block.
+
+Validation: production build passed (existing Zod annotation/Lottie/chunk warnings
+remain). 42 landing and 28 team-routing browser checks passed with intercepted
+APIs; no production data was created. Reviewed desktop/mobile screenshots,
+intermediate 3D frames, and both themes. No horizontal overflow at
+320/390/768/1024/1440px. Copy/action contrast checks pass in both themes
+(minimum measured 6.8:1).

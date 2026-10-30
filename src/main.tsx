@@ -11,6 +11,7 @@ import './styles/community.css';
 import './styles/visual-system.css';
 import './styles/scroll-text-reveal.css';
 import './styles/team-link.css';
+import './styles/landing-refresh.css';
 import { applyTheme } from './hooks/useTheme';
 
 applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');

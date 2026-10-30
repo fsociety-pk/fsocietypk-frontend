@@ -106,9 +106,8 @@ async page => {
   await team.close();
   authenticated = false;
   await page.goto(platform + '/dashboard');
-  const skip = page.getByRole('button', { name: 'Skip intro' });
-  await skip.waitFor();
-  await skip.click();
+  await page.locator('.cinematic-landing').waitFor();
+  assert(await page.locator('.cinematic-intro').count() === 0, 'Public landing opens without a splash');
   const publicLink = page.locator('.public-nav').getByRole('link', { name: 'About the team', exact: true });
   const publicPopup = context.waitForEvent('page');
   await publicLink.click();

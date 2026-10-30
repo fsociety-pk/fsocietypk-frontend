@@ -128,7 +128,7 @@ Signup alone offers three username ideas derived from the typed username. Ideas 
 
 Recognized SQL identity patterns do not trigger live format/payload warnings or reveal the joke. Submission starts the existing four-second fake-admin sequence, with six revised punchlines and no cartoon characters in any prank phase. It remains local and signed out. Passwords are unchanged, and XSS/NoSQL feedback retains its current behavior.
 
-The first public landing visit in a tab session shows a black, full-screen cinematic entrance: white bold “Hello Friends”, followed by “Welcome to the Fsociety PK”. It finishes after 3.6 seconds and supports Skip/Escape. It does not play on direct auth/admin/404 pages or under reduced motion. Background controls are inert during the intro; timers, scrolling, and interaction restore on completion or unmount. Existing loading/404 screens keep relevant copy without greetings.
+The public landing opens directly, with no splash screen, greeting, interaction lock, or session-storage gate. Its title makes two finite 3D orbits around the masked portrait and settles behind him. Navigation and signup remain usable throughout. Reduced motion shows the settled composition immediately.
 
 The compact mascot reserves its stage below the bubble in normal flow. Long username/password feedback expands the frame instead of overlapping the antenna or faces. Username suggestion captions stay concise.
 
@@ -187,3 +187,56 @@ Only one cover face is visible at a time. Switching books closes the previous
 cover before opening the next, including during rapid input. Hidden side faces
 must not peek between spines. Reduced motion keeps the same selection behavior
 with immediate turns; a single-book shelf also starts closed.
+
+
+## Landing refresh — October 30, 2026
+
+Artifact: public community landing. Positioning: a practical cybersecurity
+collective; adjectives: confident, dimensional, legible, welcoming. Signature:
+two physical title orbits around the original transparent masked portrait,
+settling into the large two-line name behind him. The CSS perspective scene
+retains depth sorting between the title and portrait; do not flatten it with
+opacity, filters, clipping, or isolation on the scene itself. A separate wrapper
+handles hero scroll fade/parallax. Font and portrait decoding precede the finite
+5.2-second Web Animations sequence. Background tabs pause it; unmount and live
+reduced-motion changes cancel it. Navigation is available immediately.
+
+Landing tokens live in `src/styles/landing-refresh.css`, scoped to `.is-landing`
+and `.cinematic-landing`. Light uses a cool green-neutral canvas (97.5% L),
+near-white panels (99%), deep green ink (25%), muted green text (45%), forest
+green action (44%), and lime (88%) reserved for the team invitation. Dark has
+a 19% canvas, 23% panels, 27% elevated green, 94% ink and 80% green actions.
+All values use OKLCH. Original Anton display and Onest body type stay self-hosted.
+Marketing type uses approximately 1.25 steps (12/14/16/20/24/30/40/52), with a
+fluid hero and display headings. Spacing uses a 4px base, 8px panel/control
+radii, and defined edges without diffuse card shadows.
+
+Domains form a compact divided index. Four numbered practice entries use quiet
+panels and consistent green metadata. The team receives a separate dark
+invitation and a tinted navigation badge, both linking to the existing team
+subdomain in a new tab. Challenge examples are explicitly examples, with no
+invented live status. Signup uses a sliding fill and directional arrow; login
+uses a drawn underline. Hover, press, focus and reduced-motion states retain
+native link behavior. Lower reading blocks fade/rise at the bottom edge and
+fade away at the top edge, reversing when scrolling back. A batched animation
+frame updates only transform/opacity variables; focused blocks remain visible.
+Content is visible before JavaScript enhancement. The dashboard's existing
+once-only reveals remain separate.
+
+Audit: the existing mascot and poster composition are the product-specific
+reference. The refresh removes the rainbow marketing accents, floating domain
+cards and splash lock. It adds no glow, decorative grids, stock art or invented
+metrics. Responsive, motion, contrast and navigation checks are recorded with
+the implementation's browser verification.
+
+
+Validation: production TypeScript/Vite build passed. The landing browser suite
+passed 42 checks against the production bundle with intercepted APIs; the team
+routing suite passed 28 checks, including actual new-tab clicks and legacy
+subdomain paths. Screenshots reviewed in desktop light and phone light/dark,
+including intermediate orbit frames with real front/behind occlusion. Layouts
+fit 320/390/768/1024/1440px. Keyboard focus, Escape restoration, auth navigation,
+reversible fades, and live reduced-motion cancellation passed. Measured primary
+copy/action pairs range from 6.8:1 to 15.5:1 in light/dark, exceeding 4.5:1.
+Design self-audit: 9/10; defined edges, restrained accents, original artwork,
+clear action hierarchy and the physical title orbit distinguish the landing.
