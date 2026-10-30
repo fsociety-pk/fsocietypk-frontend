@@ -1,6 +1,6 @@
 import api from './api';
-export type TicketStatus = 'open' | 'in_progress' | 'resolved';
-export const ticketStatuses: Record<TicketStatus, string> = { open: 'Open', in_progress: 'In progress', resolved: 'Resolved' };
+export type TicketStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
+export const ticketStatuses: Record<TicketStatus, string> = { open: 'Open', in_progress: 'In progress', resolved: 'Resolved', closed: 'Closed' };
 export const ticketCategories = { technical: 'Technical issue', account: 'My account', challenge: 'Challenge help', feedback: 'Feedback & ideas', other: 'Something else' };
 export type TicketCategory = keyof typeof ticketCategories;
 export interface Ticket {

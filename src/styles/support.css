@@ -25,7 +25,7 @@
 .support-ticket-row time { font-size: 11px; color: rgb(var(--muted)); }
 .support-status { display: inline-flex; flex-shrink: 0; border: 1px solid currentColor; padding: 4px 10px; border-radius: 20px; font-size: 11px; color: rgb(var(--warning)); white-space: nowrap; }
 .support-status.in_progress { color: rgb(var(--info)); }
-.support-status.resolved { color: rgb(var(--success)); }
+.support-status.resolved, .support-status.closed { color: rgb(var(--success)); }
 .support-empty { text-align: center; padding: 48px 16px; border: 1px dashed rgb(var(--line)); border-radius: 12px; }
 .support-empty > svg { margin: 0 auto 16px; color: rgb(var(--brand)); }
 .support-empty h3 { font-size: 17px; margin-bottom: 8px; }
@@ -33,6 +33,7 @@
 .support-conversation { padding: 24px 32px; border: 1px solid rgb(var(--line)); background: rgb(var(--card)); border-radius: 16px; }
 .support-detail-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin: 24px 0; }
 .support-detail-heading h2 { font-size: 24px; overflow-wrap: anywhere; margin: 8px 0; }
+.support-ticket-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; flex-shrink: 0; }
 .support-status-control { display: flex; align-items: center; gap: 16px; padding-bottom: 24px; font-size: 13px; }
 .support-status-control select { width: auto; }
 .support-messages { border-block: 1px solid rgb(var(--line)); padding-block: 24px; display: grid; gap: 20px; }
