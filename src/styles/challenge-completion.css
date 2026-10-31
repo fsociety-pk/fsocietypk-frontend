@@ -9,7 +9,7 @@
 .completion-points > span { font-size: 64px; line-height: 1.1; font-weight: 700; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
 .completion-points > small { font-size: 13px; color: rgb(var(--muted)); }
 .completion-earned-mark { animation: completion-reveal 350ms var(--ease-out) both; }
-.completion-earned-mark .challenge-badge-mark { width: 164px; }
+.completion-earned-mark .challenge-badge-mark { width: 156px; }
 .completion-message h2 { font-size: 25px; font-weight: 650; line-height: 1.3; letter-spacing: -.03em; }
 .completion-message p { font-size: 14px; line-height: 1.7; color: rgb(var(--muted)); margin-top: 12px; }
 .completion-challenge-title { font-size: 13px; font-weight: 600; overflow-wrap: anywhere; margin-top: 20px; }
@@ -21,5 +21,5 @@
 @keyframes completion-confetti { 0% { opacity: 0; transform: translate(-50%,-50%) rotate(0); } 8% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(calc(-50% + var(--confetti-x)),calc(-50% + var(--confetti-y))) rotate(var(--confetti-rotation)); } }
 @keyframes completion-reveal { from { opacity: 0; transform: translateY(12px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes completion-check { to { stroke-dashoffset: 0; } }
-@media (max-width: 600px) { .challenge-completion-dialog { padding: 24px 20px; }.completion-art { height: 180px; margin-bottom: 16px; }.completion-earned-mark .challenge-badge-mark { width: 144px; }.completion-message h2 { font-size: 22px; } }
+@media (max-width: 600px) { .challenge-completion-dialog { padding: 24px 20px; }.completion-art { height: 180px; margin-bottom: 16px; }.completion-earned-mark .challenge-badge-mark { width: 135px; }.completion-message h2 { font-size: 22px; } }
 @media (prefers-reduced-motion: reduce) { .completion-confetti { display: none; }.completion-check,.completion-check svg,.completion-points,.completion-earned-mark { animation: none; }.completion-check svg { stroke-dashoffset: 0; } }

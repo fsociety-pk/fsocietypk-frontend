@@ -10,7 +10,11 @@
 .challenge-badge-search .input { padding-left: 40px; }
 .challenge-badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
 .challenge-badge-card { display: flex; flex-direction: column; align-items: center; min-width: 0; padding: 24px 16px 16px; background: rgb(var(--card)); border: 1px solid transparent; border-radius: var(--radius-panel); box-shadow: var(--panel-shadow); text-align: center; color: rgb(var(--ink)); transition: background var(--motion-fast), transform var(--motion-fast); }
-.challenge-badge-mark { display: block; width: 144px; height: auto; max-width: 100%; object-fit: contain; flex-shrink: 0; }
+.challenge-badge-mark { position: relative; display: block; width: 144px; height: auto; max-width: 100%; aspect-ratio: 3 / 4; flex-shrink: 0; }
+.challenge-badge-base { position: absolute; top: 0; left: 0; display: block; width: 100%; height: auto; }
+.challenge-badge-personalization { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+.challenge-badge-shine { animation: badge-metal-shine 4.8s ease-in-out var(--badge-shine-delay, 0s) infinite; }
+@keyframes badge-metal-shine { 0% { opacity: 0; transform: translateX(-160px) skewX(-18deg); } 20%, 75% { opacity: 1; } 100% { opacity: 0; transform: translateX(360px) skewX(-18deg); } }
 .challenge-badge-card .challenge-badge-mark { margin: 0 auto 16px; }
 .challenge-badge-card > strong { font-size: 14px; font-weight: 650; line-height: 1.5; overflow-wrap: anywhere; }
 .challenge-badge-category { color: rgb(var(--muted)); font-size: 11px; margin-top: 5px; }
@@ -69,4 +73,4 @@
   .challenge-earned-badge { align-items: flex-start; gap: 12px; padding: 16px; }
   .challenge-earned-badge .challenge-badge-mark { width: 72px; }
 }
-@media (prefers-reduced-motion: reduce) { .challenge-badge-card { transition: none; }.challenge-badge-card:hover { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .challenge-badge-shine { animation: none; display: none; }.challenge-badge-card { transition: none; }.challenge-badge-card:hover { transform: none; } }

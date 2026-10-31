@@ -53,6 +53,15 @@ async page => {
   check(await badgeCards.count() === 10, 'Each completed challenge has one earned badge');
   const assets = await badgeCards.locator('img').evaluateAll(images => images.map(img => ({ src: img.getAttribute('src'), loaded: img.complete && img.naturalWidth === 240 })));
   check(assets.every(item => item.loaded) && new Set(assets.map(item => item.src)).size === 10, 'All ten exact SVG category emblems load independently');
+  check((await badgeCards.locator('.badge-owner-plate text').allTextContents()).every(name => name === '@karlos'), 'Every profile emblem includes its owner username');
+  const shine = badgeCards.first().locator('.challenge-badge-shine');
+  check(await shine.evaluate(el => getComputedStyle(el).animationIterationCount === 'infinite'), 'Profile emblems repeat their metallic shine continuously');
+  const beforeShine = await shine.evaluate(el => getComputedStyle(el).transform);
+  await page.waitForTimeout(160);
+  check(beforeShine !== await shine.evaluate(el => getComputedStyle(el).transform), 'The profile shine advances across the emblem');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  check(await shine.evaluate(el => getComputedStyle(el).animationName === 'none' && getComputedStyle(el).display === 'none'), 'Reduced motion disables the repeating profile shine');
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.screenshot({ path: '/tmp/challenge-badges-profile-desktop.png', fullPage: true });
   await page.getByLabel('Filter badges by category').selectOption('crypto');
   check(await badgeCards.count() === 1 && await badgeCards.first().getAttribute('data-badge-category') === 'crypto', 'Earned badges filter by category');
@@ -62,6 +71,7 @@ async page => {
   await page.getByLabel('Search earned badges').fill('');
   await page.getByRole('button', { name: 'View Borrowed Badge badge', exact: true }).click();
   await dialog.waitFor();
+  check(await dialog.locator('.badge-owner-plate text').textContent() === '@karlos', 'Opened badge artwork retains its owner username');
   check(await dialog.getByText(/^0?1 Oct 2026$/).count() === 1 && await dialog.getByText('Earned by @karlos', { exact: true }).count() === 1, 'Details show the actual owner and recorded completion date');
   check(await dialog.getByText('200 pts', { exact: true }).count() === 1, 'Details preserve earned points');
   const downloadEvent = page.waitForEvent('download');
@@ -95,6 +105,7 @@ async page => {
   await dialog.waitFor();
   check(await dialog.getByText('Borrowed Badge', { exact: true }).count() === 1, 'Shared public badge link opens its earned badge');
   await page.keyboard.press('Escape');
+  check((await badgeCards.locator('.badge-owner-plate text').allTextContents()).every(name => name === '@karlos') && await badgeCards.locator('.challenge-badge-shine').count() === 10, 'Public profile badges use their owner and include the repeating shine');
   await go('/profile?tab=edit');
   await page.getByLabel('Bio', { exact: true }).fill('Learning through practice.');
   await page.getByRole('button', { name: 'Save changes', exact: true }).click();

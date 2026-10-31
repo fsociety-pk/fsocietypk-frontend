@@ -230,7 +230,7 @@ const ChallengeDetail: React.FC = () => {
         challengeTitle={challenge?.title || ''}
       />
       <ChallengeBadgeDetails badge={showBadge && isChallengeSolvedUI ? earnedBadge : null} username={user?.username || 'Member'} onClose={() => { setShowBadge(false); requestAnimationFrame(() => document.querySelector<HTMLButtonElement>('.challenge-earned-badge button')?.focus()); }} isPublic={user?.isProfilePublic !== false} showProfileLink />
-      <ChallengeCompletionCelebration badge={showCompletion && isChallengeSolvedUI ? earnedBadge : null} points={awardedPoints} onClose={() => { setShowCompletion(false); requestAnimationFrame(() => document.querySelector<HTMLButtonElement>('.challenge-earned-badge button')?.focus()); }} onViewBadge={() => { setShowCompletion(false); setShowBadge(true); }} />
+      <ChallengeCompletionCelebration badge={showCompletion && isChallengeSolvedUI ? earnedBadge : null} username={user?.username || 'Member'} points={awardedPoints} onClose={() => { setShowCompletion(false); requestAnimationFrame(() => document.querySelector<HTMLButtonElement>('.challenge-earned-badge button')?.focus()); }} onViewBadge={() => { setShowCompletion(false); setShowBadge(true); }} />
       <div className="challenge-detail-content">
         <div className="challenge-detail-actions">
           <button onClick={() => navigate('/challenges')} className="btn-ghost challenge-back"><ArrowLeft size={16} />Back to challenges</button>
@@ -343,7 +343,7 @@ const ChallengeDetail: React.FC = () => {
                         <p className="text-xs text-brand/70">You have solved all flags in this challenge.</p>
                       </div>
                     </div>
-                    <div className="challenge-earned-badge"><ChallengeBadgeMark category={challenge.category} decorative /><div><h4>Badge earned</h4><p>This challenge’s category badge is part of your profile collection.</p><button className="btn-outline" onClick={() => setShowBadge(true)}><Trophy size={16} />View badge</button></div></div>
+                    <div className="challenge-earned-badge"><ChallengeBadgeMark category={challenge.category} username={user?.username || 'Member'} decorative /><div><h4>Badge earned</h4><p>This challenge’s category badge is part of your profile collection.</p><button className="btn-outline" onClick={() => setShowBadge(true)}><Trophy size={16} />View badge</button></div></div>
                   </div>
                 ) : (
                   <div className="space-y-3">

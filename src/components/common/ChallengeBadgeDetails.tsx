@@ -34,7 +34,7 @@ export default function ChallengeBadgeDetails({ badge, username, onClose, isPubl
     <div ref={dialog} className="challenge-badge-dialog" role="dialog" aria-modal="true" tabIndex={-1} aria-labelledby="challenge-badge-dialog-title" aria-describedby="challenge-badge-dialog-owner">
       <header className="challenge-badge-dialog-header"><div><h2 id="challenge-badge-dialog-title">Challenge badge</h2><p id="challenge-badge-dialog-owner">Earned by @{username}</p></div><button className="icon-button" onClick={onClose} aria-label="Close badge"><X size={19} /></button></header>
       <div className="challenge-badge-dialog-body">
-        <div className="challenge-badge-stage"><ChallengeBadgeMark category={badge.category} /></div>
+        <div className="challenge-badge-stage"><ChallengeBadgeMark category={badge.category} username={username} /></div>
         <div className="challenge-badge-earned"><CheckCircle2 size={15} aria-hidden="true" />Challenge completed</div>
         <h3>{badge.title}</h3>
         <dl className="challenge-badge-facts"><div><dt>Category</dt><dd>{badgeDesign(badge.category).label}</dd></div><div><dt>Difficulty</dt><dd className="capitalize">{badge.difficulty || 'Not specified'}</dd></div><div><dt>Points earned</dt><dd>{badge.points.toLocaleString()} pts</dd></div><div><dt>Completed</dt><dd>{badge.earnedAt ? safeDate(badge.earnedAt) : 'Date not recorded'}</dd></div></dl>

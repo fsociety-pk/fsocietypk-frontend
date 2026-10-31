@@ -27,6 +27,12 @@ OSINT/forest/compass; STEGO/rose/hidden image; NETWORK/azure/linked nodes;
 MOBILE/indigo/phone; MISC/slate/faceted diamond. Each mark reads COMPLETED.
 Final SVGs follow that direction with exact text and scalable custom paths.
 
+Every rendered emblem also carries the owner's `@username` on a matching nickel
+nameplate. Long usernames scale to fit. The same personalized plate appears in
+details, completion feedback and downloaded SVGs. Profile collections add a
+subtle clipped metallic sweep every 4.8 seconds, with staggered phases; the sweep
+is disabled by `prefers-reduced-motion` and is omitted from downloads and dialogs.
+
 ## Earning and profile behavior
 
 The backend profile projection returns `earnedBadges` for every distinct full
@@ -63,7 +69,8 @@ Details replace this dialog only after the user clicks View badge. Revisiting a
 solved challenge does not replay it. Close/Escape cancels timers and restores
 focus. Reduced motion skips both confetti/counting and shows the final message
 immediately. Decorations are hidden from assistive technology; status text is
-announced politely. No audio, looping animation, or extra follow-up popup.
+announced politely. The completion sequence has no audio, looping animation, or
+extra follow-up popup; the continuous shine belongs only to profile collections.
 
 ## Validation
 
@@ -72,8 +79,13 @@ The backend suite is `npm run build && node tests/challenge-badges.cjs`.
 Tests use mocked HTTP/WebSocket/model data and do not award real users badges.
 Profile and challenge-progress suites also cover the replacement award controls.
 
-Final validation: both builds passed; 48 badge/celebration browser checks passed,
+Initial validation: both builds passed; 48 badge/celebration browser checks passed,
 along with the 32-check challenge-progress suite, community workflows, profile
 editing/avatar persistence, badge export and password-change regressions. Ten
 standalone assets and downloaded owner/challenge/date metadata passed XML checks.
 Reviewed desktop/phone profile galleries and completion dialogs in both themes.
+
+Username/shine refinement: the frontend build and 54 badge browser checks passed,
+including owner names on private/public profiles, actual repeating sweep motion,
+live reduced-motion changes and mobile layouts. Downloaded SVG XML preserves the
+personalized owner plate and challenge title.

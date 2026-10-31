@@ -17,8 +17,8 @@ const pieces = Array.from({ length: 36 }, (_, index) => {
   } as CSSProperties;
 });
 
-export default function ChallengeCompletionCelebration({ badge, points, onClose, onViewBadge }: {
-  badge: EarnedChallengeBadge | null; points: number; onClose: () => void; onViewBadge: () => void;
+export default function ChallengeCompletionCelebration({ badge, username, points, onClose, onViewBadge }: {
+  badge: EarnedChallengeBadge | null; username: string; points: number; onClose: () => void; onViewBadge: () => void;
 }) {
   const reduced = useReducedMotionPreference();
   const [phase, setPhase] = useState<'celebrate' | 'points' | 'complete'>('celebrate');
@@ -50,7 +50,7 @@ export default function ChallengeCompletionCelebration({ badge, points, onClose,
     <div ref={dialog} className={`challenge-completion-dialog phase-${complete ? 'complete' : phase}`} role="dialog" aria-modal="true" aria-labelledby="completion-title" aria-describedby="completion-description" tabIndex={-1}>
       <button className="icon-button completion-close" aria-label="Close celebration" onClick={onClose}><X size={19} /></button>
       <div className="completion-art" aria-hidden="true">
-        {complete ? <div className="completion-earned-mark"><ChallengeBadgeMark category={badge.category} decorative /></div> : phase === 'celebrate' ? <div className="completion-check"><Check size={44} /></div> : <div className="completion-points"><span ref={counter}>+0</span><small>points earned</small></div>}
+        {complete ? <div className="completion-earned-mark"><ChallengeBadgeMark category={badge.category} username={username} decorative /></div> : phase === 'celebrate' ? <div className="completion-check"><Check size={44} /></div> : <div className="completion-points"><span ref={counter}>+0</span><small>points earned</small></div>}
       </div>
       <div className="completion-message" aria-live="polite" aria-atomic="true"><h2 id="completion-title">{complete ? 'Challenge successfully completed' : phase === 'points' ? 'Points earned' : 'All flags captured!'}</h2><p id="completion-description">{complete ? 'Your badge has been added to your profile.' : phase === 'points' ? `${points.toLocaleString()} points added to your score.` : 'Every flag verified. You earned this.'}</p></div>
       <p className="completion-challenge-title">{badge.title}</p>
