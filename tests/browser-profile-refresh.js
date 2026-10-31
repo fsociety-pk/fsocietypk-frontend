@@ -49,7 +49,7 @@ async page => {
     const s=getComputedStyle(el), canvas=document.createElement('canvas');canvas.width=canvas.height=1;
     const ctx=canvas.getContext('2d',{willReadFrequently:true});
     const luminance=token=>{ctx.fillStyle=s.getPropertyValue(token);ctx.fillRect(0,0,1,1);return [...ctx.getImageData(0,0,1,1).data].slice(0,3).map(x=>x/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4).reduce((v,x,i)=>v+x*[.2126,.7152,.0722][i],0);};
-    const bg=luminance('--profile-deep');return ['--profile-paper','--profile-soft-ink','--profile-mint'].map(token=>(luminance(token)+.05)/(bg+.05));
+    const bg=luminance('--profile-card');return ['--profile-ink','--profile-muted','--profile-accent'].map(token=>{const fg=luminance(token);return (Math.max(fg,bg)+.05)/(Math.min(fg,bg)+.05);});
   });
   check(contrast.every(ratio=>ratio>=4.5),'Identity heading, supporting copy and accent meet text contrast requirements');
   await page.screenshot({path:'/tmp/profile-refresh-desktop-light.png',fullPage:true});
@@ -90,6 +90,16 @@ async page => {
 
   for(const theme of ['light','dark']){
     await page.evaluate(theme=>{localStorage.setItem('fsociety-theme',theme);document.documentElement.dataset.theme=theme;},theme);
+    const surfaces=await page.evaluate(()=>{
+      const style=selector=>getComputedStyle(document.querySelector(selector));
+      const hero=style('.profile-banner'), stat=style('.profile-stat'), badge=style('.challenge-badge-card'), record=style('.profile-grid > .soft-panel');
+      return {hero:hero.backgroundColor, page:getComputedStyle(document.body).backgroundColor, inset:style('.profile-level-console').backgroundColor,
+        raised:[hero,stat,badge,record].every(s=>s.boxShadow!=='none' && parseFloat(s.borderTopWidth)===0),
+        gap:parseFloat(style('.profile-stat-strip').columnGap),statRadius:parseFloat(stat.borderTopLeftRadius)};
+    });
+    check(theme==='light'?surfaces.hero==='rgb(255, 255, 255)':surfaces.hero==='rgb(24, 34, 50)',`${theme} identity card uses its matching theme surface`);
+    check(surfaces.hero!==surfaces.page && surfaces.inset!==surfaces.hero,`${theme} page, identity and level panel have distinct surfaces`);
+    check(surfaces.raised && surfaces.gap>=12 && surfaces.statRadius>0,`${theme} profile cards have separate spacing and soft elevation instead of perimeter lines`);
     for(const width of [320,390,640,768,1024,1440]){
       await page.setViewportSize({width,height:1000});
       await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));

@@ -3,21 +3,23 @@
 ## Member dossier refinement, October 31
 
 The profile now has terminal chrome, a larger framed portrait, a circular level
-meter and a unified dark statistic strip. Missing or failed photos use the custom
+meter and separate elevated statistic cards. Light mode uses a white identity
+card, pale mint milestone panel and slate text; dark mode uses raised slate
+surfaces. Badges and records use soft elevation and spacing. Missing photos use the custom
 masked hacker avatar, also shared by public profiles and the account menu.
 Identity reveals settle after entry; reduced motion shows the finished state.
 The full current contract and image prompt are in [PROFILE_DESIGN.md](PROFILE_DESIGN.md).
 
 ## Member profiles, October 31
 
-Mode: Operate with one expressive identity moment. The owner chose a dark green
-identity card with theme-aware content, rather than an entirely dark page.
+Mode: Operate with one expressive identity moment. Identity and content cards
+follow the chosen light/dark theme, with emerald accents and soft elevation.
 Direction: precise, personal, confident. Preserve Onest, actual member data,
 existing badge artwork, shared page themes and all profile/account behavior.
 
 The identity card groups the original photo, username, role, bio and social
 links, with a right-hand level-progress area computed from actual points. The
-joined four-part statistics band keeps the API's solve count, points and rank,
+four separate statistic cards keep the API's solve count, points and rank,
 and the existing points-based level formula. Metadata remains factual: joined
 date, supplied country and public/private state. Do not invent verified status,
 security clearances, online indicators, skill ranks, or achievements.
@@ -31,23 +33,23 @@ motion shows the real username immediately, including after profile edits.
 The avatar scan and level bar finish within 750ms, stat arrivals within 605ms,
 and tab changes within 180ms; there are no ambient loops or fake loading states.
 
-Identity colors are scoped in `profile-refresh.css`: deep green OKLCH
-24%/.035/164, paper 96%/.012/155, secondary ink 78%/.026/155, mint
-82%/.13/155 and edge 43%/.045/164. The rest of the profile uses existing
-card/line/ink/muted/brand semantic tokens. Use a 16px joined identity surface,
-12px record/badge panels, 6–10px controls, defined edges and no diffuse panel
-shadows. No gradient text, decorative background grids or neon glow. Body
+Identity colors are scoped in `profile-refresh.css`, inheriting shared
+card/ink/muted/brand tokens. Light mode uses white identity/record surfaces and
+a pale mint inset; dark mode uses raised slate surfaces. Use a 16px identity
+surface, 12px separate statistic cards, 16px record/badge panels and 6–10px
+controls. Soft shadows separate content cards without perimeter outlines.
+No gradient text, decorative background grids or neon glow. Body
 copy uses 14px/1.75; the username scales 32–54px; statistics use 28–30px with
 tabular figures. Spacing follows the existing 4px rhythm.
 
 The phone layout stacks identity and level information, then uses a 2×2 stat
-band. Long names wrap without clipping. Badge grids fit their actual items and
+card grid with 12px gutters. Long names wrap without clipping. Badge grids fit their actual items and
 keep two columns on phones. Tabs scroll within their own band and support
 Arrow/Home/End navigation, roving focus and existing URL deep links. Profile
 editing, photo previews/saving, password controls, badge details/exports, public
 profile privacy and error recovery retain their existing paths.
 
-Validation: the production TypeScript/Vite build passed. 58 isolated profile
+Earlier profile iteration validation: the production TypeScript/Vite build passed. 58 isolated profile
 checks cover username decoding, stable accessible names/widths, replay focus,
 contrast, real statistics/level progress, arrow-key tabs, API edits, photo preview
 cancellation, public/private errors, long/empty profiles, and live reduced motion

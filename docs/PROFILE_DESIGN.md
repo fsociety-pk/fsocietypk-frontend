@@ -7,7 +7,7 @@ are the references. The prior flat green banner needed more character.
 
 The signature is a framed portrait beside a `whoami` reveal, with real progress.
 A compact terminal bar identifies the community. A circular milestone meter and
-dark statistics strip form one identity panel; underlined tabs lead to records
+separate elevated statistic cards establish hierarchy; underlined tabs lead to records
 and controls. Avoid invented ranks, fake online status, random code feeds and
 flashing backgrounds.
 
@@ -16,21 +16,25 @@ flashing backgrounds.
 Use existing Onest for names, records and controls, with local system monospace
 only for terminal chrome. Type steps: 11, 12, 14, 20, 28, 52px; names adapt down
 to 32px. Follow the shared 4px spacing scale. Shared 16px panel radius, 6/12px
-internal controls/framing. Defined edges, no diffuse shadows.
+internal controls/framing. Content cards use soft elevation without perimeter
+outlines. Keep real boundaries on inputs and the portrait's corner framing.
 
 Profile tokens in `src/styles/profile-refresh.css`:
 
-| Role | Value |
-| --- | --- |
-| Background | `oklch(21% .025 164)` |
-| Inset / stats | `oklch(25% .03 164)` |
-| Main text | `oklch(96% .012 155)` |
-| Supporting text | `oklch(78% .026 155)` |
-| Accent | `oklch(82% .13 155)` |
-| Boundary | `oklch(38% .035 164)` |
+| Role | Light | Dark |
+| --- | --- | --- |
+| Identity / records | White shared card | Slate shared card |
+| Level inset | `oklch(96% .018 164)` | Shared elevated slate with 6% brand tint |
+| Terminal chrome | `oklch(98% .005 245)` | Shared elevated slate |
+| Main / supporting text | Shared ink / muted | Shared ink / muted |
+| Accent | Shared deep emerald | Shared mint |
+| Statistic surfaces | Card + 3.5% semantic tint | Card + 3.5% semantic tint |
 
-The canvas, records and forms inherit shared light/dark tokens; identity keeps
-its dark material. Below 900px the milestone moves beneath identity; below 600px
+The entire profile follows the selected theme. White cards stand above the pale
+slate canvas in light mode; raised slate cards sit above the deep canvas in dark
+mode. Statistics are separated by 16px gaps, reduced to 12px on phones. Badges
+and reading panels share soft elevation instead of outline-only separation.
+Below 900px the milestone moves beneath identity; below 600px
 stats form two columns; below 400px portrait and milestone become compact. Long names wrap
 without losing their accessible names. Tabs scroll within their own row.
 
@@ -71,3 +75,8 @@ materials match the brief. Final visual audit: 8/10; no unintended page overflow
 obscured content, fake activity, neon haze or stacked shadow/outline materials.
 Small decorative portrait captions are omitted on phones; biography stays 14px.
 The ring uses a small SVG stroke reveal; other new motion uses transform/opacity.
+
+Theme/elevation refinement: build passed and 70 profile checks passed. The added
+checks confirm the white/slate identity surfaces, different page/level materials,
+separate metric spacing, and elevated cards without perimeter outlines in both
+themes. Desktop and phone screenshots reviewed in light and dark mode.
