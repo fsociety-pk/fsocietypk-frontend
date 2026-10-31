@@ -13,8 +13,12 @@ async (page) => {
     const request = route.request();
     const url = new URL(request.url());
     const pathname = url.pathname;
-    const json = (data, status = 200, message = 'Local browser fixture') => route.fulfill({ status, contentType: 'application/json', body: JSON.stringify({ success: status < 400, statusCode: status, message, data }) });
-    if (url.origin !== origin) return route.fulfill({ status: 204, body: '' });
+    // Test the normal production bundle even when it uses an absolute API URL.
+    // All API requests remain intercepted; no live credentials are submitted.
+    const headers = { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Credentials': 'true', 'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS', 'Access-Control-Allow-Headers': request.headers()['access-control-request-headers'] || 'Content-Type,Authorization' };
+    const json = (data, status = 200, message = 'Local browser fixture') => route.fulfill({ status, headers, contentType: 'application/json', body: JSON.stringify({ success: status < 400, statusCode: status, message, data }) });
+    if (pathname.startsWith('/api/') && request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers });
+    if (url.origin !== origin && !pathname.startsWith('/api/')) return route.fulfill({ status: 204, body: '' });
     if (pathname === '/__fixture') {
       if (request.method() === 'POST') Object.assign(state, request.postDataJSON());
       return json({ ...state, avatar: profile.avatar });

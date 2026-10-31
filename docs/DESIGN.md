@@ -1,5 +1,31 @@
 # Fsociety PK design system
 
+## Password privacy and signup helper, October 31
+
+The top login/signup crew handles privacy and messages. Masked password entry
+keeps its eyes directed up; revealing the password retains the existing helping
+hands. Its mouth/brows do not change with password strength. Identity-field gaze,
+greeting, availability messages and verification remain intact. Do not pass the
+password's score, checker state, length or contents to this crew.
+
+Signup alone shows a compact robot immediately beside the password input. It
+receives only one enum: empty, weak, fair, good, complete or invalid. Its face and
+existing semantic colors reflect the same five-rule checker; it never receives
+the password itself. Over-72-byte passwords remain invalid even if all five
+rules pass. Facial expressions and an accessible label supplement the existing
+checklist/status text. A finite 280ms reaction plays only when the state changes;
+reduced motion shows the new expression immediately. The helper stays out of
+login, OTP and prank screens. The robot is a small vector UI companion, using
+shared card/surface/semantic tokens, with no added artwork dependencies or loops.
+
+Validation: production build passed. 62 targeted helper checks, 44 existing crew
+privacy/layout checks and 16 auth checks passed with intercepted APIs. Reviewed
+normal/reduced motion, desktop and phone light/dark captures. Masked/revealed
+password privacy, visibility toggles, OTP/resend/login, the byte limit, natural
+form scrolling and reachable submit controls remain functional. The auth fixture
+now intercepts absolute production API URLs with CORS/OPTIONS support so this
+verification runs on the normal production bundle without live account writes.
+
 ## Member dossier refinement, October 31
 
 The profile now has terminal chrome, a larger framed portrait, a circular level
@@ -150,7 +176,7 @@ Self-hosted Onest for interface/body and Anton for the existing landing wordmark
 ## Layout and behavior
 - Auth uses a dedicated compact header and a centered form with the crew directly above login/signup on every screen size. Signup groups email and username in one row on desktop and stacks them on mobile. No public navigation or footer competes with form space. At short heights the password requirements remain visible while redundant helper text is removed. Natural scrolling remains available for validation errors, increased text size, and open software keyboards; do not crop or lock the page.
 - The auth crew uses a soft clay treatment: rounded material shading, eye catchlights, small noses, eyebrows, and cheeks within the existing green/coral/lilac palette. Stage scale is .3 at every breakpoint, with a compact 104px minimum frame that grows for wrapped feedback and the speech bubble centered above the crew, matching the user’s final reference. Preserve normal scrolling when the larger artwork, validation messages, zoom, or keyboard need extra room.
-- Character motion receives field focus and character count only, never password contents. Each character derives gaze from the active input’s actual bounding box and approximate caret position, so desktop email and username point in different directions. Focused fields own attention; cursor tracking resumes after blur. Masked password entry keeps the eyes open and directs them upward or away from the form. Revealing the password raises four connected arms: the green friend covers both neighbours’ eyes, and the coral/lilac neighbours each cover one green eye. Each hand matches its owner’s color. Real eye/shoulder bounds determine the SVG endpoints, including after resizing; all six eyes stay rendered behind the hands. Hiding the password retracts the arms. Reduced motion positions the hands immediately. Mouse/pen tracking is batched through requestAnimationFrame; touch and reduced motion disable it. Resize/scroll recalculate field gaze, and listeners/frames clean up on unmount. A greeting button provides a short, staggered head wiggle with a friendly caption; privacy takes priority over greeting motion.
+- Crew motion receives field focus and identity-field character count only, never password contents, length or checker state. Each character derives gaze from the active input’s actual bounding box and approximate caret position, so desktop email and username point in different directions. Focused fields own attention; cursor tracking resumes after blur. Masked password entry keeps the eyes open and directs them upward or away from the form. Revealing the password raises four connected arms: the green friend covers both neighbours’ eyes, and the coral/lilac neighbours each cover one green eye. Each hand matches its owner’s color. Real eye/shoulder bounds determine the SVG endpoints, including after resizing; all six eyes stay rendered behind the hands. Hiding the password retracts the arms. Reduced motion positions the hands immediately. Mouse/pen tracking is batched through requestAnimationFrame; touch and reduced motion disable it. Resize/scroll recalculate field gaze, and listeners/frames clean up on unmount. A greeting button provides a short, staggered head wiggle with a friendly caption; privacy takes priority over greeting motion.
 - Dashboard has a concise welcome, visibly separate resource area, compact loading feedback, and independently colored stat icons/numbers.
 - Challenge cards show category icons, readable descriptions, difficulty labels, solve counts, points, and explicit solved state. Search and category/difficulty filtering preserve existing behavior.
 - Incorrect flag submissions rotate through six lighthearted, encouraging messages, starting with “Lol! That flag’s an impostor. Try again.” Inline feedback states which flag failed and preserves the entry and earned progress. A single replacement toast avoids stacking failed-attempt notices. Network/server failures retain plain retry instructions. Inline feedback uses sentence case and a polite status announcement.
@@ -236,7 +262,7 @@ Latest refinement: remove the middle character’s torso dots (they looked like 
 
 Cards use tinted green, violet, coral, and category surfaces against the lighter page, with a single material edge and restrained shadow. Dark cards use elevated green surfaces. Interactive cards lift 4px on hover; reduced motion removes the transform. Admin panels share the surface tokens. The original detailed logo is unchanged, with a light contrasting base on dark backgrounds so the black lettering stays legible.
 
-Signup alone offers three username ideas derived from the typed username. Ideas are keyboard accessible, selecting one restores input focus, and availability is checked live after a pause and confirmed during registration. The crew suggests the first idea in its bubble and confirms a choice. Only password score/state reaches the character: weak passwords show a frown and concerned brows; strong passwords show wide smiles and brighter cheeks. Cross-character privacy hands retain priority.
+Signup alone offers three username ideas derived from the typed username. Ideas are keyboard accessible, selecting one restores input focus, and availability is checked live after a pause and confirmed during registration. The crew suggests the first idea in its bubble and confirms a choice. The crew stays neutral while protecting password privacy. A separate signup robot beside the password input receives only the checker state and owns the worried/smiling strength reactions. Cross-character privacy hands retain priority.
 
 Recognized SQL identity patterns do not trigger live format/payload warnings or reveal the joke. Submission starts the existing four-second fake-admin sequence, with six revised punchlines and no cartoon characters in any prank phase. It remains local and signed out. Passwords are unchanged, and XSS/NoSQL feedback retains its current behavior.
 

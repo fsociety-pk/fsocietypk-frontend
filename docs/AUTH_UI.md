@@ -27,3 +27,26 @@ Shared page/session/data loading uses an animated SVG orbit and relevant status 
 Both TypeScript builds pass. Backend controller tests cover normalization, fixed database filters, scalar validation, available/taken results, minimal output, and no-store responses. The HTTP test exercises the real route and independent check/auth limits with mocked database methods. Browser fixtures exercise availability debounce, stale responses, failures, registration fallback, real WebGL pixels, input isolation, context loss, reduced motion, route cleanup, loading, auth, mascot privacy, and prank behavior without contacting production APIs.
 
 Light-theme fluid visibility now uses full opacity, stronger saturation, and a less restrictive center mask. Dark-theme rendering keeps its previous values.
+
+
+## Password privacy versus strength feedback
+
+`AccessMascot` owns only focus/gaze, privacy hands, greeting and messages. It has
+no password-score or verification-score prop. Password entry always supplies an
+identity character count of zero. Its expressions stay neutral for every checker
+state on both login and signup.
+
+`PasswordStrengthRobot` appears only beside the signup password input, before
+email verification. Its only prop is the checker-state enum; no password text or
+length enters the component. The existing five requirements, meter, validation
+and 72-byte limit remain authoritative. Empty/weak/fair/good/complete/invalid
+states change its facial expression and semantic color, with a short finite
+reaction and a reduced-motion alternative. The accessible state label provides
+a text equivalent for the face. Login retains its usual password field and crew
+privacy behavior, without evaluating/displaying signup strength guidance.
+
+Regression checks: `browser-password-robot.js` covers all states, independent
+crew expressions, eyes-up/covered privacy, field placement, Unicode byte limits,
+normal/reduced motion and both themes at phone/tablet/desktop widths.
+`browser-mascot.js` checks all six eyes and connected hands; `browser-auth.js`
+checks existing registration, verification and login using intercepted requests.

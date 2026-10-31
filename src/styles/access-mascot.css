@@ -48,13 +48,3 @@
 .access-companions.cartoon-crew .crew-arm-color { stroke-width: 14px; }
 .access-companions.cartoon-crew .crew-hand { stroke: #557e6c; stroke-width: 1.2px; stroke-linejoin: round; }
 .access-companions.cartoon-crew .crew-fingers { fill: none; stroke: #557e6c; stroke-width: 1.2px; stroke-linecap: round; }
-/* Expressions respond to password progress, without receiving the password. */
-.access-companions.cartoon-crew .companion-mouth { transition: transform 180ms var(--ease-out), width 180ms var(--ease-out), background-color 180ms var(--ease-out); }
-.access-companions.cartoon-crew.is-sad .companion-mouth { transform: translateY(4px) rotate(180deg); }
-.access-companions.cartoon-crew.is-sad .companion-eye.left::before { transform: rotate(-22deg); }
-.access-companions.cartoon-crew.is-sad .companion-eye.right::before { transform: rotate(22deg); }
-.access-companions.cartoon-crew.is-sad .companion-cheek { opacity: .2; }
-.access-companions.cartoon-crew.is-happy .companion-mouth { width: 21px; left: 26px; height: 14px; background: #31534c; border-radius: 3px 3px 14px 14px; }
-.access-companions.cartoon-crew.is-happy .companion-mouth::after { content: ''; position: absolute; top: 0; left: 3px; right: 3px; height: 4px; background: #fff8ef; border-radius: 0 0 3px 3px; }
-.access-companions.cartoon-crew.is-happy .companion-cheek { opacity: .65; }
-.access-companions.cartoon-crew.is-hopeful .companion-mouth { transform: rotate(-7deg); }

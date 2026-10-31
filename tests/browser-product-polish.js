@@ -33,11 +33,11 @@ async (page) => {
   assert((await page.locator('.companion-bubble').innerText()).includes('Nice choice'), 'The crew confirms the chosen username');
   const password = page.getByLabel('Password', { exact: true });
   await password.fill('weak');
-  assert(await page.locator('.access-companions').getAttribute('data-emotion') === 'sad', 'Weak passwords make the crew sad');
-  assert(await page.locator('.companion-mouth').first().evaluate(el => getComputedStyle(el).transform !== 'none'), 'Sadness changes the visible mouth');
+  assert(await page.locator('.access-companions').getAttribute('data-emotion') === 'neutral', 'Weak passwords keep the privacy crew neutral');
+  assert(await page.locator('.password-strength-robot').getAttribute('data-strength') === 'weak', 'Weak password reaction belongs to the field robot');
   await password.fill('StrongPassword1!');
-  assert(await page.locator('.access-companions').getAttribute('data-emotion') === 'happy', 'Strong passwords make the crew happy');
-  assert(await page.locator('.companion-mouth').first().evaluate(el => getComputedStyle(el, '::after').content !== 'none'), 'Happy faces have a toothy smile');
+  assert(await page.locator('.access-companions').getAttribute('data-emotion') === 'neutral', 'Strong passwords keep the privacy crew neutral');
+  assert(await page.locator('.password-strength-robot').getAttribute('data-strength') === 'complete', 'Passing every check makes the field robot smile');
   await page.setViewportSize({ width: 320, height: 844 });
   assert(await page.evaluate(() => document.querySelector('.companion-bubble').getBoundingClientRect().bottom < document.querySelector('.companion-antenna').getBoundingClientRect().top - 3), 'Wrapped password feedback stays above the crew');
   await page.setViewportSize({ width: 1440, height: 900 });

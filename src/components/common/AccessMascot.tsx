@@ -3,7 +3,7 @@ import { Hand } from 'lucide-react';
 import CompanionPrivacyArms from './CompanionPrivacyArms';
 import '../../styles/access-mascot.css';
 
-interface Props { focused: string | null; characterCount: number; covered: boolean; verified: boolean; pending: boolean; message?: string; passwordScore?: number; welcomeMessage?: string; }
+interface Props { focused: string | null; characterCount: number; covered: boolean; pending: boolean; message?: string; welcomeMessage?: string; }
 
 function Face() {
   return <div className="companion-face">
@@ -13,10 +13,9 @@ function Face() {
 }
 
 /** Only focus and character count reach the illustration, never password contents. */
-export default function AccessMascot({ focused, characterCount, covered, verified, pending, message, passwordScore, welcomeMessage }: Props) {
+export default function AccessMascot({ focused, characterCount, covered, pending, message, welcomeMessage }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const [greeting, setGreeting] = useState(false);
-  const emotion = passwordScore === undefined ? 'neutral' : passwordScore <= 2 ? 'sad' : passwordScore === 5 ? 'happy' : 'hopeful';
   const privateEntry = focused === 'password' && !covered;
   useEffect(() => {
     if (!greeting) return;
@@ -85,8 +84,8 @@ export default function AccessMascot({ focused, characterCount, covered, verifie
       motion.removeEventListener('change', reset);
     };
   }, [focused, characterCount, covered, privateEntry]);
-  const caption = message || (covered ? 'No peeking! Friends cover for friends.' : privateEntry ? passwordScore === 5 ? 'All five checks passed. Eyes up—we respect that!' : emotion === 'sad' ? 'Eyes up. Give that password a little more muscle!' : 'Eyes up! We respect your privacy.' : greeting ? 'Hey, friend! The whole crew says hello.' : pending ? 'Check your inbox. You’ve got this.' : verified ? 'All checks passed. We respect that!' : focused ? 'Looking good. Keep going!' : welcomeMessage || 'Hi! Ready for a challenge?');
-  return <div ref={root} data-emotion={emotion} className={`access-companions cartoon-crew ${covered ? 'is-covered' : ''} ${privateEntry ? 'is-private' : ''} ${greeting ? 'is-greeting' : ''} ${verified ? 'is-ready' : ''} is-${emotion}`}>
+  const caption = message || (covered ? 'No peeking! Friends cover for friends.' : privateEntry ? 'Eyes up! We respect your privacy.' : greeting ? 'Hey, friend! The whole crew says hello.' : pending ? 'Check your inbox. You’ve got this.' : focused ? 'Looking good. Keep going!' : welcomeMessage || 'Hi! Ready for a challenge?');
+  return <div ref={root} data-emotion="neutral" className={`access-companions cartoon-crew ${covered ? 'is-covered' : ''} ${privateEntry ? 'is-private' : ''} ${greeting ? 'is-greeting' : ''}`}>
     <p className="companion-bubble" aria-live="polite">{caption}</p>
     <div className="companion-stage" aria-hidden="true">
       {(['coral', 'green', 'lilac'] as const).map(color => <div key={color} className={`companion companion-${color}`}>

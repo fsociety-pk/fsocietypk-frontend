@@ -388,3 +388,26 @@ keyboard focus, editing, photo cancellation, badge dialogs, responsive light/dar
 layouts at 320/390/640/768/1024/1440px, long/empty states, public/private states,
 API failure recovery and live reduced motion. The mechanical design detector
 reported no findings. Tests created no production accounts or records.
+
+
+## October 31 — separate signup strength robot
+
+The top cartoons no longer react emotionally to password strength. Their
+score/verified props and sad/happy expression rules were removed; they keep
+privacy messages, eyes-up masked entry, and helping hands for revealed passwords.
+Only identity-field character counts reach their gaze controller.
+
+A small robot now sits beside the signup password input and receives only the
+existing checker-state enum. It changes face/color for empty, weak, fair, good,
+complete and invalid states. The 280ms reaction runs on state changes; reduced
+motion keeps state changes immediate. It is absent from login/OTP/prank screens.
+All existing rules, visibility controls, the UTF-8 72-byte limit and submissions
+remain unchanged.
+
+Build passed with existing dependency warnings. 62 robot checks, 44 crew checks
+and 16 auth checks passed. Light/dark desktop/phone screenshots were reviewed.
+Tests verify independent crew faces and actual eye/hand privacy, responsive
+placement, accessible status, rule/byte-limit agreement, OTP/resend/login and
+absence of credential requests while typing. The browser fixture now intercepts
+absolute API URLs too, permitting auth regression on the production build with
+no real accounts created.
