@@ -1,5 +1,40 @@
 # Fsociety PK design system
 
+## Challenge records and completion, October 31
+
+Artifact: a working CTF library for choosing tasks and reviewing completed ones.
+Direction: precise, readable, earned. Preserve Onest, category colors and the
+existing slate/emerald workspace palette. The signature is a completion receipt:
+the whole solved card gains a soft green material, a solid semantic-green band
+states “Challenge solved”, and a separate Review challenge link remains usable.
+Partial progress always stays In progress; only the API's `isSolved` flag enables
+the solved treatment. No decorative achievement or additional reward is invented.
+
+Shared channels supply page/card/elevated/ink/muted/brand/success/on-brand;
+solved surfaces mix card and success in OKLCH. Light cards are white against the
+pale page; dark cards rise above the navy canvas. Defined edges replace shadows.
+Typography: 22px/800 title, 14px body/action, 12px metadata, 24px points with
+tabular numerals. Spacing uses 4px units, 24px desktop/20px phone padding and
+12px card corners. Category/difficulty precede the title, description and real
+flag progress; points/solvers/writeups precede the state and action. State text
+and a check accompany completion color. Card title and writeup links remain
+independent, with visible focus and no nested links. Single-flag tasks also show
+progress. Normal hover is a short 160ms lift/arrow shift; reduced motion is still.
+
+This extends the existing library rather than changing its filters or layout
+grammar. The receipt hierarchy was chosen over a ranking tile or decorative
+mission poster because choosing, continuing and reviewing are the real tasks.
+
+Finish gate: production build and 63 browser checks passed with mocked APIs.
+Submitting the final flag, returning through the in-app Back button, and
+refreshing retain the solved treatment; partial flags and wrong answers do not
+unlock it. Both themes pass text/state AA contrast checks and fit 320/390/768/
+1024/1440px with 44px actions. Desktop and phone screenshots were reviewed.
+Design audit: 9/10, no blocking checklist findings; the CTF-specific progress and
+completion hierarchy remain visible in grayscale, without decorative panels,
+glow, gradients or repeated achievements. Existing independent writeup links,
+search/category filters and reduced motion remain intact.
+
 ## Level emblem and editing boundaries, October 31
 
 The profile's level panel now uses an engraved, dimensional nickel-style emblem

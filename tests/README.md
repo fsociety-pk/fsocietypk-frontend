@@ -211,10 +211,13 @@ badge controls through 320×568, SVG export, focus restoration, and explicit
 staff flag reveal/hide. No production API or WebSocket connection is used.
 Screenshots are saved under `<workspace>/.playwright-mcp/community-*`.
 
-`tests/browser-challenge-progress.js` retains its 32 checks for partial and full
-solves, filtering, refresh persistence, progress counts, distinct profile history,
-and responsive cards. Its visual assertions now follow neutral cards with colored
-category labels and independent challenge/writeup links.
+`tests/browser-challenge-progress.js` has 63 checks for partial and full solves,
+filtering, refresh persistence, progress counts, distinct profile history and
+responsive cards. It verifies the new solved surface and completion band,
+returning through Back to challenges after the final flag, refresh persistence,
+single-flag progress, text/state contrast in both themes, 320–1440px layouts,
+touch targets, keyboard focus and reduced motion. It follows the normal
+production bundle with intercepted APIs and CORS/preflight support.
 
 From the backend directory, after building, run `node tests/community-updates.cjs`.
 It uses real routers, JWT verification, controllers, encryption, and an isolated

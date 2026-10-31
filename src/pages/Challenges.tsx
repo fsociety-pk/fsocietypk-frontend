@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Plus, ArrowUpRight, BookOpen, CheckCircle2 } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { challengeService } from "../services/challenge.service";
 import PageState from "../components/common/PageState";
-import FlagProgress from "../components/common/FlagProgress";
+import ChallengeCard from "../components/common/ChallengeCard";
 import { CHALLENGE_CATEGORIES, CATEGORY_LABELS } from "../utils/categories";
 import { useWriteupUpdates } from '../hooks/useWriteupUpdates';
 export default function Challenges() {
@@ -32,7 +32,7 @@ export default function Challenges() {
       c.title.toLowerCase().includes(search.toLowerCase()),
   );
   return (
-    <div className="page-wrap">
+    <div className="page-wrap challenge-library">
       <div className="page-heading">
         <div>
           <h1>Challenges</h1>
@@ -120,41 +120,7 @@ export default function Challenges() {
             explore
           </p>
           <div className="challenge-grid">
-            {filtered.map((c) => {
-              const solved = c.isSolved;
-              const started = (c.completedFlags ?? 0) > 0;
-              return (
-                <article
-                  key={c._id}
-                  className={`challenge-card${solved ? " challenge-card-solved" : ""}`}
-                  data-category={c.category}
-                >
-                  <div className="challenge-card-heading">
-                    <span className="category-label">{CATEGORY_LABELS[c.category] || c.category}</span>
-                    <span className={{easy: "badge-easy", medium: "badge-medium", hard: "badge-hard", insane: "badge-insane"}[c.difficulty]}>
-                      {c.difficulty}
-                    </span>
-                  </div>
-                  <h2><Link to={"/challenges/" + c._id}>{c.title}</Link></h2>
-                  <p>{c.description}</p>
-                  {(c.totalFlags ?? 1) > 1 && (
-                    <FlagProgress completed={c.completedFlags ?? 0} total={c.totalFlags!} />
-                  )}
-                  <footer>
-                    <span>{c.solveCount || 0} {(c.solveCount || 0) === 1 ? "solver" : "solvers"}</span>
-                    <strong>{c.points} pts</strong>
-                  </footer>
-                  <div className="challenge-writeups">
-                    {(c.writeupCount ?? 0) > 0 ? <Link to={`/writeups/challenge/${c._id}`}><BookOpen size={14} />{c.writeupCount} {(c.writeupCount ?? 0) === 1 ? 'writeup' : 'writeups'} available</Link> : <span><BookOpen size={14} />No writeups yet</span>}
-                    {solved && <span className="text-brand"><CheckCircle2 size={14} />Solved</span>}
-                  </div>
-                  <Link className="challenge-card-action" to={"/challenges/" + c._id}>
-                    <strong>{solved ? "View completed challenge" : started ? "Continue challenge" : "Start challenge"}</strong>
-                    <ArrowUpRight size={16} />
-                  </Link>
-                </article>
-              );
-            })}
+            {filtered.map(c => <ChallengeCard key={c._id} challenge={c} />)}
           </div>
         </>
       )}

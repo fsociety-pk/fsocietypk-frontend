@@ -1,3 +1,11 @@
+# Clear challenge completion cards — 2026-10-31
+
+- The library now distinguishes Not started, In progress and Challenge solved. Completed cards have a tinted surface, solid green completion band and separate Review challenge action. Every card shows real flag progress, points, solver count and writeup availability, with theme-aware contrast and responsive spacing.
+- Only the server's `isSolved` flag enables completion. Existing submission/query invalidation and backend completion rules are unchanged.
+- Passed: production build, 63 browser checks including completing the final flag and returning through in-app navigation, refresh persistence, wrong/partial flags, both-theme AA text contrast, 320–1440px layouts, keyboard focus and reduced motion; `git diff --check`. APIs are mocked; no production submissions were made.
+
+---
+
 # Static auth background and portrait hover — 2026-10-31
 
 - Login/signup (including verification) no longer mount the decorative WebGL fluid background.
