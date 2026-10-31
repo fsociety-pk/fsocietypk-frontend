@@ -23,6 +23,7 @@ import { authService } from "../../services/auth.service";
 import NotificationBell from '../common/NotificationBell';
 import BrandLogo from "../common/BrandLogo";
 import ThemeToggle from "../common/ThemeToggle";
+import MemberAvatar from '../common/MemberAvatar';
 import { toast } from "react-hot-toast";
 import { TEAM_ABOUT_URL } from '../../data/team';
 const workspaceLinks = [
@@ -206,11 +207,7 @@ export default function Navbar() {
                 aria-label={`View profile for ${user?.username || "your account"}`}
               >
                 <span className="avatar-small user-chip-avatar" aria-hidden="true">
-                  {user?.avatar ? (
-                    <img src={user.avatar} alt="" />
-                  ) : (
-                    user?.username?.[0]?.toUpperCase() || <User size={18} />
-                  )}
+                  <MemberAvatar src={user?.avatar} username={user?.username} decorative />
                 </span>
                 <span className="user-chip-copy">
                   <strong>{user?.username || "Your account"}</strong>

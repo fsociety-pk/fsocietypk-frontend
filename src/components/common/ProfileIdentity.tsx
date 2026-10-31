@@ -1,9 +1,10 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Github, Linkedin, Instagram, Globe, Lock, MapPin, Calendar, ArrowUpRight, Fingerprint, Flag, Zap, Trophy, Layers } from 'lucide-react';
+import { Github, Linkedin, Instagram, Globe, Lock, MapPin, Calendar, ArrowUpRight, Fingerprint, Flag, Zap, Trophy, Layers, TerminalSquare } from 'lucide-react';
 import type { UserProfile } from '../../services/userService';
 import { safeDate } from '../../utils/profileFormat';
 import AnimatedUsername from './AnimatedUsername';
+import MemberAvatar from './MemberAvatar';
 import '../../styles/profile-refresh.css';
 
 export default function ProfileIdentity({ profile, avatar }: { profile: UserProfile; avatar?: ReactNode }) {
@@ -18,16 +19,24 @@ export default function ProfileIdentity({ profile, avatar }: { profile: UserProf
   ];
   return <div className="profile-summary">
     <section className="profile-banner" aria-label="Member identity">
+      <div className="profile-terminal-bar">
+        <span><TerminalSquare size={16} aria-hidden="true" />fsociety<span aria-hidden="true">/</span>members</span>
+        <span className="profile-terminal-edition">CTF COMMUNITY</span>
+      </div>
       <div className="profile-banner-main">
         <div className="profile-identity">
-          <div className="profile-avatar-frame">
-            {avatar || <div className="profile-avatar">{profile.avatar ? <img src={profile.avatar} alt={profile.username} /> : profile.username?.[0]?.toUpperCase()}</div>}
-            <span className="profile-avatar-scan" aria-hidden="true" />
+          <div className="profile-portrait">
+            <div className="profile-avatar-frame">
+              {avatar || <div className="profile-avatar"><MemberAvatar src={profile.avatar} username={profile.username} /></div>}
+              <span className="profile-avatar-scan" aria-hidden="true" />
+            </div>
+            <span className="profile-portrait-caption" aria-hidden="true"><Fingerprint size={12} />FSOCIETY PK</span>
           </div>
           <div className="profile-identity-copy">
+            <div className="profile-command" aria-hidden="true"><span>❯</span> whoami</div>
             <AnimatedUsername username={profile.username} />
             <span className="profile-member-role"><Fingerprint size={14} aria-hidden="true" />{profile.role === 'admin' ? 'Community admin' : 'Community member'}</span>
-            <p className="profile-bio">{profile.bio || 'This member has not added a bio yet.'}</p>
+            <p className={`profile-bio${profile.bio ? '' : ' profile-bio-empty'}`}>{profile.bio || 'No bio yet. The solves tell the story.'}</p>
             <div className="profile-socials">
               {[
                 { key: 'github' as const, label: 'GitHub', icon: Github },
@@ -40,8 +49,14 @@ export default function ProfileIdentity({ profile, avatar }: { profile: UserProf
             </div>
           </div>
         </div>
-        <div className="profile-level-console" aria-label="Level progress">
-          <div className="profile-level-title"><Layers size={18} aria-hidden="true" /><span>Level <strong>{String(level).padStart(2, '0')}</strong></span></div>
+        <div className="profile-level-console" aria-label="Level progress" style={{ '--profile-progress': levelPoints / 1000 } as CSSProperties}>
+          <div className="profile-level-header">
+            <div className="profile-level-orbit" aria-hidden="true">
+              <svg viewBox="0 0 100 100" focusable="false"><circle className="profile-orbit-guide" cx="50" cy="50" r="45" /><circle className="profile-orbit-progress" cx="50" cy="50" r="45" pathLength="100" /></svg>
+              <Flag size={26} strokeWidth={1.5} />
+            </div>
+            <div className="profile-level-title"><span>Level <strong>{String(level).padStart(2, '0')}</strong></span><small>Keep your edge.</small></div>
+          </div>
           <div className="profile-level-facts"><span>Next level</span><span>{levelPoints.toLocaleString()} / 1,000 pts</span></div>
           <div className="profile-level-track" role="progressbar" aria-label={`Progress to level ${level + 1}`} aria-valuemin={0} aria-valuemax={1000} aria-valuenow={levelPoints}><span style={{ width: `${levelPoints / 10}%` }} /></div>
           <p>{(1000 - levelPoints).toLocaleString()} points to level {level + 1}</p>
@@ -55,7 +70,7 @@ export default function ProfileIdentity({ profile, avatar }: { profile: UserProf
       </div>
     </section>
     <div className="stats-strip profile-stat-strip" aria-label="Member statistics">
-      {stats.map(({ label, value, icon: Icon }, i) => <div className="profile-stat" key={label} style={{ '--profile-stat-delay': `${i * 55}ms` } as React.CSSProperties}>
+      {stats.map(({ label, value, icon: Icon }, i) => <div className="profile-stat" key={label} style={{ '--profile-stat-delay': `${i * 55}ms` } as CSSProperties}>
         <div className="profile-stat-value"><strong>{value}</strong><Icon size={19} strokeWidth={1.7} aria-hidden="true" /></div><span>{label}</span>
       </div>)}
     </div>

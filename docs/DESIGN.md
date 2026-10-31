@@ -1,5 +1,13 @@
 # Fsociety PK design system
 
+## Member dossier refinement, October 31
+
+The profile now has terminal chrome, a larger framed portrait, a circular level
+meter and a unified dark statistic strip. Missing or failed photos use the custom
+masked hacker avatar, also shared by public profiles and the account menu.
+Identity reveals settle after entry; reduced motion shows the finished state.
+The full current contract and image prompt are in [PROFILE_DESIGN.md](PROFILE_DESIGN.md).
+
 ## Member profiles, October 31
 
 Mode: Operate with one expressive identity moment. The owner chose a dark green

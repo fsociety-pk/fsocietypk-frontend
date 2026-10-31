@@ -58,7 +58,7 @@ export default function AnimatedUsername({ username }: { username: string }) {
   }, [username, reduced]);
 
   return <div className="profile-username-row">
-    <h1 className="profile-name" ref={heading} aria-label={username} onPointerEnter={event => {
+    <h1 className={`profile-name${username.length > 20 ? ' profile-name-long' : ''}`} ref={heading} aria-label={username} onPointerEnter={event => {
       if (event.pointerType === 'mouse') play.current();
     }}>
       <span aria-hidden="true">{[...username].map((letter, i) => <span className="username-letter" key={i}>

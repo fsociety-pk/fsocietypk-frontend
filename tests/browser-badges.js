@@ -183,6 +183,7 @@ async page => {
   check(small.x >= 0 && small.y >= 0 && small.x + small.width <= 320 && small.y + small.height <= 568, 'Completion feedback fits a small phone');
   await page.screenshot({ path: '/tmp/challenge-completion-phone.png' });
   await page.keyboard.press('Escape');
+  await page.waitForFunction(() => document.activeElement === document.querySelector('.challenge-earned-badge button'));
   check(await page.getByRole('button', { name: 'View badge', exact: true }).evaluate(el => el === document.activeElement), 'Closing completion restores focus to the earned badge action');
   Object.assign(unfinished, { _id: '507f1f77bcf86cd799439042', completedFlags: 1, completedSequences: [1], isSolved: false, completedAt: null });
   await page.emulateMedia({ reducedMotion: 'no-preference' });

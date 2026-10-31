@@ -26,6 +26,7 @@ import ProfileOverview, {
 import ChallengeBadgeCollection from "../components/common/ChallengeBadgeCollection";
 import type { ApiResponse } from "../types";
 import PageState from "../components/common/PageState";
+import MemberAvatar from '../components/common/MemberAvatar';
 export default function Profile() {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
@@ -168,11 +169,7 @@ export default function Profile() {
         profile={profile}
         avatar={
           <div className="profile-avatar">
-            {avatar || profile.avatar ? (
-              <img src={avatar || profile.avatar} alt={profile.username} />
-            ) : (
-              profile.username[0].toUpperCase()
-            )}
+            <MemberAvatar src={avatar || profile.avatar} username={profile.username} />
             <label className="avatar-edit">
               <Camera size={24} />
               <input
