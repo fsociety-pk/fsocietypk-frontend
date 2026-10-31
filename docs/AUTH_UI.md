@@ -10,13 +10,11 @@ The signup UI shows Checking, Available, Taken, or Check unavailable. Editing ca
 
 Deploy the backend and frontend changes together to enable live checks. An older/unreachable backend shows Check unavailable rather than claiming the name is available.
 
-## Auth-only fluid background
+## Static auth backgrounds
 
-The user-supplied `WebGL-Fluid-Simulation` repository is unchanged. A local MIT-licensed adaptation lives in `fsocietypk-frontend/public/auth-fluid`, including its copyright/license and upstream source hash. Regenerate it with `python3 fsocietypk-frontend/scripts/prepare-auth-fluid.py`.
-
-The real solver/shaders run in a sandboxed decorative frame only while a normal login/signup form is mounted, including the signup verification step. The prank, landing, 404, member, and admin pages do not mount it. The frame receives only normalized pointer coordinates and pause state. No form values, usernames, passwords, or keystrokes are forwarded. The original demo GUI, promotions, analytics, image downloads, and global keyboard/touch controls are removed.
-
-Rendering is capped at 30fps with lower resolutions and a capped pixel ratio; bloom and sunrays are disabled. Reduced motion removes the frame. Missing/lost WebGL uses a static backdrop. The layer cannot intercept clicks or touch scrolling. Route changes remove the frame and release its document/GPU context. The center remains quiet so the forms stay readable in both themes.
+Login, signup and email verification use the page's existing theme background.
+The shared auth form no longer mounts `AuthFluidBackground`, so the decorative
+iframe, WebGL engine and fluid assets are not loaded on these pages.
 
 ## Loading
 
@@ -24,9 +22,7 @@ Shared page/session/data loading uses an animated SVG orbit and relevant status 
 
 ## Validation
 
-Both TypeScript builds pass. Backend controller tests cover normalization, fixed database filters, scalar validation, available/taken results, minimal output, and no-store responses. The HTTP test exercises the real route and independent check/auth limits with mocked database methods. Browser fixtures exercise availability debounce, stale responses, failures, registration fallback, real WebGL pixels, input isolation, context loss, reduced motion, route cleanup, loading, auth, mascot privacy, and prank behavior without contacting production APIs.
-
-Light-theme fluid visibility now uses full opacity, stronger saturation, and a less restrictive center mask. Dark-theme rendering keeps its previous values.
+Both TypeScript builds pass. Backend controller tests cover normalization, fixed database filters, scalar validation, available/taken results, minimal output, and no-store responses. The HTTP test exercises the real route and independent check/auth limits with mocked database methods. Browser fixtures exercise availability debounce, stale responses, failures, registration fallback, static auth backgrounds, responsive forms, loading, auth, mascot privacy, and prank behavior without contacting production APIs.
 
 
 ## Password privacy versus strength feedback

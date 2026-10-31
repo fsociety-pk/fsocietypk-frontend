@@ -305,9 +305,7 @@ The compact mascot reserves its stage below the bubble in normal flow. Long user
 
 Latest auth refinement: signup validates username availability through the new public read endpoint after a 450ms pause. The label shows Checking/Available/Taken, aborts obsolete checks, and gives alternative names when taken. Failure is advisory; normal registration remains available. Format/payload validation still gates checks, and login has no availability requests.
 
-Login/signup alone mount the supplied WebGL fluid simulation as an isolated decorative background, with green/lilac/teal colors and a quiet center for legibility. It uses local MIT-licensed assets, capped resolution/frame rate, and no demo controls or analytics. Only pointer coordinates and visibility state enter the frame. Reduced motion removes it; GPU loss falls back to a static surface. Other pages and the prank do not use the effect. Loading is a professional animated orbit with no logo. See AUTH_UI.md for the API and deployment contract.
-
-Light-theme fluid visibility now uses full opacity, stronger saturation, and a less restrictive center mask. Dark-theme rendering keeps its previous values.
+Login/signup use their static theme background, including email verification. The shared auth form no longer mounts or loads the WebGL fluid simulation. Mascot privacy and the signup password robot keep their existing behavior. See AUTH_UI.md.
 
 ## Team site and motion, October 29
 
@@ -371,6 +369,13 @@ opacity, filters, clipping, or isolation on the scene itself. A separate wrapper
 handles hero scroll fade/parallax. Font and portrait decoding precede the finite
 6.4-second Web Animations sequence. Background tabs pause it; unmount and live
 reduced-motion changes cancel it. Navigation is available immediately.
+
+The portrait retains a separate interactive image branch with three decorative
+clipped duplicates. Fine-pointer hover on desktop triggers a short colored
+slice glitch and two brief shake cycles, then settles; leaving and returning
+replays it. The center of the hero copy passes pointer events through to the
+hat. Effects stay inside the image branch to preserve title depth sorting.
+Reduced motion hides the slices and leaves the image still.
 
 Landing tokens live in `src/styles/landing-refresh.css`, scoped to `.is-landing`
 and `.cinematic-landing`. Light uses a cool green-neutral canvas (97.5% L),

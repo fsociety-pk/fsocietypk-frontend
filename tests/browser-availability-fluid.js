@@ -1,4 +1,4 @@
-// Run after browser-fixtures.js. Every API response is mocked, and all fluid assets are local.
+// Run after browser-fixtures.js. API responses are mocked; auth backgrounds stay static.
 async (page) => {
   const checks = [];
   const assert = (ok, label) => { if (!ok) throw new Error(label); checks.push(label); };
@@ -12,12 +12,13 @@ async (page) => {
   const gate = new Promise(resolve => { release = resolve; });
   const pattern = /\/auth\/username-availability(?:\?|$)/;
   const availability = async route => {
+    const headers = { 'Access-Control-Allow-Origin': 'http://fsociety.test', 'Access-Control-Allow-Credentials': 'true' };
     const username = new URL(route.request().url()).searchParams.get('username');
     requests.push(username);
     if (username === 'stale_taken') await gate;
     try {
-      if (username === 'check_fault') return await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ success: false, message: 'Fixture check unavailable' }) });
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true, data: { username, available: !['taken_name','stale_taken'].includes(username) } }) });
+      if (username === 'check_fault') return await route.fulfill({ status: 503, headers, contentType: 'application/json', body: JSON.stringify({ success: false, message: 'Fixture check unavailable' }) });
+      await route.fulfill({ status: 200, headers, contentType: 'application/json', body: JSON.stringify({ success: true, data: { username, available: !['taken_name','stale_taken'].includes(username) } }) });
     } catch { /* A changed username aborts the old request. */ }
   };
   await page.route(pattern, availability);
@@ -60,59 +61,17 @@ async (page) => {
   await page.getByLabel('Username or email').fill('login_name'); await page.waitForTimeout(550);
   const fixture = await page.evaluate(async () => (await (await fetch('/__fixture')).json()).data);
   assert(!fixture.requests.some(request => request.path.endsWith('/username-availability')), 'Login never checks username availability');
-  await page.locator('.auth-fluid[data-ready="active"]').waitFor();
-  let frame = page.frames().find(frame => frame.url().endsWith('/auth-fluid/index.html'));
-  assert(!!frame, 'Login mounts the local fluid engine');
-  assert(await page.locator('.auth-fluid iframe').getAttribute('sandbox') === 'allow-scripts', 'Fluid runs in an isolated sandbox');
-  assert(await page.locator('.auth-fluid').evaluate(el => getComputedStyle(el).pointerEvents === 'none'), 'Fluid cannot intercept form clicks');
-  const initialFrames = await frame.evaluate(() => Number(document.body.dataset.frames));
-  await page.waitForTimeout(200);
-  assert(await frame.evaluate(() => Number(document.body.dataset.frames)) > initialFrames, 'The real WebGL simulation advances frames');
-  await frame.evaluate(() => { window.fluidMessages = []; window.addEventListener('message', event => window.fluidMessages.push(event.data)); });
-  for (const [x,y] of [[30,200],[200,400],[400,250]]) { await page.mouse.move(x,y); await page.waitForTimeout(80); }
-  const painted = await frame.evaluate(() => new Promise(resolve => {
-    const canvas = document.querySelector('canvas'); const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-    const original = gl.drawElements;
-    const timeout = setTimeout(() => { gl.drawElements = original; resolve(false); }, 3000);
-    gl.drawElements = function(...args) {
-      original.apply(gl, args);
-      if (!gl.getParameter(gl.FRAMEBUFFER_BINDING)) {
-        gl.drawElements = original; clearTimeout(timeout);
-        const pixels = new Uint8Array(canvas.width * canvas.height * 4);
-        gl.readPixels(0,0,canvas.width,canvas.height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
-        resolve(pixels.some(value => value > 0));
-      }
-    };
-  }));
-  assert(painted, 'Fluid draws real colored pixels, not an empty canvas');
-  const password = page.getByLabel('Password', { exact: true });
-  await password.fill('P p space !1');
-  assert(await password.inputValue() === 'P p space !1', 'Fluid does not capture letters or spaces from inputs');
-  const messages = await frame.evaluate(() => window.fluidMessages);
-  assert(messages.some(message => message.pointer), 'Pointer movement reaches the simulation');
-  assert(messages.every(message => Object.keys(message).every(key => ['channel','pointer','x','y','init','paused'].includes(key))), 'Only coordinates and lifecycle state reach the fluid frame');
-  await page.screenshot({ path: '/tmp/auth-fluid-login-light.png', fullPage: true });
+  assert(await page.locator('.auth-fluid,iframe[src*="/auth-fluid/"]').count() === 0, 'Login has no fluid background or simulation frame');
+  await page.getByLabel('Password', { exact: true }).fill('StillUsable1!');
+  assert(await page.getByLabel('Password', { exact: true }).inputValue() === 'StillUsable1!', 'Login password entry remains usable');
   await page.getByRole('button', { name: 'Switch to dark theme', exact: true }).click();
-  await page.screenshot({ path: '/tmp/auth-fluid-login-dark.png', fullPage: true });
-  const detached = page.waitForEvent('framedetached', { predicate: candidate => candidate === frame });
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await detached;
-  await page.locator('.auth-fluid[data-ready="reduced"]').waitFor();
-  assert(await page.locator('.auth-fluid iframe').count() === 0 && frame.isDetached(), 'Reduced motion removes the GPU frame');
-  assert(await password.isVisible(), 'The form remains usable without WebGL');
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.locator('.auth-fluid[data-ready="active"]').waitFor();
-  frame = page.frames().find(frame => frame.url().endsWith('/auth-fluid/index.html'));
-  await frame.evaluate(() => { const canvas = document.querySelector('canvas'); const gl = canvas.getContext('webgl2') || canvas.getContext('webgl'); gl.getExtension('WEBGL_lose_context').loseContext(); });
-  await page.locator('.auth-fluid[data-ready="unavailable"]').waitFor();
-  await password.fill('StillUsable1!');
-  assert(await password.inputValue() === 'StillUsable1!', 'GPU context loss leaves the form usable with a static backdrop');
+  assert(await page.locator('.auth-fluid').count() === 0, 'Dark login has no fluid background');
   await page.getByRole('navigation', { name: 'Account access' }).getByRole('link', { name: 'Sign up', exact: true }).click();
-  await page.locator('.auth-fluid[data-ready="active"]').waitFor();
-  assert(frame.isDetached(), 'Changing auth pages disposes the old simulation frame');
+  await page.locator('.signup-mode').waitFor();
+  assert(await page.locator('.auth-fluid,iframe[src*="/auth-fluid/"]').count() === 0, 'Signup has no fluid background or simulation frame');
   for (const width of [320,390,768,1440]) {
     await page.setViewportSize({ width, height: 844 });
-    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Auth fluid causes no overflow at ${width}px`);
+    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Auth form causes no overflow at ${width}px`);
   }
   await page.getByLabel('Username', { exact: true }).fill("' OR '1'='1");
   await page.getByRole('button', { name: 'Create account', exact: true }).click();
@@ -123,5 +82,5 @@ async (page) => {
   await page.goto('http://fsociety.test/dashboard'); await page.locator('.cinematic-landing').waitFor();
   assert(await page.locator('.auth-fluid').count() === 0, 'The public landing page has no auth fluid');
   await page.setViewportSize({ width: 1440, height: 900 });
-  return { mode: 'mock API and real local WebGL', checks };
+  return { mode: 'mock API; static auth backgrounds', checks };
 }

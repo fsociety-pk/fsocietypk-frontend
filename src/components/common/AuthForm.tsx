@@ -11,7 +11,6 @@ import AccessMascot from './AccessMascot';
 import PasswordStrengthRobot, { type PasswordCheckState } from './PasswordStrengthRobot';
 import SqlPrank from './SqlPrank';
 import { useUsernameAvailability } from '../../hooks/useUsernameAvailability';
-import AuthFluidBackground from './AuthFluidBackground';
 import { returnLocation } from '../../utils/returnLocation';
 import { detectAuthPayload, authPayloadMessage } from '../../utils/authInputFeedback';
 
@@ -167,7 +166,6 @@ export default function AuthForm({ signup = false }: { signup?: boolean }) {
   </div>;
 
   return <div className={`auth-page access-page ${signup ? 'signup-mode' : 'login-mode'}`}>
-    <AuthFluidBackground />
     <section className="auth-form access-form">
       <AccessMascot focused={focused} characterCount={focused && focused !== 'password' ? values[focused].length : 0} covered={visible} pending={!!pending} welcomeMessage={signup ? undefined : 'Welcome back! Ready for new challenges?'} message={mascotMessage} />
       <nav className="auth-switch" aria-label="Account access"><Link to="/login" state={location.state} className={!signup ? 'selected' : ''} aria-current={!signup ? 'page' : undefined}>Log in</Link><Link to="/signup" state={location.state} className={signup ? 'selected' : ''} aria-current={signup ? 'page' : undefined}>Sign up</Link><span className={signup ? 'switch-right' : ''} aria-hidden="true"/></nav>

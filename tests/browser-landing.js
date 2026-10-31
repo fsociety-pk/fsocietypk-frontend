@@ -73,6 +73,27 @@ async page => {
   check(await page.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.hero-name')).transform).m43 === -1), 'Orbit settles behind the figure');
   check(await page.locator('.hero-name').evaluate(el => el.getAnimations({subtree:true}).length === 0), 'Settled letters release all animation layers');
   await page.screenshot({ path: '/tmp/landing-final-desktop.png' });
+  const figure = page.locator('.hero-glitch');
+  await figure.hover({ position: { x: 230, y: 40 } });
+  check(await figure.evaluate(el => el.matches(':hover')), 'The empty space between hero copy does not block the top hat hover');
+  const hoverFigure = async () => {
+    await page.mouse.move(20, 110);
+    await figure.hover({ position: { x: 230, y: 165 } });
+    await page.waitForTimeout(100);
+  };
+  await hoverFigure();
+  check(await figure.evaluate(el => el.matches(':hover')), 'A real mouse pointer can reach the portrait through the orbit scene');
+  check(await figure.locator('.portrait-original').evaluate(el => el.getAnimations().some(a => a.playState === 'running')), 'Hover starts the portrait glitch');
+  check(await figure.locator('.portrait-glitch-slice').evaluateAll(elements => elements.some(el => Number(getComputedStyle(el).opacity) > .1 && getComputedStyle(el).transform !== 'none')), 'Hover visibly displaces colored image slices');
+  await page.screenshot({ path: '/tmp/landing-hover-glitch.png' });
+  await page.waitForTimeout(800);
+  check(await figure.evaluate(el => el.getAnimations({subtree:true}).every(a => a.playState !== 'running')), 'The glitch settles while the pointer stays on the portrait');
+  await hoverFigure();
+  check(await figure.locator('.portrait-original').evaluate(el => el.getAnimations().some(a => a.playState === 'running')), 'Leaving and returning replays the glitch');
+  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  await hoverFigure();
+  check(await figure.locator('.portrait-glitch-slice').evaluateAll(elements => elements.some(el => Number(getComputedStyle(el).opacity) > .1)), 'The glitch is visible in dark theme');
+  await page.getByRole('button', { name: 'Switch to light theme' }).click();
   for (const width of [1200,1280,1440,1600]) {
     await page.setViewportSize({width,height:900});
     const layout = await page.evaluate(() => {
@@ -96,6 +117,7 @@ async page => {
   await page.locator('.nav-login').hover();
   await page.waitForTimeout(280);
   check(await page.locator('.nav-login').evaluate(el => getComputedStyle(el, '::after').transform === 'matrix(1, 0, 0, 1, 0, 0)'), 'Login underline draws on hover');
+  await page.keyboard.press('Tab');
   await page.locator('.nav-signup').focus();
   await page.waitForTimeout(340);
   check(await page.locator('.nav-signup').evaluate(el => getComputedStyle(el, '::before').transform === 'matrix(1, 0, 0, 1, 0, 0)'), 'Signup fill responds to keyboard focus');
@@ -170,6 +192,9 @@ async page => {
   check(await page.locator('.hero-name').evaluate(el => el.getAnimations({subtree:true}).length === 0), 'Live reduced-motion changes cancel the orbit');
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.evaluate(() => scrollTo({top:0,behavior:'instant'}));
+  await hoverFigure();
+  check(await figure.evaluate(el => el.getAnimations({subtree:true}).length === 0), 'Reduced motion keeps the hovered portrait still');
+  check(await figure.locator('.portrait-glitch-slice').evaluateAll(elements => elements.every(el => getComputedStyle(el).display === 'none')), 'Reduced motion hides decorative glitch slices');
   await page.locator('.nav-login').click();
   await page.waitForURL('**/login');
   await page.locator('.access-shell').waitFor();

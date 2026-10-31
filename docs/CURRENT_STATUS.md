@@ -1,3 +1,11 @@
+# Static auth background and portrait hover — 2026-10-31
+
+- Login/signup (including verification) no longer mount the decorative WebGL fluid background.
+- Restored the portrait's original image and decorative glitch slices inside the 3D scene. The portrait accepts hover, and the empty center of the hero copy no longer blocks the hat. A short glitch plays on hover and replays after leaving/returning; reduced motion stays still.
+- Passed: production build; 80 landing checks including real mouse hover, both themes, 3D title settling, reduced motion and responsive layouts; 24 auth availability/background checks; `git diff --check`. Browser checks use intercepted production assets and mocked APIs.
+
+---
+
 # Refresh keeps the requested page — 2026-10-31
 
 - The platform layout waits for the initial server session check before mounting public or member content. Refreshing a profile no longer briefly renders the signed-out navigation or landing/dashboard branch.

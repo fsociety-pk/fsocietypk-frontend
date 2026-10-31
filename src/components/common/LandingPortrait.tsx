@@ -115,7 +115,14 @@ export default function LandingPortrait() {
         ))}
       </h1>
       <figure className="hero-portrait">
-        <img ref={portrait} src="/brand/masked-portrait.png" alt="Fsociety masked figure in a black top hat and suit" width="941" height="1672" loading="eager" fetchPriority="high" decoding="async" />
+        <div className="hero-glitch">
+          <img ref={portrait} className="portrait-original" src="/brand/masked-portrait.png" alt="Fsociety masked figure in a black top hat and suit" width="941" height="1672" loading="eager" fetchPriority="high" decoding="async" />
+          {['top', 'middle', 'bottom'].map(slice => (
+            <span key={slice} className={`portrait-glitch-slice glitch-slice-${slice}`} aria-hidden="true">
+              <img src="/brand/masked-portrait.png" alt="" width="941" height="1672" decoding="async" />
+            </span>
+          ))}
+        </div>
       </figure>
     </div>
   );

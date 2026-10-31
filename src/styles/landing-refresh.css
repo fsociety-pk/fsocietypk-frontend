@@ -79,7 +79,15 @@
   margin: 0; transform: translate3d(-50%,0,0); pointer-events: none;
 }
 .cinematic-landing .hero-portrait img { display: block; width: 100%; height: auto; }
-.cinematic-landing .cinematic-topline { padding-top: 135px; }
+/* Keep the interactive portrait on its own plane so the title can still orbit.
+   Only this image branch accepts the pointer; the surrounding scene stays clear. */
+.cinematic-landing .hero-glitch { animation: none; filter: none; }
+.cinematic-landing .portrait-glitch-slice { mix-blend-mode: normal; }
+@media (min-width: 769px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .cinematic-landing .hero-glitch:hover .portrait-original { animation: cyber-shake 320ms steps(2, start) 2; }
+}
+.cinematic-landing .cinematic-topline { padding-top: 135px; pointer-events: none; }
+.cinematic-landing .cinematic-topline > * { pointer-events: auto; }
 :root .cinematic-landing .hero-manifesto { color: var(--landing-ink); font-size: clamp(28px,3vw,44px); }
 .cinematic-landing .hero-manifesto span { animation: none; }
 .cinematic-landing .hero-introduction { max-width: 280px; animation: none; }
