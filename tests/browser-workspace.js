@@ -38,9 +38,11 @@ async (page) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('http://fsociety.test/profile');
   await page.waitForLoadState('networkidle');
+  await page.getByRole('button', { name: 'Edit profile', exact: true }).click();
   await page.getByLabel('Upload profile photo').setInputFiles('/home/sheriff/fsocietypk-web/fsocietypk-frontend/public/brand/masked-portrait.png');
-  await page.getByRole('button', { name: 'Save photo', exact: true }).click();
-  await page.getByRole('button', { name: 'Save photo', exact: true }).waitFor({ state: 'hidden' });
+  await page.getByText('New photo ready. Save changes to apply it.').waitFor();
+  await page.getByRole('button', { name: 'Save changes', exact: true }).click();
+  await page.waitForFunction(() => document.querySelector('.profile-avatar img')?.getAttribute('src')?.startsWith('data:image/jpeg;base64,'));
   const saved = await page.evaluate(async () => (await (await fetch('/__fixture')).json()).data.avatar);
   assert(saved.startsWith('data:image/jpeg;base64,'), 'Profile upload sends converted JPEG');
   await page.reload();

@@ -1,5 +1,38 @@
 # Fsociety PK design system
 
+## Level emblem and editing boundaries, October 31
+
+The profile's level panel now uses an engraved, dimensional nickel-style emblem
+containing the real level number. Its inset face, metallic rim and small physical
+shadow give it material depth; the arc and percentage show actual progress.
+Points needed and the next level's total-points milestone remain explicit.
+`memberLevel` centralizes the existing progression: one level per 1,000 points,
+starting at level 1. Do not invent rank names, reward unlocks or additional tiers.
+Normal motion draws the progress once; reduced motion shows the final value.
+The existing theme-aware profile/card materials remain unchanged.
+
+The owner's Edit profile action is in the identity card's upper-right header,
+separate from Overview/History/Badges/Settings. It opens the existing `tab=edit`
+URL, scrolls/focuses the editing heading, and Back to profile restores focus to
+the header action. Public profiles never receive this action. The main portrait
+is display-only, including while a photo change is being previewed elsewhere.
+
+Photo management exists only inside Edit profile. Add/Replace select a raster
+image, keep the existing 400px square JPEG preparation and 5MB input limit, and
+show a local preview. Remove stages the default avatar. Undo and Reset restore
+the saved picture. Save changes persists the photo together with other edits;
+removal uses the backend-supported empty string. A failed save preserves the
+current server picture and pending edit for retry. Image reads are versioned
+so stale callbacks cannot overwrite a removed/unmounted preview. Saving waits
+until image preparation finishes. No direct header upload/save overlay remains.
+
+Validation: production build, 125 profile checks and 54 badge checks passed with
+intercepted APIs. Tests cover add/replace/remove, reload persistence, failure and
+retry, undo/reset, default-avatar/menu consistency, private/public boundaries,
+header focus restoration, editor layout and save reachability at phone/tablet
+sizes in both themes, and level boundaries at 0/999/1,000/2,700 points. Screenshots
+reviewed on desktop and phone. These tests do not alter production user records.
+
 ## Password privacy and signup helper, October 31
 
 The top login/signup crew handles privacy and messages. Masked password entry

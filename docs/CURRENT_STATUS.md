@@ -411,3 +411,27 @@ placement, accessible status, rule/byte-limit agreement, OTP/resend/login and
 absence of credential requests while typing. The browser fixture now intercepts
 absolute API URLs too, permitting auth regression on the production build with
 no real accounts created.
+
+
+## October 31 — clearer levels and editor-only photo management
+
+Added a dimensional, engraved level emblem with a real progress arc/percentage,
+remaining points and the next total-points milestone. The existing 1,000-point
+level formula is centralized in `memberLevel`; no reward/rank claims were added.
+The level panel retains theme-aware materials and a reduced-motion path.
+
+Moved Edit profile from the tab row to the identity header. Its action focuses
+the editor; Back to profile returns focus to that action. Existing edit deep
+links remain supported. Photo add/replace/remove controls and local previews are
+now inside Edit profile only. The main portrait shows the saved photo. Undo,
+Reset and Back can discard staged changes; Save changes persists them. Deletion
+uses the backend's existing empty-avatar support, updates the account menu and
+survives reload. Failed saves retain the staged change for retry. File callbacks
+are versioned and saving waits for preparation, preserving the existing crop,
+type and size checks. No backend deployment or schema change is required.
+
+Production build passed with existing dependency warnings. 125 profile checks
+and 54 earned-badge checks passed with intercepted requests, including photo
+persistence/deletion/retry and points boundaries at 0/999/1,000/2,700. Light/dark
+phone/tablet/desktop layouts, keyboard focus, public/private behavior and badge
+regressions passed. Production accounts/photos were not changed by validation.

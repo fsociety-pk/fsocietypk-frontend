@@ -1,16 +1,15 @@
-import type { CSSProperties, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
-import { Github, Linkedin, Instagram, Globe, Lock, MapPin, Calendar, ArrowUpRight, Fingerprint, Flag, Zap, Trophy, Layers, TerminalSquare } from 'lucide-react';
+import type { CSSProperties } from 'react';
+import { Github, Linkedin, Instagram, Globe, Lock, MapPin, Calendar, ArrowUpRight, Fingerprint, Flag, Zap, Trophy, Layers, TerminalSquare, Pencil } from 'lucide-react';
 import type { UserProfile } from '../../services/userService';
 import { safeDate } from '../../utils/profileFormat';
 import AnimatedUsername from './AnimatedUsername';
 import MemberAvatar from './MemberAvatar';
+import ProfileLevel from './ProfileLevel';
+import { memberLevel } from '../../utils/memberLevel';
 import '../../styles/profile-refresh.css';
 
-export default function ProfileIdentity({ profile, avatar }: { profile: UserProfile; avatar?: ReactNode }) {
-  const score = Math.max(0, Number(profile.score) || 0);
-  const level = Math.floor(score / 1000) + 1;
-  const levelPoints = score % 1000;
+export default function ProfileIdentity({ profile, onEdit, editing = false }: { profile: UserProfile; onEdit?: () => void; editing?: boolean }) {
+  const { score, level } = memberLevel(profile.score);
   const stats = [
     { label: 'Challenges solved', value: profile.solvedChallenges?.length || 0, icon: Flag },
     { label: 'Total points', value: score.toLocaleString(), icon: Zap },
@@ -21,13 +20,13 @@ export default function ProfileIdentity({ profile, avatar }: { profile: UserProf
     <section className="profile-banner" aria-label="Member identity">
       <div className="profile-terminal-bar">
         <span><TerminalSquare size={16} aria-hidden="true" />fsociety<span aria-hidden="true">/</span>members</span>
-        <span className="profile-terminal-edition">CTF COMMUNITY</span>
+        <div className="profile-header-actions"><span className="profile-terminal-edition">CTF COMMUNITY</span>{onEdit && <button id="profile-edit-action" type="button" className="profile-edit-action" onClick={onEdit} aria-controls="panel-edit" aria-expanded={editing}><Pencil size={14} aria-hidden="true" />Edit profile</button>}</div>
       </div>
       <div className="profile-banner-main">
         <div className="profile-identity">
           <div className="profile-portrait">
             <div className="profile-avatar-frame">
-              {avatar || <div className="profile-avatar"><MemberAvatar src={profile.avatar} username={profile.username} /></div>}
+              <div className="profile-avatar"><MemberAvatar src={profile.avatar} username={profile.username} /></div>
               <span className="profile-avatar-scan" aria-hidden="true" />
             </div>
             <span className="profile-portrait-caption" aria-hidden="true"><Fingerprint size={12} />FSOCIETY PK</span>
@@ -49,19 +48,7 @@ export default function ProfileIdentity({ profile, avatar }: { profile: UserProf
             </div>
           </div>
         </div>
-        <div className="profile-level-console" aria-label="Level progress" style={{ '--profile-progress': levelPoints / 1000 } as CSSProperties}>
-          <div className="profile-level-header">
-            <div className="profile-level-orbit" aria-hidden="true">
-              <svg viewBox="0 0 100 100" focusable="false"><circle className="profile-orbit-guide" cx="50" cy="50" r="45" /><circle className="profile-orbit-progress" cx="50" cy="50" r="45" pathLength="100" /></svg>
-              <Flag size={26} strokeWidth={1.5} />
-            </div>
-            <div className="profile-level-title"><span>Level <strong>{String(level).padStart(2, '0')}</strong></span><small>Keep your edge.</small></div>
-          </div>
-          <div className="profile-level-facts"><span>Next level</span><span>{levelPoints.toLocaleString()} / 1,000 pts</span></div>
-          <div className="profile-level-track" role="progressbar" aria-label={`Progress to level ${level + 1}`} aria-valuemin={0} aria-valuemax={1000} aria-valuenow={levelPoints}><span style={{ width: `${levelPoints / 10}%` }} /></div>
-          <p>{(1000 - levelPoints).toLocaleString()} points to level {level + 1}</p>
-          <Link to="/challenges">Keep solving <ArrowUpRight size={15} aria-hidden="true" /></Link>
-        </div>
+        <ProfileLevel score={score} />
       </div>
       <div className="profile-meta">
         {profile.country && <span><MapPin size={13} aria-hidden="true" />{profile.country}</span>}

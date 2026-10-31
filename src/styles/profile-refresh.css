@@ -36,10 +36,6 @@
 .profile-avatar-frame::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-radius: 0 0 12px; }
 .profile-refresh .profile-avatar { width: var(--profile-photo-size); height: var(--profile-photo-size); border-radius: 6px; background: var(--profile-inset); }
 .profile-refresh .profile-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; transform: none; }
-.profile-refresh .profile-avatar .avatar-edit { opacity: 1; background: transparent; place-items: end; padding: 8px; }
-.profile-refresh .profile-avatar .avatar-edit > svg { width: 32px; height: 32px; padding: 7px; border: 1px solid var(--profile-edge); border-radius: 6px; background: var(--profile-card); color: var(--profile-ink); }
-.profile-refresh .profile-avatar:hover .avatar-edit { background: rgb(0 0 0 / .12); }
-.profile-refresh .profile-avatar:focus-within { outline: 2px solid var(--profile-accent); outline-offset: 3px; }
 .profile-avatar-scan { position: absolute; left: 8px; right: 8px; top: 8px; height: 1px; background: var(--profile-accent); opacity: 0; pointer-events: none; }
 .profile-portrait-caption { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; font: 11px var(--profile-mono); letter-spacing: .1em; color: var(--profile-muted); }
 .profile-identity-copy { min-width: 0; flex: 1; }
@@ -186,4 +182,80 @@
   .profile-refresh :is(.profile-stat,.profile-portrait,.profile-identity-copy,.profile-level-console,.profile-level-track > span,.profile-orbit-progress,.profile-avatar-scan,.profile-tab-panel) { animation: none; }
   .profile-refresh :is(.profile-tabs > button::after,.profile-level-console > a svg) { transition: none; }
   .profile-replay-name:active svg,.profile-level-console > a:hover svg { transform: none; }
+}
+
+/* The member's real level, engraved into a dimensional progress emblem. */
+.profile-level-console { display: block; padding: 20px; }
+.profile-level-header { display: flex; align-items: center; gap: 12px; }
+.profile-level-medal { display: block; flex: 0 0 112px; width: 112px; height: 112px; overflow: visible; filter: drop-shadow(0 5px 4px rgb(0 0 0 / .14)); }
+.profile-medal-face { fill: var(--profile-card); }
+.profile-medal-guide { fill: none; stroke: var(--profile-edge); stroke-width: 2; }
+.profile-medal-progress { fill: none; stroke: var(--profile-accent); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: calc(100 - var(--profile-progress) * 100); }
+.profile-medal-engraving { fill: none; stroke: var(--profile-muted); stroke-width: 1; opacity: .5; }
+.profile-medal-label { fill: var(--profile-muted); font-family: var(--font-body); font-size: 10px; letter-spacing: .16em; }
+.profile-medal-number { fill: var(--profile-ink); font-family: var(--font-body); font-weight: 650; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+.profile-level-title { min-width: 0; gap: 5px; }
+.profile-level-title > h2 { margin: 0; font-size: 13px; line-height: 1.4; color: var(--profile-ink); }
+.profile-level-title > .profile-level-percent { display: block; font-size: 30px; font-weight: 600; line-height: 1.2; letter-spacing: -.03em; color: var(--profile-accent); font-variant-numeric: tabular-nums; }
+.profile-level-percent > small { font-size: 14px; margin-left: 3px; }
+.profile-level-title > small { display: block; white-space: normal; font-size: 11px; line-height: 1.6; }
+.profile-level-facts { justify-content: space-between; margin-top: 16px; }
+.profile-level-facts > span:first-child { display: inline; }
+.profile-level-console > .profile-level-facts, .profile-level-console > .profile-level-track, .profile-level-console > p, .profile-level-console > a { grid-column: auto; }
+.profile-level-milestone { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--profile-edge); }
+.profile-level-milestone > span { display: block; font-size: 10px; color: var(--profile-muted); margin-bottom: 5px; }
+.profile-level-milestone > strong { display: block; font-size: 12px; line-height: 1.65; font-weight: 600; color: var(--profile-ink); }
+.profile-level-milestone > strong > span { font-size: 11px; font-weight: 400; color: var(--profile-muted); }
+.profile-header-actions { display: flex; align-items: center; gap: 18px; }
+.profile-edit-action { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 36px; padding: 8px 12px; border-radius: 6px; background: var(--profile-accent); color: rgb(var(--on-brand)); font: 600 12px var(--font-body); transition: transform 180ms, background-color 180ms; scroll-margin-top: 110px; }
+.profile-edit-action:hover { transform: translateY(-1px); }
+.profile-edit-action > svg { color: inherit; }
+.profile-edit-action[aria-expanded='true'] { background: var(--profile-inset); color: var(--profile-accent); }
+.profile-editor-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.profile-editor-heading > h2 { margin: 0; scroll-margin-top: 110px; }
+.profile-editor-heading > h2:focus { outline: none; }
+.profile-editor-heading > button { font-size: 12px; min-height: 40px; }
+.profile-photo-editor { margin: 28px 0; padding: 0 0 28px; border: 0; border-bottom: 1px solid rgb(var(--line)); min-width: 0; }
+.profile-photo-editor > legend { font-size: 15px; font-weight: 600; padding: 0; margin-bottom: 18px; }
+.profile-photo-editor-body { display: flex; align-items: flex-start; gap: 24px; }
+.profile-photo-preview { width: 104px; height: 104px; flex: 0 0 104px; border-radius: 12px; overflow: hidden; background: rgb(var(--surface)); }
+.profile-photo-preview > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.profile-photo-editor-copy { flex: 1; min-width: 0; }
+.profile-photo-editor-copy > p { font-size: 13px; line-height: 1.6; color: rgb(var(--muted)); }
+.profile-photo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0; }
+.profile-photo-actions > button { min-height: 40px; font-size: 12px; gap: 8px; }
+.profile-remove-photo { color: rgb(var(--error)); }
+.profile-photo-editor-copy > small { display: block; font-size: 11px; line-height: 1.65; color: rgb(var(--muted)); }
+.profile-photo-editor-copy > .profile-photo-status { margin-top: 12px; font-size: 12px; color: rgb(var(--brand)); }
+@media (prefers-reduced-motion: no-preference) {
+  .profile-medal-progress { animation: profile-orbit-draw 900ms 180ms var(--ease-out) both; }
+}
+@media (max-width: 1100px) {
+  .profile-level-medal { flex-basis: 92px; width: 92px; height: 92px; }
+  .profile-level-header { gap: 10px; }
+}
+@media (max-width: 760px) {
+  .profile-level-console { display: grid; grid-template-columns: 176px minmax(0,1fr); gap: 0 24px; }
+  .profile-level-header { grid-column: 1; grid-row: 1/5; }
+  .profile-level-console > .profile-level-facts, .profile-level-console > .profile-level-track, .profile-level-console > p, .profile-level-console > a { grid-column: 2; }
+  .profile-level-milestone { grid-column: 1/-1; margin-top: 16px; }
+  .profile-level-facts { margin-top: 0; }
+}
+@media (max-width: 600px) {
+  .profile-level-console { grid-template-columns: minmax(0,1fr); }
+  .profile-level-header { grid-row: auto; grid-column: 1; justify-content: center; gap: 20px; margin-bottom: 8px; }
+  .profile-level-medal { flex-basis: 124px; width: 124px; height: 124px; }
+  .profile-level-title > .profile-level-percent { font-size: 34px; }
+  .profile-level-console > .profile-level-facts, .profile-level-console > .profile-level-track, .profile-level-console > p, .profile-level-console > a, .profile-level-milestone { grid-column: 1; }
+  .profile-level-facts { margin-top: 14px; }
+  .profile-terminal-bar { padding: 12px 16px; gap: 8px; }
+  .profile-terminal-bar > span:first-child { font-size: 10px; gap: 6px; }
+  .profile-edit-action { padding-inline: 10px; font-size: 11px; }
+  .profile-photo-editor-body { flex-direction: column; gap: 18px; }
+  .profile-editor-heading { align-items: flex-start; gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .profile-medal-progress { animation: none; }
+  .profile-edit-action { transition: none; }
+  .profile-edit-action:hover { transform: none; }
 }

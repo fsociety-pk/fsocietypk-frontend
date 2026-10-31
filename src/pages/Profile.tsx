@@ -1,14 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Camera,
   Eye,
   EyeOff,
   ExternalLink,
   Save,
-  Check,
-  X,
+  ArrowLeft,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -26,7 +24,7 @@ import ProfileOverview, {
 import ChallengeBadgeCollection from "../components/common/ChallengeBadgeCollection";
 import type { ApiResponse } from "../types";
 import PageState from "../components/common/PageState";
-import MemberAvatar from '../components/common/MemberAvatar';
+import ProfilePhotoEditor from '../components/common/ProfilePhotoEditor';
 export default function Profile() {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
@@ -34,6 +32,22 @@ export default function Profile() {
   const tab = ["overview", "history", "badges", "edit", "settings"].includes(requestedTab) ? requestedTab : "overview";
   const setTab = (next: string) => setParams({ tab: next });
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [photoReading, setPhotoReading] = useState(false);
+  const editHeading = useRef<HTMLHeadingElement>(null);
+  const editRequested = useRef(false);
+  const backRequested = useRef(false);
+  const openEditor = () => { editRequested.current = true; setTab('edit'); };
+  useEffect(() => {
+    if (tab === 'edit' && editRequested.current && editHeading.current) {
+      editHeading.current.scrollIntoView({ block: 'start', behavior: 'instant' });
+      editHeading.current.focus({ preventScroll: true });
+      editRequested.current = false;
+    }
+    if (tab === 'overview' && backRequested.current) {
+      document.getElementById('profile-edit-action')?.focus();
+      backRequested.current = false;
+    }
+  });
   const [showPassword, setShowPassword] = useState(false);
   const { user, setUser, logout } = useAuthStore();
   const client = useQueryClient();
@@ -92,51 +106,6 @@ export default function Profile() {
         error.response?.data?.message || "Could not change your password.",
       ),
   });
-  const chooseAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (
-      !["image/jpeg", "image/png", "image/webp", "image/gif"].includes(
-        file.type,
-      )
-    ) {
-      toast.error("Choose a JPG, PNG, WebP, or GIF image.");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Choose an image smaller than 5 MB.");
-      return;
-    }
-    const reader = new FileReader();
-    reader.onerror = () => toast.error("This image could not be read.");
-    reader.onload = () => {
-      const image = new Image();
-      image.onerror = () => toast.error("This image could not be opened.");
-      image.onload = () => {
-        const size = Math.min(image.width, image.height);
-        const canvas = document.createElement("canvas");
-        canvas.width = 400;
-        canvas.height = 400;
-        const context = canvas.getContext("2d");
-        if (!context) return;
-        context.drawImage(
-          image,
-          (image.width - size) / 2,
-          (image.height - size) / 2,
-          size,
-          size,
-          0,
-          0,
-          400,
-          400,
-        );
-        setAvatar(canvas.toDataURL("image/jpeg", 0.85));
-      };
-      image.src = String(reader.result);
-    };
-    reader.readAsDataURL(file);
-    event.target.value = "";
-  };
   if (isLoading)
     return (
       <div className="page-wrap profile-refresh">
@@ -165,56 +134,22 @@ export default function Profile() {
           </Link>
         )}
       </div>
-      <ProfileHeader
-        profile={profile}
-        avatar={
-          <div className="profile-avatar">
-            <MemberAvatar src={avatar || profile.avatar} username={profile.username} />
-            <label className="avatar-edit">
-              <Camera size={24} />
-              <input
-                className="sr-only"
-                type="file"
-                accept="image/png,image/jpeg,image/webp,image/gif"
-                aria-label="Upload profile photo"
-                onChange={chooseAvatar}
-              />
-            </label>
-          </div>
-        }
-      />
-      {avatar && (
-        <div className="notice flex items-center gap-4 flex-wrap my-5">
-          <span>Ready to use this profile photo?</span>
-          <button
-            className="btn-primary"
-            disabled={update.isPending}
-            onClick={() => update.mutate({ avatar })}
-          >
-            <Check size={15} />
-            {update.isPending ? "Saving…" : "Save photo"}
-          </button>
-          <button className="btn-ghost" onClick={() => setAvatar(null)}>
-            <X size={15} />
-            Cancel
-          </button>
-        </div>
-      )}
+      <ProfileHeader profile={profile} onEdit={openEditor} editing={tab === 'edit'} />
       <div className="tabs-line profile-tabs" role="tablist" aria-label="Profile sections" onKeyDown={event => {
         const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
         if (!keys.includes(event.key)) return;
         event.preventDefault();
         const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
-        const current = buttons.findIndex(button => button.getAttribute('aria-selected') === 'true');
+        const focusedIndex = buttons.indexOf(document.activeElement as HTMLButtonElement);
+        const current = Math.max(0, focusedIndex >= 0 ? focusedIndex : buttons.findIndex(button => button.getAttribute('aria-selected') === 'true'));
         const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (current + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length;
-        setTab(['overview', 'history', 'badges', 'edit', 'settings'][next]);
+        setTab(['overview', 'history', 'badges', 'settings'][next]);
         buttons[next].focus();
       }}>
         {[
           ["overview", "Overview"],
           ["history", "Solve history"],
           ["badges", "Badges"],
-          ["edit", "Edit profile"],
           ["settings", "Settings"],
         ].map(([id, label]) => (
           <button
@@ -223,14 +158,14 @@ export default function Profile() {
             id={"tab-" + id}
             aria-controls={"panel-" + id}
             aria-selected={tab === id}
-            tabIndex={tab === id ? 0 : -1}
+            tabIndex={tab === id || (tab === 'edit' && id === 'overview') ? 0 : -1}
             onClick={() => setTab(id)}
           >
             {label}
           </button>
         ))}
       </div>
-      <div className="profile-tab-panel" key={tab} role="tabpanel" id={"panel-" + tab} aria-labelledby={"tab-" + tab}>
+      <div className="profile-tab-panel" key={tab} role={tab === "edit" ? "region" : "tabpanel"} id={"panel-" + tab} aria-labelledby={tab === "edit" ? "profile-edit-title" : "tab-" + tab}>
         {tab === "overview" && (
           <>
             <ChallengeBadgeCollection profile={profile} limit={4} onViewAll={() => setTab("badges")} />
@@ -247,12 +182,13 @@ export default function Profile() {
         {tab === "edit" && (
           <form
             className="profile-editor soft-panel"
-            onSubmit={edit.handleSubmit((values) => update.mutate(values))}
+            onSubmit={edit.handleSubmit((values) => { if (!photoReading) update.mutate({ ...values, ...(avatar !== null ? { avatar } : {}) }); })}
           >
-            <h2>Profile details</h2>
+            <div className="profile-editor-heading"><h2 id="profile-edit-title" ref={editHeading} tabIndex={-1}>Edit profile</h2><button type="button" className="btn-ghost" disabled={update.isPending} onClick={() => { setAvatar(null); edit.reset(); backRequested.current = true; setTab('overview'); }}><ArrowLeft size={15} />Back to profile</button></div>
             <p>
               Your public information and the way you appear to the community.
             </p>
+            <ProfilePhotoEditor saved={profile.avatar} preview={avatar} username={profile.username} disabled={update.isPending} onChange={setAvatar} onBusyChange={setPhotoReading} />
             <div className="form-grid">
               <div className="form-field">
                 <label htmlFor="profile-username">Username</label>
@@ -367,14 +303,14 @@ export default function Profile() {
               </label>
             </div>
             <div className="form-actions">
-              <button className="btn-primary" disabled={update.isPending}>
+              <button className="btn-primary" disabled={update.isPending || photoReading}>
                 <Save size={16} />
                 {update.isPending ? "Saving…" : "Save changes"}
               </button>
               <button
                 className="btn-ghost"
                 type="button"
-                onClick={() => edit.reset()}
+                onClick={() => { edit.reset(); setAvatar(null); }}
               >
                 Reset changes
               </button>

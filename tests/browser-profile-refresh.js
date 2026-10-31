@@ -7,7 +7,7 @@ async page => {
   const id = '507f1f77bcf86cd799439011';
   const awards = ['web','crypto','forensics'].map((category,i) => ({ id: `${id}:${i}`, challengeId: (i+100).toString(16).padStart(24,'0'), title: ['Borrowed Badge','The Cipher Room','Memory Trail'][i], category, difficulty: 'medium', points: [300,200,200][i], earnedAt: '2026-10-20T12:00:00Z' }));
   const profile = { _id:id, username:'sheriff', role:'user', avatar:'/brand/fsociety-logo-transparent.png', bio:'Breaking down challenges. Building better instincts.', country:'PK', socialLinks:{github:'https://github.com/fsociety-pk'}, isProfilePublic:true, score:700, rank:2, createdAt:'2026-10-06T12:00:00Z', solvedChallenges:awards.map(x=>x.challengeId), earnedBadges:awards, solveHistory:awards.map(x=>({_id:x.id,challengeId:{_id:x.challengeId,title:x.title,category:x.category,difficulty:x.difficulty},isCorrect:true,pointsAwarded:x.points,timestamp:x.earnedAt})), proficiencyIndex:[{category:'web',solved:1,total:8},{category:'crypto',solved:1,total:5},{category:'forensics',solved:1,total:7}], challengeProgress:[] };
-  let fail = false, privatePublic = false;
+  let fail = false, privatePublic = false, saveFailure = false;
   const writes = [];
   await page.route('**/api/**', async route => {
     const r=route.request(), path=new URL(r.url()).pathname;
@@ -17,7 +17,7 @@ async page => {
     if(path.endsWith('/auth/me'))return json(profile);
     if(path.endsWith('/notifications/unread-count'))return json({unreadCount:0});
     if(path.endsWith('/users/me/profile')){
-      if(r.method()==='PUT'){const body=r.postDataJSON();writes.push(body);Object.assign(profile,body);}
+      if(r.method()==='PUT'){if(saveFailure)return json(null,503);const body=r.postDataJSON();writes.push(body);Object.assign(profile,body);}
       return fail?json(null,503):json(profile);
     }
     if(path.includes('/users/') && path.endsWith('/profile'))return privatePublic?json(null,403):json(profile);
@@ -28,9 +28,9 @@ async page => {
   await page.evaluate(()=>localStorage.setItem('fsociety-theme','light'));
   const go=async(path='/profile')=>{await page.goto('http://fsociety.test'+path);await page.locator('.profile-summary').waitFor();};
   await go();
-  const ring=page.locator('.profile-orbit-progress');
+  const ring=page.locator('.profile-medal-progress');
   const ringStart=await ring.evaluate(el=>parseFloat(getComputedStyle(el).strokeDashoffset));
-  await page.waitForFunction(start=>Math.abs(parseFloat(getComputedStyle(document.querySelector('.profile-orbit-progress')).strokeDashoffset)-start)>1,ringStart);
+  await page.waitForFunction(start=>Math.abs(parseFloat(getComputedStyle(document.querySelector('.profile-medal-progress')).strokeDashoffset)-start)>1,ringStart);
   check(true,'The level ring draws actual progress on profile entry');
   const name=page.locator('.profile-name');
   check(await name.getAttribute('aria-label')==='sheriff','Accessible username is stable during decoding');
@@ -38,7 +38,7 @@ async page => {
   check(await name.locator('[data-username-ink]').allTextContents().then(x=>x.join(''))==='sheriff','Animated username resolves to the real username');
   check(await page.locator('.profile-stat strong').allTextContents().then(x=>JSON.stringify(x)===JSON.stringify(['3','700','#2','1'])),'Statistics retain actual solves, score, rank and level');
   check(await page.getByRole('progressbar',{name:'Progress to level 2'}).getAttribute('aria-valuenow')==='700','Level progress uses actual points');
-  await page.waitForFunction(()=>Math.abs(parseFloat(getComputedStyle(document.querySelector('.profile-orbit-progress')).strokeDashoffset)-30)<.1);
+  await page.waitForFunction(()=>Math.abs(parseFloat(getComputedStyle(document.querySelector('.profile-medal-progress')).strokeDashoffset)-30)<.1);
   check(true,'The level ring settles at the actual 70 percent progress');
   check(await page.locator('.profile-level-console').innerText().then(x=>x.includes('300 points to level 2')),'Next-level distance is accurate');
   check(await page.locator('.profile-member-role').innerText()==='Community member','No invented member status');
@@ -70,7 +70,10 @@ async page => {
   await page.keyboard.press('ArrowRight');
   check(await page.getByRole('tab',{name:'Solve history',exact:true}).getAttribute('aria-selected')==='true','Arrow keys select solve history');
   check(await page.getByRole('table').getByRole('link',{name:'Borrowed Badge'}).isVisible(),'Solve history remains available');
-  await page.getByRole('tab',{name:'Edit profile',exact:true}).click();
+  check(await page.getByLabel('Upload profile photo').count()===0 && await page.locator('.profile-avatar .avatar-edit').count()===0,'Profile summary is display-only with no photo upload controls');
+  check(await page.getByRole('tab',{name:'Edit profile',exact:true}).count()===0,'Edit profile is relocated from the tab row');
+  await page.getByRole('button',{name:'Edit profile',exact:true}).click();
+  check(await page.getByRole('heading',{name:'Edit profile',exact:true}).evaluate(el=>el===document.activeElement),'Header edit action moves focus to the editor');
   await page.getByRole('textbox',{name:'Bio',exact:true}).fill('A profile edited in the isolated browser fixture.');
   await page.getByRole('button',{name:'Save changes',exact:true}).click();
   await page.waitForFunction(()=>document.querySelector('.profile-bio')?.textContent==='A profile edited in the isolated browser fixture.');
@@ -78,9 +81,49 @@ async page => {
   check(profile.score===700 && profile.solvedChallenges.length===3,'Editing preserves earned progress');
   const png='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jF9sAAAAASUVORK5CYII=';
   await page.getByLabel('Upload profile photo').setInputFiles({name:'fixture.png',mimeType:'image/png',buffer:Buffer.from(png,'base64')});
-  await page.getByText('Ready to use this profile photo?').waitFor();
-  await page.getByRole('button',{name:'Cancel',exact:true}).click();
-  check(await page.locator('.profile-avatar img').getAttribute('src')===profile.avatar,'Photo preview cancellation restores the existing photo');
+  await page.getByText('New photo ready. Save changes to apply it.').waitFor();
+  check(await page.locator('.profile-avatar img').getAttribute('src')===profile.avatar,'Unsaved photo previews do not change the profile summary');
+  check(await page.locator('.profile-photo-preview img').getAttribute('src').then(x=>x.startsWith('data:image/jpeg;base64,')),'Photo is prepared inside Edit profile');
+  await page.getByRole('button',{name:'Undo photo change',exact:true}).click();
+  check(await page.locator('.profile-photo-preview img').getAttribute('src')===profile.avatar,'Undo restores the saved photo without a request');
+  await page.getByLabel('Upload profile photo').setInputFiles({name:'fixture.png',mimeType:'image/png',buffer:Buffer.from(png,'base64')});
+  await page.getByText('New photo ready. Save changes to apply it.').waitFor();
+  await page.getByRole('button',{name:'Save changes',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelector('.profile-avatar img')?.getAttribute('src')?.startsWith('data:image/jpeg;base64,'));
+  const savedPhoto=profile.avatar;
+  check(writes.at(-1).avatar===savedPhoto,'Replacing a photo is persisted with the profile save');
+  check(await page.locator('.profile-avatar img').evaluate(el=>el.naturalWidth===400 && el.naturalHeight===400),'Saved photo keeps the existing square crop');
+  await page.reload();await page.locator('.profile-summary').waitFor();
+  check(await page.locator('.profile-avatar img').getAttribute('src')===savedPhoto,'Photo persists after reload');
+  await page.getByRole('button',{name:'Remove photo',exact:true}).click();
+  check(await page.locator('.profile-photo-preview img').getAttribute('src')==='/brand/default-hacker-avatar.webp','Removing previews the default avatar inside the editor');
+  check(await page.locator('.profile-avatar img').getAttribute('src')===savedPhoto,'Removing remains reversible until Save changes');
+  await page.getByRole('button',{name:'Undo photo change',exact:true}).click();
+  check(await page.locator('.profile-photo-preview img').getAttribute('src')===savedPhoto,'Undo photo removal keeps the saved picture');
+  await page.getByRole('button',{name:'Remove photo',exact:true}).click();
+  saveFailure=true;
+  const failedSave=page.waitForResponse(r=>new URL(r.url()).pathname.endsWith('/users/me/profile') && r.request().method()==='PUT' && r.status()===503);
+  await page.getByRole('button',{name:'Save changes',exact:true}).click();await failedSave;
+  check(await page.locator('.profile-avatar img').getAttribute('src')===savedPhoto,'Failed saves preserve the current server photo');
+  check(await page.getByText('Photo will be removed when you save changes.').isVisible(),'Failed saves retain the pending photo change for retry');
+  saveFailure=false;
+  await page.getByRole('button',{name:'Save changes',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelector('.profile-avatar img')?.getAttribute('src')==='/brand/default-hacker-avatar.webp');
+  check(writes.at(-1).avatar==='' && profile.avatar==='','Photo removal uses the backend-supported empty value');
+  check(await page.locator('.user-chip-avatar img').getAttribute('src')==='/brand/default-hacker-avatar.webp','Saved photo removal updates the account menu');
+  check(await page.getByRole('button',{name:'Add photo',exact:true}).isVisible(),'An empty profile can add a new photo in Edit profile');
+  await page.getByLabel('Upload profile photo').setInputFiles({name:'fixture.png',mimeType:'image/png',buffer:Buffer.from(png,'base64')});
+  await page.getByText('New photo ready. Save changes to apply it.').waitFor();
+  await page.getByRole('button',{name:'Reset changes',exact:true}).click();
+  check(await page.locator('.profile-photo-preview img').getAttribute('src')==='/brand/default-hacker-avatar.webp','Reset discards an unsaved addition');
+  await page.getByLabel('Upload profile photo').setInputFiles({name:'fixture.png',mimeType:'image/png',buffer:Buffer.from(png,'base64')});
+  await page.getByText('New photo ready. Save changes to apply it.').waitFor();
+  await page.getByRole('button',{name:'Save changes',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelector('.profile-avatar img')?.getAttribute('src')?.startsWith('data:image/jpeg;base64,'));
+  check(profile.score===700 && profile.earnedBadges.length===3,'Photo addition preserves points and earned badges');
+  await page.getByRole('button',{name:'Back to profile',exact:true}).click();
+  check(await page.getByLabel('Upload profile photo').count()===0,'Returning to the profile removes all photo editing controls');
+  check(await page.getByRole('button',{name:'Edit profile',exact:true}).evaluate(el=>el===document.activeElement),'Back to profile restores focus to the header action');
   await page.getByRole('tab',{name:'Badges',exact:true}).click();
   await page.getByRole('button',{name:'View Borrowed Badge badge',exact:true}).click();
   await page.getByRole('dialog').waitFor();
@@ -106,6 +149,17 @@ async page => {
       await page.waitForTimeout(100);
       check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${theme} profile fits ${width}px`);
       check(await page.locator('.profile-avatar').isVisible(),`${theme} avatar remains visible at ${width}px`);
+      if([320,390,768].includes(width)){
+        await page.getByRole('button',{name:'Edit profile',exact:true}).click();
+        await page.getByLabel('Upload profile photo').waitFor();
+        check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${theme} photo editor fits ${width}px`);
+        check(await page.locator('.profile-summary input[type="file"]').count()===0,`${theme} ${width}px summary remains read-only while editing`);
+        await page.getByRole('button',{name:'Save changes',exact:true}).scrollIntoViewIfNeeded();
+        const saveBox=await page.getByRole('button',{name:'Save changes',exact:true}).boundingBox();
+        check(saveBox.y>=0 && saveBox.y+saveBox.height<=1000,`${theme} ${width}px save action is reachable`);
+        await page.getByRole('button',{name:'Back to profile',exact:true}).click();
+        await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
+      }
       if([390,1440].includes(width))await page.screenshot({path:`/tmp/profile-refresh-${width}-${theme}.png`,fullPage:true});
     }
   }
@@ -114,7 +168,7 @@ async page => {
   await page.locator('.profile-summary').waitFor();
   check(await name.locator('[data-username-ink]').allTextContents().then(x=>x.join(''))==='sheriff','Reduced motion shows the real username immediately');
   check(await page.locator('.profile-summary').evaluate(el=>el.getAnimations({subtree:true}).length===0),'Reduced motion disables decorative profile motion');
-  await page.getByRole('tab',{name:'Edit profile',exact:true}).click();
+  await page.getByRole('button',{name:'Edit profile',exact:true}).click();
   await page.getByRole('textbox',{name:'Username',exact:true}).fill('sh3riff');
   await page.getByRole('button',{name:'Save changes',exact:true}).click();
   await page.getByRole('heading',{name:'sh3riff',exact:true}).waitFor();
@@ -158,9 +212,18 @@ async page => {
   privatePublic=true;await page.reload();
   await page.getByRole('heading',{name:'This profile is private'}).waitFor();
   check(true,'Private public-profile error state is preserved');
+  check(await page.getByRole('button',{name:'Edit profile',exact:true}).count()===0,'Public profiles do not expose the owner edit action');
   privatePublic=false;fail=true;await page.goto('http://fsociety.test/profile');
   await page.getByRole('heading',{name:"Your profile couldn't be loaded"}).waitFor();
   check(await page.locator('.profile-summary').count()===0,'API failures show recovery instead of fabricated zero statistics');
+  fail=false;await page.emulateMedia({reducedMotion:'reduce'});await page.setViewportSize({width:1440,height:1000});
+  for(const [score,level,points,remaining] of [[0,1,0,1000],[999,1,999,1],[1000,2,0,1000],[2700,3,700,300]]){
+    profile.score=score;await go();
+    check(await page.locator('.profile-medal-number').textContent()===String(level).padStart(2,'0'),`The emblem shows the actual level at ${score} points`);
+    check(await page.getByRole('progressbar',{name:`Progress to level ${level+1}`}).getAttribute('aria-valuenow')===String(points),`Progress resets correctly at ${score} points`);
+    check(await page.locator('.profile-level-console').innerText().then(x=>x.includes(`${remaining.toLocaleString()} points to level ${level+1}`)),`Next-level distance is truthful at ${score} points`);
+    check(await page.locator('.profile-level-milestone').innerText().then(x=>x.includes((level*1000).toLocaleString())),`Next milestone total is accurate at ${score} points`);
+  }
   check(errors.length===0,`No runtime errors: ${errors.join('; ')}`);
   return {passed:checks.length,checks};
 }
