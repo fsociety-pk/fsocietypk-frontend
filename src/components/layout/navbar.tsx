@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Headphones,
   LayoutDashboard,
@@ -17,6 +18,8 @@ import {
   ArrowUpRight,
   ChevronRight,
   Users,
+  Home,
+  ArrowRight,
 } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { authService } from "../../services/auth.service";
@@ -26,6 +29,15 @@ import ThemeToggle from "../common/ThemeToggle";
 import MemberAvatar from '../common/MemberAvatar';
 import { toast } from "react-hot-toast";
 import { TEAM_ABOUT_URL } from '../../data/team';
+import { useReducedMotionPreference } from '../../hooks/useReducedMotionPreference';
+
+const publicLinks = [
+  { to: "/dashboard", label: "Home", icon: Home },
+  { to: "/challenges", label: "Challenges", icon: Flag },
+  { to: "/resources", label: "Resources", icon: Library },
+  { to: "/projects", label: "Projects", icon: Folder },
+];
+
 const workspaceLinks = [
   { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { to: "/challenges", label: "Challenges", icon: Flag },
@@ -48,13 +60,30 @@ export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const [open, setOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [focusedLink, setFocusedLink] = useState<string | null>(null);
+  const reducedMotion = useReducedMotionPreference();
   const location = useLocation();
   const navigate = useNavigate();
   const drawer = useRef<HTMLDivElement>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
+  const activePublicLink = publicLinks.find(({ to }) =>
+    location.pathname === to || location.pathname.startsWith(`${to}/`)
+  )?.to;
+  const highlightedLink = focusedLink ?? hoveredLink ?? activePublicLink;
   useEffect(() => {
     setOpen(false);
+    setHoveredLink(null);
+    setFocusedLink(null);
   }, [location.pathname]);
+  useEffect(() => {
+    if (!open || isAuthenticated) return;
+    const desktop = window.matchMedia('(min-width: 1200px)');
+    const closeOnDesktop = () => { if (desktop.matches) setOpen(false); };
+    closeOnDesktop();
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => desktop.removeEventListener('change', closeOnDesktop);
+  }, [open, isAuthenticated]);
   useEffect(() => {
     if (!open) return;
     const before = document.body.style.overflow;
@@ -189,11 +218,49 @@ export default function Navbar() {
           <Brand />
         )}
         {!isAuthenticated && (
-          <nav className="public-nav" aria-label="Main">
-            <NavLink to="/challenges">Challenges</NavLink>
-            <NavLink to="/resources">Resources</NavLink>
-            <NavLink to="/projects">Projects</NavLink>
-            <a className="nav-team-link" href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer"><Users size={15} aria-hidden="true" /><span>About the team</span><ArrowUpRight size={14} aria-hidden="true" /></a>
+          <nav className="public-nav" aria-label="Main" onMouseLeave={() => setHoveredLink(null)}>
+            {publicLinks.map(({ to, label }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={to === '/dashboard'}
+                onMouseEnter={() => { setHoveredLink(to); setFocusedLink(null); }}
+                onFocus={() => { setFocusedLink(to); setHoveredLink(null); }}
+                onBlur={() => setFocusedLink(null)}
+              >
+                {highlightedLink === to && (
+                  <motion.span
+                    className="public-nav-highlight"
+                    layoutId="public-navigation-highlight"
+                    initial={false}
+                    transition={{ duration: reducedMotion ? 0 : .24, ease: [.16, 1, .3, 1] }}
+                    aria-hidden="true"
+                  />
+                )}
+                <span className="public-nav-label">{label}</span>
+              </NavLink>
+            ))}
+            <a
+              className="nav-team-link"
+              href={TEAM_ABOUT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onMouseEnter={() => { setHoveredLink('team'); setFocusedLink(null); }}
+              onFocus={() => { setFocusedLink('team'); setHoveredLink(null); }}
+              onBlur={() => setFocusedLink(null)}
+            >
+              {highlightedLink === 'team' && (
+                <motion.span
+                  className="public-nav-highlight"
+                  layoutId="public-navigation-highlight"
+                  initial={false}
+                  transition={{ duration: reducedMotion ? 0 : .24, ease: [.16, 1, .3, 1] }}
+                  aria-hidden="true"
+                />
+              )}
+              <span className="public-nav-label">About the team</span>
+              <ArrowUpRight size={13} aria-hidden="true" />
+            </a>
           </nav>
         )}
         <div className="header-actions">
@@ -219,10 +286,10 @@ export default function Navbar() {
           ) : (
             <>
               <Link to="/login" className="login-link text-sm nav-login">
-                <span>Log in</span><ArrowUpRight size={15} aria-hidden="true" />
+                <span>Log in</span>
               </Link>
               <Link to="/signup" className="btn-primary join-button nav-signup">
-                <span>Create account</span><ArrowUpRight size={15} aria-hidden="true" />
+                <span>Create account</span><ArrowRight size={16} aria-hidden="true" />
               </Link>
             </>
           )}
@@ -238,10 +305,20 @@ export default function Navbar() {
           </button>
         </div>
       </header>
+      {open && !isAuthenticated && (
+        <div
+          className="public-navigation-backdrop"
+          aria-hidden="true"
+          onClick={() => {
+            setOpen(false);
+            menuButton.current?.focus();
+          }}
+        />
+      )}
       {open && (
         <div
           ref={drawer}
-          className="mobile-drawer"
+          className={`mobile-drawer${isAuthenticated ? '' : ' public-mobile-drawer'}`}
           id="mobile-navigation"
           role="dialog"
           aria-modal="true"
@@ -260,16 +337,15 @@ export default function Navbar() {
           {isAuthenticated ? (
             <>{navigation}<div className="sidebar-caption">Community</div>{communityNavigation}</>
           ) : (
-            <nav className="sidebar-nav">
-              {workspaceLinks
-                .filter((x) => x.to !== "/writeups")
-                .map(({ to, label, icon: Icon }) => (
-                  <NavLink to={to} key={to}>
-                    <Icon size={18} />
-                    {label}
-                  </NavLink>
-                ))}
-              <a className="nav-team-link" href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer"><Users size={18} />About the team<ArrowUpRight size={14} /></a>
+            <nav className="sidebar-nav" aria-label="Main">
+              {publicLinks.map(({ to, label, icon: Icon }) => (
+                <NavLink to={to} key={to} end={to === '/dashboard'} onClick={() => setOpen(false)}>
+                  <Icon size={18} aria-hidden="true" />
+                  <span>{label}</span>
+                  <ChevronRight className="mobile-nav-arrow" size={16} aria-hidden="true" />
+                </NavLink>
+              ))}
+              <a className="nav-team-link" href={TEAM_ABOUT_URL} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}><Users size={18} aria-hidden="true" /><span>About the team</span><ArrowUpRight className="mobile-nav-arrow" size={16} aria-hidden="true" /></a>
             </nav>
           )}
           <div className="mobile-drawer-footer">
@@ -288,7 +364,7 @@ export default function Navbar() {
                   Log in
                 </Link>
                 <Link to="/signup" className="btn-primary">
-                  Create account
+                  Create account <ArrowRight size={16} aria-hidden="true" />
                 </Link>
               </>
             )}

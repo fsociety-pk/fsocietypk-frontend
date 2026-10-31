@@ -17,6 +17,7 @@ a { text-underline-offset: 4px; }
 /* Consistent material surfaces across member, public and staff screens. */
 :root :is(.soft-panel,.card,.surface-panel,.action-card,.project-card,.resource-card,.challenge-card,.review-card,.profile-banner,.dashboard-welcome,.solve-feed,.support-intro,.support-conversation,.support-empty,.feature-card,.discipline-card,.dashboard-preview) {
   background: rgb(var(--card));
+  color: rgb(var(--ink));
   border: 1px solid transparent;
   border-radius: var(--radius-panel);
   box-shadow: var(--panel-shadow);
@@ -39,6 +40,10 @@ a { text-underline-offset: 4px; }
 :root .support-status.open { background: rgb(var(--warning) / .11); }
 :root .support-status.in_progress { background: rgb(var(--info) / .1); }
 :root .support-status.resolved { background: rgb(var(--success) / .1); }
+:root .badge-easy { color: rgb(var(--success)); background: var(--brand-soft); }
+:root .badge-medium { color: rgb(var(--warning)); background: var(--warning-soft); }
+:root .badge-hard { color: rgb(var(--error)); background: var(--error-soft); }
+:root .badge-insane { color: rgb(var(--violet)); background: var(--violet-soft); }
 /* Controls retain a clear edge, unlike the large elevated surfaces. */
 :root :is(.input,input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),textarea,select) {
   background: rgb(var(--elevated)); color: rgb(var(--ink));
@@ -53,8 +58,11 @@ a { text-underline-offset: 4px; }
 :root .btn-primary { background: rgb(var(--brand)); color: rgb(var(--on-brand)); border: 1px solid transparent; box-shadow: 0 3px 6px rgb(0 0 0 / .1), inset 0 1px 0 rgb(255 255 255 / .14); }
 :root .btn-primary:hover { background: color-mix(in srgb, rgb(var(--brand)), rgb(var(--ink)) 7%); }
 :root .btn-primary:active { transform: translateY(1px); box-shadow: none; }
-:root .btn-outline { background: rgb(var(--card)); border-color: rgb(var(--line)); color: rgb(var(--ink)); }
-:root .btn-outline:hover { background: rgb(var(--surface)); }
+:root .btn-outline { background: rgb(var(--card)); border-color: rgb(var(--field-edge)); color: rgb(var(--ink)); box-shadow: none; }
+:root .btn-outline:hover { background: rgb(var(--surface)); border-color: rgb(var(--muted)); }
+:root .btn-ghost { color: rgb(var(--muted)); }
+:root .btn-ghost:hover { color: rgb(var(--ink)); background: rgb(var(--surface)); }
+:root .btn-danger { background: rgb(var(--error)); color: rgb(var(--on-brand)); }
 :root :is(.btn-primary,.btn-outline,.btn-ghost):disabled { transform: none; box-shadow: none; cursor: not-allowed; }
 /* Navigation: the same neutral material in both workspaces. */
 :root :is(.app-sidebar,.admin-sidebar,.admin-mobile-navigation) { background: rgb(var(--card)); color: rgb(var(--ink)); border: 0; box-shadow: 2px 0 18px rgb(0 0 0 / .035); }
@@ -86,6 +94,23 @@ a { text-underline-offset: 4px; }
 :root .admin-stat strong { font-size: 30px; }
 :root .admin-stat-label svg { color: rgb(var(--info)); }
 :root .admin-stat.needs-review { background: color-mix(in srgb, rgb(var(--card)), rgb(var(--warning)) 5%); }
+/* Supporting colors describe the content; the green action remains dominant. */
+:root .resource-card {
+  --resource-accent: var(--category-color, var(--info));
+  background: color-mix(in oklch, rgb(var(--resource-accent)) 3%, rgb(var(--card)));
+}
+:root .resource-card h4 { color: rgb(var(--ink)); font-size: 16px; line-height: 1.45; }
+:root .resource-card h4 + p { color: rgb(var(--resource-accent)); font-weight: 600; }
+:root .resource-visit { min-height: 40px; padding: 8px 12px; font-size: 12px; }
+:root .project-card .feature-icon { color: rgb(var(--violet)); background: var(--violet-soft); }
+:root .review-card .category-label { color: rgb(var(--info)); background: var(--info-soft); }
+:root .admin-nav a[href$='/analytics'] > svg,
+:root .admin-nav a[href$='/users'] > svg { color: rgb(var(--info)); }
+:root .admin-nav a[href$='/team'] > svg,
+:root .admin-nav a[href$='/projects'] > svg { color: rgb(var(--violet)); }
+:root .admin-nav a[href$='/reviews'] > svg { color: rgb(var(--warning)); }
+:root .admin-nav a[href$='/security'] > svg { color: rgb(var(--cyan)); }
+:root .admin-nav a.active > svg { color: rgb(var(--brand)); }
 /* Reading and forms share hierarchy and materials without moving on hover. */
 :root .reading-page { max-width: 900px; padding-top: 40px; }
 :root .writeup-content { line-height: 1.9; font-size: 16px; padding: 32px; border: 0; border-radius: var(--radius-panel); background: rgb(var(--card)); box-shadow: var(--panel-shadow); }
@@ -200,5 +225,5 @@ a { text-underline-offset: 4px; }
 :root .admin-tool { padding: 18px; }
 :root .challenge-hint { background: rgb(var(--elevated)); border: 1px solid transparent; border-radius: 12px; }
 
-:root[data-theme="dark"] .admin-brand .brand-artwork { background: #edf2f9; border-radius: 8px; padding: 4px; }
+:root[data-theme="dark"] :is(.admin-brand .brand-artwork, .team-brand img) { background: #edf2f9; border-radius: 8px; padding: 4px; }
 :root .btn-outline.text-status-error { color: rgb(var(--error)); }

@@ -1,0 +1,316 @@
+/* Public navigation: one quiet frame, a moving selection, and a clear next step. */
+.app-shell:not(.is-authenticated) {
+  --nav-top: 16px;
+  --nav-height: 76px;
+  --nav-gutter: clamp(16px, 2.5vw, 40px);
+  --nav-panel: var(--landing-panel, rgb(var(--card)));
+  --nav-ink: var(--landing-ink, rgb(var(--ink)));
+  --nav-muted: var(--landing-muted, rgb(var(--muted)));
+  --nav-green: var(--landing-green, rgb(var(--brand)));
+  --nav-edge: var(--landing-edge, rgb(var(--line)));
+  --nav-soft: var(--landing-soft, rgb(var(--surface)));
+}
+
+:root .app-shell .public-site-header {
+  position: sticky;
+  inset: var(--nav-top) auto auto;
+  width: calc(100% - var(--nav-gutter) * 2);
+  max-width: 1480px;
+  height: var(--nav-height);
+  margin: var(--nav-top) auto 16px;
+  padding: 0 20px;
+  gap: 20px;
+  border: 1px solid var(--nav-edge);
+  border-radius: 16px;
+  box-shadow: none;
+  background: var(--nav-panel);
+  color: var(--nav-ink);
+  animation: public-nav-arrive 440ms var(--ease-out) both;
+}
+
+:root .is-landing .public-site-header {
+  position: fixed;
+  inset: var(--nav-top) var(--nav-gutter) auto;
+  margin: 0 auto;
+}
+
+.public-site-header .brand-lockup {
+  gap: 10px;
+  font-size: 19px;
+  letter-spacing: -.035em;
+  color: var(--nav-ink);
+}
+
+.public-site-header .brand-lockup .brand-artwork {
+  width: 46px;
+  height: 46px;
+}
+
+:root .public-site-header .brand-lockup small {
+  margin-left: 4px;
+  color: var(--nav-muted);
+  font-size: 10px;
+  letter-spacing: .04em;
+}
+
+:root .public-site-header .public-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+:root .public-site-header .public-nav > a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--nav-muted);
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 24px;
+  transition: color 160ms ease-out;
+}
+
+.public-nav-highlight {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--nav-soft);
+  pointer-events: none;
+}
+
+.public-nav-label, .public-site-header .nav-team-link > svg {
+  position: relative;
+}
+
+:root .public-site-header .public-nav > a:is(:hover, :focus-visible, .active) {
+  background: transparent;
+  color: var(--nav-green);
+}
+
+.public-site-header .header-actions {
+  gap: 8px;
+}
+
+:root .public-site-header .theme-toggle,
+:root .public-site-header .menu-toggle {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--nav-ink);
+  transition: background-color 160ms ease-out;
+}
+
+:root .public-site-header .theme-toggle:hover,
+:root .public-site-header .menu-toggle:hover {
+  background: var(--nav-soft);
+}
+
+.public-site-header .theme-toggle svg {
+  transition: transform 240ms var(--ease-out);
+}
+
+.public-site-header .theme-toggle:hover svg {
+  transform: rotate(-16deg);
+}
+
+:root .public-site-header .nav-login {
+  min-height: 44px;
+  margin-right: 4px;
+  padding-inline: 14px;
+  color: var(--nav-ink);
+  font-size: 13px;
+  font-weight: 550;
+}
+
+.public-site-header .nav-login::after {
+  right: 14px;
+  left: 14px;
+  bottom: 9px;
+  background: var(--nav-green);
+}
+
+:root .public-site-header .nav-signup {
+  min-height: 44px;
+  padding: 0 16px;
+  gap: 14px;
+  border-radius: 10px;
+  background: var(--nav-green);
+  color: rgb(var(--on-brand));
+  font-size: 13px;
+  font-weight: 650;
+  transform: none;
+}
+
+.public-site-header .nav-signup:hover > svg,
+.public-site-header .nav-signup:focus-visible > svg {
+  transform: translateX(3px);
+}
+
+.public-site-header :is(a, button):focus-visible,
+.public-mobile-drawer :is(a, button):focus-visible {
+  outline: 2px solid var(--nav-green);
+  outline-offset: 3px;
+}
+
+/* The drawer shares the header's edge and link order, including at 200% zoom. */
+.public-navigation-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 49;
+  background: color-mix(in srgb, var(--nav-ink) 18%, transparent);
+  animation: public-backdrop-arrive 180ms ease-out both;
+}
+
+:root .app-shell .public-mobile-drawer {
+  inset: calc(var(--nav-top) + var(--nav-height)) var(--nav-gutter) auto;
+  max-height: calc(100dvh - var(--nav-top) - var(--nav-height) - 16px);
+  padding: 20px;
+  border: 1px solid var(--nav-edge);
+  border-radius: 0 0 16px 16px;
+  background: var(--nav-panel);
+  color: var(--nav-ink);
+  animation: public-menu-arrive 240ms var(--ease-out) both;
+}
+
+.public-mobile-drawer > .btn-ghost {
+  display: flex;
+  min-height: 44px;
+  margin: 0 0 12px auto;
+  color: var(--nav-muted);
+  font-size: 12px;
+}
+
+.public-mobile-drawer .sidebar-nav {
+  display: grid;
+  gap: 4px;
+  max-width: none;
+}
+
+:root .public-mobile-drawer .sidebar-nav > a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--nav-ink);
+  font-size: 15px;
+  font-weight: 550;
+  animation: public-menu-arrive 260ms var(--ease-out) both;
+}
+
+.public-mobile-drawer .sidebar-nav > a:nth-child(2) { animation-delay: 25ms; }
+.public-mobile-drawer .sidebar-nav > a:nth-child(3) { animation-delay: 50ms; }
+.public-mobile-drawer .sidebar-nav > a:nth-child(4) { animation-delay: 75ms; }
+.public-mobile-drawer .sidebar-nav > a:nth-child(5) { animation-delay: 100ms; }
+
+:root .public-mobile-drawer .sidebar-nav > a:is(.active, :hover, :focus-visible) {
+  background: var(--nav-soft);
+  color: var(--nav-green);
+}
+
+.public-mobile-drawer .mobile-nav-arrow {
+  margin-left: auto;
+}
+
+.public-mobile-drawer .mobile-drawer-footer {
+  max-width: none;
+  margin: 16px 0 0;
+  padding-top: 20px;
+  border-color: var(--nav-edge);
+  gap: 10px;
+}
+
+.public-mobile-drawer .mobile-drawer-footer a {
+  flex: 1;
+  min-height: 48px;
+  padding: 12px 8px;
+  border-radius: 10px;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+.public-mobile-drawer .mobile-drawer-footer .btn-outline {
+  border-color: var(--nav-edge);
+  color: var(--nav-ink);
+}
+
+.public-mobile-drawer .mobile-drawer-footer .btn-primary {
+  gap: 8px;
+  background: var(--nav-green);
+  color: rgb(var(--on-brand));
+}
+
+@keyframes public-nav-arrive {
+  from { opacity: .65; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes public-backdrop-arrive {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes public-menu-arrive {
+  from { opacity: .5; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (min-width: 1200px) {
+  :root .app-shell .public-site-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1199px) {
+  :root .public-site-header .public-nav { display: none; }
+  :root .public-site-header .menu-toggle { display: inline-flex; }
+}
+
+@media (max-width: 700px) {
+  .app-shell:not(.is-authenticated) {
+    --nav-top: 12px;
+    --nav-height: 64px;
+    --nav-gutter: 12px;
+  }
+
+  :root .app-shell .public-site-header {
+    padding-inline: 12px;
+    gap: 8px;
+    border-radius: 14px;
+  }
+
+  .public-site-header .brand-lockup { font-size: 17px; gap: 7px; }
+  .public-site-header .brand-lockup .brand-artwork { width: 40px; height: 40px; }
+  .public-site-header .header-actions { gap: 4px; }
+  :root .public-site-header .header-actions :is(.nav-login, .nav-signup) { display: none; }
+  :root .app-shell .public-mobile-drawer { padding: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root .app-shell .public-site-header,
+  :root .public-navigation-backdrop,
+  :root .app-shell .public-mobile-drawer,
+  :root .public-mobile-drawer .sidebar-nav > a { animation: none; }
+
+  :root .public-site-header *,
+  :root .public-site-header *::before,
+  :root .public-site-header *::after { transition: none; }
+
+  :root .public-site-header :is(a, button):is(:hover, :focus-visible, :active),
+  :root .public-site-header :is(a, button):is(:hover, :focus-visible) svg { transform: none; }
+}

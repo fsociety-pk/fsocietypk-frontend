@@ -38,6 +38,7 @@ const ResourceCard = ({ resource }: { resource: IResource }) => (
     variants={itemVariants}
     whileHover={{ y: -4 }}
     transition={{ duration: .22, ease: 'easeOut' }}
+    data-category={resource.category}
     className="resource-card group bg-background-card border border-surface-border rounded-xl p-6 hover:border-brand/30 transition-all duration-300 hover:shadow-sm"
   >
     <div className="flex items-start justify-between mb-3">
@@ -62,7 +63,7 @@ const ResourceCard = ({ resource }: { resource: IResource }) => (
         href={resource.githubLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-1.5 px-3 py-1.5 bg-brand/10 hover:bg-brand/20 rounded-lg transition-colors text-xs font-bold text-brand uppercase tracking-wider"
+        className="btn-outline resource-visit"
       >
         <Github className="w-3.5 h-3.5" />
         <span>Visit</span>
@@ -184,12 +185,6 @@ export const Resources: React.FC<ResourcesProps> = ({ showDashboardSection = fal
 
   return (
     <div className="relative min-h-screen bg-background font-sans text-text-primary overflow-hidden">
-      {/* Ambient background glows */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-brand/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[400px] bg-brand/3 blur-[150px] rounded-full" />
-      </div>
-
       <div className="page-wrap relative z-10">
         <motion.div variants={containerVariants} initial={false} animate="visible" className="space-y-7">
           <PageHeading eyebrow="Learn with the community" title="Learning resources" description="Find guides, tools, and practice material shared by the community. Each resource links to a GitHub project." />

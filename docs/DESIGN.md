@@ -1,5 +1,45 @@
 # Fsociety PK design system
 
+## Shared themes and public navigation, October 31
+
+The owner's current direction is professional, varied color with green as the
+primary action. This supersedes earlier green-only landing palettes and inverted
+light-mode banners. All public, member, authentication, team and staff screens
+use the semantic channels in `design-refresh.css`. Landing variables are aliases,
+never a second palette. Light uses a cool pale canvas, white cards and slate ink;
+dark uses graphite/navy surfaces, raised slate cards and bright readable ink.
+Blue marks information/web, amber crypto/rank/warnings, violet OSINT/identity,
+rose exploitation/errors, coral reverse engineering/contribution and teal tools.
+Green remains practice/completion and primary actions. Labels/icons accompany
+every semantic color. Supporting colors have separate light/dark inks and opaque
+soft surfaces derived from the card token so badges never compound translucency.
+
+The landing's team invitation is a violet-tinted surface in both themes, with
+normal heading/body ink and a solid green action. Example-library chrome follows
+the selected theme. Category symbols and practice-entry accents retain their
+individual colors. Member summaries distinguish solves, points and rank; the
+milestone uses violet. Resources inherit their category, while project icons use
+violet. Cards retain existing layout, original artwork and actual data. Shared
+secondary buttons have defined edges; primary/danger buttons use contrasting ink.
+
+Public navigation follows the owner-approved Home → Challenges → Resources →
+Projects → About the team order on desktop and phone. Its compact rounded frame
+floats above the landing; equal outer grid tracks center the desktop links. The
+selected/preview surface slides between hover and keyboard targets in 240ms.
+The header arrives once in 440ms; the phone list enters within 360ms. Reduced
+motion shows final states. The same link collection drives both menus. Escape
+restores menu focus, choosing the current page closes the drawer, and resizing
+to desktop closes it and restores scrolling. Auth and external team destinations
+remain unchanged.
+
+Validation: production TypeScript/Vite build passed. The theme/navigation suite
+passes 27 checks, including 1,184 rendered text samples in 18 light/dark route
+variants, with no AA text-contrast failures. Existing landing, 36 overview,
+125 profile and 43 administration checks passed using intercepted APIs. Desktop
+and phone captures were reviewed for landing, navigation, resources, member
+overview, profile, administration and the standalone team entry. The mechanical
+design scan reports no findings. No production data or accounts were changed.
+
 ## Challenge records and completion, October 31
 
 Artifact: a working CTF library for choosing tasks and reviewing completed ones.
@@ -220,21 +260,22 @@ Source: `fsocietypk-frontend/src/styles/design-refresh.css`. Semantic custom pro
 
 | Role | Light default | Dark optional |
 | --- | --- | --- |
-| Page | #F7F9F8 | #101715 |
-| Card | #FFFFFF | #19221F |
-| Elevated | #EFF5F2 | #1F2B25 |
-| Surface | #EBF3EF | #24302A |
-| Border | #CCDAD2 | #394C41 |
-| Text | #1D2B24 | #EDF3F0 |
-| Secondary text | #4F6458 | #AEC1B6 |
-| Primary action | #08784F | #78D7B2 |
-| On primary | #FFFFFF | #102D23 |
-| Success / mint | #147C60 | #69D6B1 |
-| Warning / amber | #95600B | #F7BD76 |
-| Error / rose | #B83350 | #FF9BA9 |
-| Information / blue | #166E6B | #84D2D0 |
-| Lilac | #7650B8 | #C0A6FF |
-| Coral | #B64E33 | #FFAC96 |
+| Page | #F6F8FB | #10151E |
+| Card | #FFFFFF | #19212E |
+| Elevated | #F9FAFC | #1F2938 |
+| Surface | #EDF1F7 | #253041 |
+| Border | #D3DCE8 | #3D4D62 |
+| Text | #192435 | #EDF2F9 |
+| Secondary text | #4E6077 | #AEBDD0 |
+| Primary action | #087751 | #58D8A9 |
+| On primary | #FFFFFF | #0C271E |
+| Success / mint | #087751 | #58D8A9 |
+| Warning / amber | #905B09 | #F6C370 |
+| Error / rose | #BA2B4D | #FF9BB1 |
+| Information / blue | #225FB1 | #89BDFF |
+| Violet | #7048B3 | #C1ADFF |
+| Coral | #AB4526 | #FFB396 |
+| Teal | #0C6F7D | #6FD6E0 |
 
 Green identifies actions. Mint, amber, and rose communicate status with labels/icons. Challenge categories have named icons and distinct blue, lilac, mint, rose, coral, and amber treatments; difficulty has separate badges. Color is always accompanied by text or an icon. Light mode uses darker accent inks for legibility; dark mode uses lighter, less saturated inks. Large illustration shapes intentionally use softer green/coral/lilac with dark facial features.
 

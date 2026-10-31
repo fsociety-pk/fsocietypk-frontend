@@ -40,7 +40,7 @@ const Analytics: React.FC = () => {
   const overviewCards = [
     { title: 'Community members', value: analytics?.overview.totalUsers, icon: Users, color: 'text-status-info' },
     { title: 'Published challenges', value: analytics?.overview.totalChallenges, icon: Flag, color: 'text-brand' },
-    { title: 'Confirmed Solves', value: analytics?.overview.totalSolves, icon: CheckCircle2, color: 'text-status-error' },
+    { title: 'Confirmed Solves', value: analytics?.overview.totalSolves, icon: CheckCircle2, color: 'text-status-success' },
   ];
 
   return (
@@ -122,7 +122,7 @@ const Analytics: React.FC = () => {
               <Tooltip
                 position={{ x: 8, y: 0 }}
                 wrapperStyle={{ maxWidth: 'calc(100% - 16px)', whiteSpace: 'normal' }}
-                cursor={{ fill: '#ffffff10' }}
+                cursor={{ fill: 'rgb(var(--info) / .08)' }}
                 contentStyle={{ backgroundColor: 'rgb(var(--card))', color: 'rgb(var(--ink))', border: '1px solid rgb(var(--line))', borderRadius: '10px', fontSize: '12px' }}
               />
               <Bar isAnimationActive={false} dataKey="solveCount" name="Solves" fill="rgb(var(--brand))" radius={[0, 4, 4, 0]}>

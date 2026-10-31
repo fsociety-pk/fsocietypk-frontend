@@ -34,7 +34,7 @@ const features = [
     title: 'Learn from writeups',
     text: 'Read detailed walk-throughs from fellow researchers. Share your methodologies to help others grow.',
     to: '/writeups',
-    accent: 'rgb(var(--brand))',
+    accent: 'rgb(var(--info))',
     tag: 'Knowledge Base',
   },
   {
@@ -42,7 +42,7 @@ const features = [
     title: 'Track your skills',
     text: 'Monitor your solve history, analyze discipline strengths, and build your offensive security profile.',
     to: '/profile',
-    accent: 'rgb(var(--brand))',
+    accent: 'rgb(var(--violet))',
     tag: 'Player Profile',
   },
   {
@@ -50,7 +50,7 @@ const features = [
     title: 'Contribute challenges',
     text: 'Have an interesting vulnerability or binary? Submit a challenge for peer and admin review.',
     to: '/submit-challenge',
-    accent: 'rgb(var(--brand))',
+    accent: 'rgb(var(--coral))',
     tag: 'Community Submissions',
   },
 ];

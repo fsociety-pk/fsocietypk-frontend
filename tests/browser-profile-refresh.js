@@ -136,11 +136,13 @@ async page => {
     const surfaces=await page.evaluate(()=>{
       const style=selector=>getComputedStyle(document.querySelector(selector));
       const hero=style('.profile-banner'), stat=style('.profile-stat'), badge=style('.challenge-badge-card'), record=style('.profile-grid > .soft-panel');
-      return {hero:hero.backgroundColor, page:getComputedStyle(document.body).backgroundColor, inset:style('.profile-level-console').backgroundColor,
+      const reference=document.createElement('span');reference.style.backgroundColor='rgb(var(--card))';document.body.append(reference);
+      const themeCard=getComputedStyle(reference).backgroundColor;reference.remove();
+      return {hero:hero.backgroundColor, themeCard, page:getComputedStyle(document.body).backgroundColor, inset:style('.profile-level-console').backgroundColor,
         raised:[hero,stat,badge,record].every(s=>s.boxShadow!=='none' && parseFloat(s.borderTopWidth)===0),
         gap:parseFloat(style('.profile-stat-strip').columnGap),statRadius:parseFloat(stat.borderTopLeftRadius)};
     });
-    check(theme==='light'?surfaces.hero==='rgb(255, 255, 255)':surfaces.hero==='rgb(24, 34, 50)',`${theme} identity card uses its matching theme surface`);
+    check(surfaces.hero===surfaces.themeCard,`${theme} identity card uses its matching theme surface`);
     check(surfaces.hero!==surfaces.page && surfaces.inset!==surfaces.hero,`${theme} page, identity and level panel have distinct surfaces`);
     check(surfaces.raised && surfaces.gap>=12 && surfaces.statRadius>0,`${theme} profile cards have separate spacing and soft elevation instead of perimeter lines`);
     for(const width of [320,390,640,768,1024,1440]){

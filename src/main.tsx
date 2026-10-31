@@ -12,6 +12,7 @@ import './styles/visual-system.css';
 import './styles/scroll-text-reveal.css';
 import './styles/team-link.css';
 import './styles/landing-refresh.css';
+import './styles/public-navigation.css';
 import { applyTheme } from './hooks/useTheme';
 
 applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
@@ -41,12 +42,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             success: {
               className: "cyber-toast cyber-toast-success",
               duration: 3000,
-              iconTheme: { primary: "#20704f", secondary: "#ffffff" },
+              iconTheme: { primary: "rgb(var(--success))", secondary: "rgb(var(--on-brand))" },
             },
             error: {
               className: "cyber-toast cyber-toast-error",
               duration: 4500,
-              iconTheme: { primary: "#b32a3e", secondary: "#ffffff" },
+              iconTheme: { primary: "rgb(var(--error))", secondary: "rgb(var(--on-brand))" },
             },
           }}
         />

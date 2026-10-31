@@ -278,3 +278,22 @@ member/public layouts, expired sessions, login return destinations, and failed
 session checks. No production login or API calls are made. Use a fresh browser
 fixture before running the existing `browser-auth.js` and `browser-session.js`
 suites; the latter deliberately blocks browser storage.
+
+## Shared color themes and public navigation
+
+After a normal production build and `node tests/prepare-browser.cjs`, load the
+generated `.playwright-mcp/browser-fixtures.js`, then run
+`tests/browser-theme-system.js` with connected Playwright. It measures rendered
+text contrast on the public landing, seven resource categories, projects,
+login/signup, member overview, challenges, rankings and profile in both themes.
+Canvas color conversion and alpha compositing include solid/OKLCH surfaces,
+ancestor opacity and the navigation/auth selection layers. Disabled and
+decorative hidden text are excluded; normal/large text use WCAG AA thresholds.
+It also checks the approved desktop/mobile link order, shared highlight feedback,
+live reduced motion, focus containment, Escape restoration, current-page dismissal
+and desktop-resize scroll recovery. All API data is intercepted.
+
+For workflow regressions, reload the base fixture before each suite:
+`browser-landing.js`, `browser-overview.js`, `browser-profile-refresh.js`, and
+`browser-admin-fixtures.js` followed by `browser-admin.js`. Profile surfaces are
+compared with the active shared card token rather than a fixed historical hex.
