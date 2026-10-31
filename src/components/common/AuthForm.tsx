@@ -12,6 +12,7 @@ import PasswordStrengthRobot, { type PasswordCheckState } from './PasswordStreng
 import SqlPrank from './SqlPrank';
 import { useUsernameAvailability } from '../../hooks/useUsernameAvailability';
 import AuthFluidBackground from './AuthFluidBackground';
+import { returnLocation } from '../../utils/returnLocation';
 import { detectAuthPayload, authPayloadMessage } from '../../utils/authInputFeedback';
 
 const pendingKey = 'fsociety-pending-email';
@@ -93,8 +94,7 @@ export default function AuthForm({ signup = false }: { signup?: boolean }) {
     client.clear();
     setUser(user);
     toast.success(signup ? 'Email verified. Welcome to the collective.' : 'Access granted. Welcome back.');
-    const from = location.state?.from;
-    const path = typeof from?.pathname === 'string' && from.pathname.startsWith('/') && !from.pathname.startsWith('//') ? from.pathname + (from.search || '') : '/dashboard';
+    const path = returnLocation(location.state?.from);
     navigate(isStaff(user.role) ? path.startsWith('/admin') ? path : '/admin' : path.startsWith('/admin') ? '/dashboard' : path, { replace: true });
   };
   const field = (name: keyof typeof values) => ({

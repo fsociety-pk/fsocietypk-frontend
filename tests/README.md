@@ -263,3 +263,15 @@ tabs, so a real dashboard/public link click must show the standalone team site
 and preserve the original tab. Includes root/index priority, refresh/deep paths,
 asset/API routing, no platform intro/auth, and 320/390px layouts. APIs are mocked;
 verify the deployed hostname separately after pushing.
+
+## Refresh and session restoration
+
+After a normal production build and `node tests/prepare-browser.cjs`, load the
+generated `.playwright-mcp/browser-fixtures.js`, then run
+`tests/browser-refresh-route.js` with connected Playwright. It holds session
+responses and a profile JavaScript chunk while tracing DOM changes and browser
+history. Checks cover direct profile links, refresh, selected tabs, URL hashes,
+member/public layouts, expired sessions, login return destinations, and failed
+session checks. No production login or API calls are made. Use a fresh browser
+fixture before running the existing `browser-auth.js` and `browser-session.js`
+suites; the latter deliberately blocks browser storage.

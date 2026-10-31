@@ -21,7 +21,9 @@ export default function MainLayout() {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [pathname]);
   const landing = !authenticated && ["/", "/dashboard"].includes(pathname);
-  if (authenticated && isLoading) return <PageState loading fullPage />;
+  // A fresh tab has no user until /auth/me resolves. Do not mount the public
+  // shell or landing/dashboard branch while that identity is still unknown.
+  if (isLoading) return <PageState loading fullPage title="Checking your session" description="Opening the page you requested." />;
   if (authenticated && isStaff(role)) return <Navigate to="/admin" replace />;
   if (authPage && !authenticated) return (
     <MotionConfig reducedMotion="user">

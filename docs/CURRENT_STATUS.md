@@ -1,3 +1,11 @@
+# Refresh keeps the requested page — 2026-10-31
+
+- The platform layout waits for the initial server session check before mounting public or member content. Refreshing a profile no longer briefly renders the signed-out navigation or landing/dashboard branch.
+- Login return destinations retain pathname, query string and hash, including profile tabs and editor links. Authentication still comes from the server, without a persisted user granting access.
+- Passed: production build; 61 delayed-session/refresh/browser-history checks; 16 signup/login checks; six existing session checks; `git diff --check`. Browser scenarios use intercepted production assets and mock APIs.
+
+---
+
 # Submission email alerts — 2026-10-25
 
 - Writeup submissions, resource submissions and newly created projects now notify the same `CHALLENGE_NOTIFICATION_EMAIL` recipient using the existing SMTP configuration. Emails include the saved title and authenticated submitter's username. Projects are immediately published (existing admin-only route); their email says published instead of awaiting review.

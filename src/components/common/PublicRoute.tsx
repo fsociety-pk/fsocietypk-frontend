@@ -3,6 +3,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import CyberLoader from './CyberLoader';
+import { returnLocation } from '../../utils/returnLocation';
 
 interface PublicRouteProps {
   children: React.ReactNode;
@@ -18,7 +19,7 @@ const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
 
   if (isAuthenticated) {
     // Redirect authenticated users to /dashboard or where they came from
-    const from = location.state?.from?.pathname || '/dashboard';
+    const from = returnLocation(location.state?.from);
     return <Navigate to={isStaff(user?.role) ? '/admin' : from.startsWith('/admin') ? '/dashboard' : from} replace />;
   }
 
