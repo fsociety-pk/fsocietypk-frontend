@@ -1,131 +1,13 @@
 import { Link } from "react-router-dom";
-import {
-  Github,
-  Linkedin,
-  Instagram,
-  Globe,
-  Lock,
-  MapPin,
-  Calendar,
-  ArrowUpRight,
-  Award,
-} from "lucide-react";
-import { ReactNode } from "react";
+import { ArrowUpRight, Award, Flag, Target } from 'lucide-react';
+import { safeDate } from '../../utils/profileFormat';
 import { UserProfile } from "../../services/userService";
 import { CATEGORY_LABELS } from "../../utils/categories";
 import FlagProgress from "./FlagProgress";
 
-export const safeDate = (value?: string) => {
-  if (!value) return "—";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? "—"
-    : date.toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-};
-export function ProfileHeader({
-  profile,
-  avatar,
-}: {
-  profile: UserProfile;
-  avatar?: ReactNode;
-}) {
-  return (
-    <>
-      <section className="profile-banner">
-        <div className="profile-identity">
-          {avatar || (
-            <div className="profile-avatar">
-              {profile.avatar ? (
-                <img src={profile.avatar} alt={profile.username} />
-              ) : (
-                profile.username?.[0]?.toUpperCase()
-              )}
-            </div>
-          )}
-          <div>
-            <span className="eyebrow">
-              {profile.role === "admin"
-                ? "Community admin"
-                : "Community member"}
-            </span>
-            <h1 className="profile-name">{profile.username}</h1>
-            <p className="profile-bio">
-              {profile.bio || "This member has not added a bio yet."}
-            </p>
-            <div className="profile-meta">
-              {profile.country && (
-                <span>
-                  <MapPin size={12} />
-                  {profile.country}
-                </span>
-              )}
-              <span>
-                <Calendar size={12} />
-                Joined {safeDate(profile.createdAt)}
-              </span>
-              <span>
-                {profile.isProfilePublic ? (
-                  <Globe size={12} />
-                ) : (
-                  <Lock size={12} />
-                )}{" "}
-                {profile.isProfilePublic ? "Public profile" : "Private profile"}
-              </span>
-            </div>
-            <div className="profile-socials">
-              {[
-                { key: "github" as const, label: "GitHub", icon: Github },
-                { key: "linkedin" as const, label: "LinkedIn", icon: Linkedin },
-                {
-                  key: "instagram" as const,
-                  label: "Instagram",
-                  icon: Instagram,
-                },
-              ].map(({ key, label, icon: Icon }) => {
-                const url = profile.socialLinks?.[key];
-                return url && /^https?:\/\//i.test(url) ? (
-                  <a
-                    key={key}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Icon size={14} />
-                    {label}
-                    <ArrowUpRight size={12} />
-                  </a>
-                ) : null;
-              })}
-            </div>
-          </div>
-        </div>
-        
-      </section>
-      <div className="stats-strip">
-        <div>
-          <strong>{profile.solvedChallenges?.length || 0}</strong>
-          <span>Challenges solved</span>
-        </div>
-        <div>
-          <strong>{Number(profile.score || 0).toLocaleString()}</strong>
-          <span>Total points</span>
-        </div>
-        <div>
-          <strong>{profile.rank ? "#" + profile.rank : "—"}</strong>
-          <span>Global rank</span>
-        </div>
-        <div>
-          <strong>{Math.floor((profile.score || 0) / 1000) + 1}</strong>
-          <span>Current level</span>
-        </div>
-      </div>
-    </>
-  );
-}
+export { safeDate } from '../../utils/profileFormat';
+export { default as ProfileHeader } from './ProfileIdentity';
+
 export function SolveHistory({
   profile,
   limit,
@@ -197,7 +79,7 @@ export default function ProfileOverview({ profile }: { profile: UserProfile }) {
   return (
     <div className="profile-grid">
       <section className="soft-panel">
-        <h2>Recent solves</h2>
+        <h2 className="profile-panel-title"><Flag size={18} aria-hidden="true" />Recent solves</h2>
         <SolveHistory profile={profile} limit={5} />
         {!!profile.challengeProgress?.length && (
           <div className="mt-6 border-t border-surface-border pt-6">
@@ -214,7 +96,7 @@ export default function ProfileOverview({ profile }: { profile: UserProfile }) {
         )}
       </section>
       <section className="soft-panel">
-        <h2>Category progress</h2>
+        <h2 className="profile-panel-title"><Target size={18} aria-hidden="true" />Category progress</h2>
         {progress.length ? (
           progress.map((stat) => (
             <div className="progress-item" key={stat.category}>

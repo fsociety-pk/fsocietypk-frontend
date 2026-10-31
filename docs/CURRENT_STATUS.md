@@ -361,3 +361,30 @@ resize continuity, navbar center/alignment/clearance, and menu placement. Normal
 and reduced motion, keyboard/auth navigation and safe team popups still pass.
 Reviewed circular-animation frames and final layouts in both themes, including
 the owner's 1600px desktop size and 390px phone. No production records changed.
+
+
+## October 31 — profile identity and motion
+
+The owner chose a dark green profile identity card with theme-aware content.
+Member and public profiles now share a framed portrait, an 850ms username decode
+with keyboard replay, real level-progress information and a unified statistics
+band. Avatar scanning and progress/stat entrances are finite; content stays
+visible and usable. The username's accessible name and measured widths remain
+stable. Reduced motion shows the actual name immediately, including when it is
+edited; hiding the tab resolves any active decode.
+
+Profile tabs support Arrow/Home/End navigation and retain URL deep links. Badges,
+solve history, profile editing, upload previews, password controls and public
+privacy handling retain their behavior. No invented ranks, verification status,
+online indicators or progress values were added. Dark mode keeps the same green
+identity panel with shared dark content surfaces; phones stack the identity and
+level area above a 2×2 statistics band.
+
+Validation: production build, 58 profile checks, 48 badge checks and 71 landing
+checks passed using intercepted APIs. The landing suite also confirms the
+existing final-depth correction keeps every glyph corner behind the person
+throughout the last settling phase. Profile checks cover actual values, contrast,
+keyboard focus, editing, photo cancellation, badge dialogs, responsive light/dark
+layouts at 320/390/640/768/1024/1440px, long/empty states, public/private states,
+API failure recovery and live reduced motion. The mechanical design detector
+reported no findings. Tests created no production accounts or records.

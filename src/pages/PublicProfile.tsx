@@ -21,7 +21,7 @@ export default function PublicProfile() {
   });
   const status = (error as { response?: { status: number } })?.response?.status;
   return (
-    <div className="page-wrap">
+    <div className="page-wrap profile-refresh">
       {isLoading ? (
         <PageState loading />
       ) : error || !profile ? (
@@ -44,7 +44,6 @@ export default function PublicProfile() {
         />
       ) : (
         <>
-          <span className="eyebrow">Meet the community</span>
           <ProfileHeader profile={profile} />
           <ChallengeBadgeCollection profile={profile} />
           <div className="section-title">

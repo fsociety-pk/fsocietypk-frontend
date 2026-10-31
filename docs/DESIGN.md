@@ -1,5 +1,54 @@
 # Fsociety PK design system
 
+## Member profiles, October 31
+
+Mode: Operate with one expressive identity moment. The owner chose a dark green
+identity card with theme-aware content, rather than an entirely dark page.
+Direction: precise, personal, confident. Preserve Onest, actual member data,
+existing badge artwork, shared page themes and all profile/account behavior.
+
+The identity card groups the original photo, username, role, bio and social
+links, with a right-hand level-progress area computed from actual points. The
+joined four-part statistics band keeps the API's solve count, points and rank,
+and the existing points-based level formula. Metadata remains factual: joined
+date, supplied country and public/private state. Do not invent verified status,
+security clearances, online indicators, skill ranks, or achievements.
+
+The signature is a brief username decode with a scanner-style portrait frame.
+Only decorative ink changes; the heading's accessible label and reserved
+character widths remain stable. It plays once on load/username change and on
+intentional replay or mouse entry, resolving within 850ms. A keyboard-accessible
+replay button is provided. Hidden tabs cancel to the final name. Live reduced
+motion shows the real username immediately, including after profile edits.
+The avatar scan and level bar finish within 750ms, stat arrivals within 605ms,
+and tab changes within 180ms; there are no ambient loops or fake loading states.
+
+Identity colors are scoped in `profile-refresh.css`: deep green OKLCH
+24%/.035/164, paper 96%/.012/155, secondary ink 78%/.026/155, mint
+82%/.13/155 and edge 43%/.045/164. The rest of the profile uses existing
+card/line/ink/muted/brand semantic tokens. Use a 16px joined identity surface,
+12px record/badge panels, 6–10px controls, defined edges and no diffuse panel
+shadows. No gradient text, decorative background grids or neon glow. Body
+copy uses 14px/1.75; the username scales 32–54px; statistics use 28–30px with
+tabular figures. Spacing follows the existing 4px rhythm.
+
+The phone layout stacks identity and level information, then uses a 2×2 stat
+band. Long names wrap without clipping. Badge grids fit their actual items and
+keep two columns on phones. Tabs scroll within their own band and support
+Arrow/Home/End navigation, roving focus and existing URL deep links. Profile
+editing, photo previews/saving, password controls, badge details/exports, public
+profile privacy and error recovery retain their existing paths.
+
+Validation: the production TypeScript/Vite build passed. 58 isolated profile
+checks cover username decoding, stable accessible names/widths, replay focus,
+contrast, real statistics/level progress, arrow-key tabs, API edits, photo preview
+cancellation, public/private errors, long/empty profiles, and live reduced motion
+including renaming. Reviewed desktop light/dark and phone captures at
+320/390/640/768/1024/1440px. All 48 earned-badge and 71 landing checks also pass;
+the latter includes all tilted glyph edges remaining behind the portrait during
+settling. The Impeccable mechanical detector reports no findings. No production
+accounts, earned data, privacy settings or photos were changed by these tests.
+
 ## Earned challenge badges, October 30
 
 Individual challenge achievements use a category-colored nickel/enamel emblem

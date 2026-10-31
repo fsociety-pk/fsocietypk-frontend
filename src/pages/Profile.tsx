@@ -138,13 +138,13 @@ export default function Profile() {
   };
   if (isLoading)
     return (
-      <div className="page-wrap">
+      <div className="page-wrap profile-refresh">
         <PageState loading title="Loading your profile" description="Gathering your progress and recent solves." />
       </div>
     );
   if (isError || !profile)
     return (
-      <div className="page-wrap">
+      <div className="page-wrap profile-refresh">
         <PageState
           title="Your profile couldn't be loaded"
           description="Reconnect to load your profile and settings."
@@ -153,9 +153,8 @@ export default function Profile() {
       </div>
     );
   return (
-    <div className="page-wrap">
-      <div className="flex justify-between items-center">
-        <span className="eyebrow">My profile</span>
+    <div className="page-wrap profile-refresh">
+      <div className="profile-toolbar">
         {profile.isProfilePublic && (
           <Link
             to={"/profile/" + encodeURIComponent(profile.username)}
@@ -204,7 +203,16 @@ export default function Profile() {
           </button>
         </div>
       )}
-      <div className="tabs-line" role="tablist" aria-label="Profile sections">
+      <div className="tabs-line profile-tabs" role="tablist" aria-label="Profile sections" onKeyDown={event => {
+        const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+        if (!keys.includes(event.key)) return;
+        event.preventDefault();
+        const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+        const current = buttons.findIndex(button => button.getAttribute('aria-selected') === 'true');
+        const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (current + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length;
+        setTab(['overview', 'history', 'badges', 'edit', 'settings'][next]);
+        buttons[next].focus();
+      }}>
         {[
           ["overview", "Overview"],
           ["history", "Solve history"],
@@ -218,13 +226,14 @@ export default function Profile() {
             id={"tab-" + id}
             aria-controls={"panel-" + id}
             aria-selected={tab === id}
+            tabIndex={tab === id ? 0 : -1}
             onClick={() => setTab(id)}
           >
             {label}
           </button>
         ))}
       </div>
-      <div role="tabpanel" id={"panel-" + tab} aria-labelledby={"tab-" + tab}>
+      <div className="profile-tab-panel" key={tab} role="tabpanel" id={"panel-" + tab} aria-labelledby={"tab-" + tab}>
         {tab === "overview" && (
           <>
             <ChallengeBadgeCollection profile={profile} limit={4} onViewAll={() => setTab("badges")} />
